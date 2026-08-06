@@ -6,7 +6,12 @@
     <title>STEP – Mão de Obra | Secure Access</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
         body {
             background: radial-gradient(circle at center, #7b9ba6 0%, #4a5c66 100%);
             min-height: 100vh;
@@ -35,6 +40,7 @@
             justify-content: center;
             margin: 0 auto 10px;
             color: #0091ff;
+            font-weight: bold;
         }
         h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; color: #111; }
         h2 { font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; color: #444; margin-bottom: 5px; }
@@ -83,10 +89,10 @@
 <body>
 
     <div class="login-card">
-        <div class="logo-icon">↓</div>
+        <div class="logo-icon">&darr;</div>
         <h1>STEP</h1>
         <h2>MÃO DE OBRA</h2>
-        <div class="subtitle">OIL & GAS WORKFORCE INTELLIGENCE PLATFORM</div>
+        <div class="subtitle">OIL &amp; GAS WORKFORCE INTELLIGENCE PLATFORM</div>
 
         <div class="input-group">
             <input type="email" id="email" placeholder="Seu e-mail">
@@ -95,8 +101,8 @@
             <input type="password" id="password" placeholder="Sua senha">
         </div>
 
-        <button class="btn-main" onclick="login()">Enter Platform</button>
-        <button class="btn-sub" onclick="signUp()">Cadastrar Nova Pessoa</button>
+        <button type="button" class="btn-main" onclick="login()">Enter Platform</button>
+        <button type="button" class="btn-sub" onclick="signUp()">Cadastrar Nova Pessoa</button>
 
         <div id="message" class="msg"></div>
     </div>
@@ -104,17 +110,28 @@
     <script>
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let supabaseClient;
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (e) {
+            console.error('Erro ao inicializar Supabase:', e);
+        }
 
         async function login() {
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const msg = document.getElementById('message');
             msg.textContent = '';
             msg.style.color = 'red';
 
-            if(!email || !password) {
+            if (!email || !password) {
                 msg.textContent = 'Informe e-mail e senha.';
+                return;
+            }
+
+            if (!supabaseClient) {
+                msg.textContent = 'Erro ao conectar ao serviço de autenticação.';
                 return;
             }
 
@@ -127,14 +144,20 @@
         }
 
         async function signUp() {
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const msg = document.getElementById('message');
             msg.textContent = '';
 
-            if(!email || !password) {
+            if (!email || !password) {
                 msg.style.color = 'red';
                 msg.textContent = 'Digite e-mail e senha para cadastrar.';
+                return;
+            }
+
+            if (!supabaseClient) {
+                msg.style.color = 'red';
+                msg.textContent = 'Erro ao conectar ao serviço de autenticação.';
                 return;
             }
 
