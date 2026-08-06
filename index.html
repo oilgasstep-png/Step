@@ -3,38 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acesso - Plataforma STEP</title>
-    <!-- SDK do Supabase -->
+    <title>STEP – Mão de Obra | Secure Access</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .login-card { background: #ffffff; padding: 2.5rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
-        .login-card h2 { text-align: center; color: #333; margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; margin-bottom: 0.4rem; color: #555; font-size: 0.9rem; }
-        .form-group input { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
-        .btn { width: 100%; padding: 0.75rem; background-color: #0066cc; color: #fff; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; transition: background 0.2s; }
-        .btn:hover { background-color: #0052a3; }
-        .btn-secondary { background-color: #6c757d; margin-top: 0.5rem; }
-        .btn-secondary:hover { background-color: #5a6268; }
-        .msg { margin-top: 1rem; font-size: 0.88rem; text-align: center; color: #d9534f; word-break: break-word; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body {
+            background: radial-gradient(circle at center, #7b9ba6 0%, #4a5c66 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        .login-card {
+            background: rgba(230, 235, 238, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #0091ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: #0091ff;
+        }
+        h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; color: #111; }
+        h2 { font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; color: #444; margin-bottom: 5px; }
+        .subtitle { font-size: 0.6rem; color: #666; letter-spacing: 1px; margin-bottom: 20px; font-weight: 600; }
+        .input-group { margin-bottom: 12px; }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #ccd5dc;
+            background: rgba(255, 255, 255, 0.7);
+            outline: none;
+            font-size: 0.9rem;
+        }
+        input:focus { border-color: #0091ff; background: #fff; }
+        .btn-main {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: #0091ff;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        .btn-main:hover { background: #0077d6; }
+        .btn-sub {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #0091ff;
+            background: transparent;
+            color: #0091ff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .btn-sub:hover { background: rgba(0, 145, 255, 0.1); }
+        .msg { margin-top: 15px; font-size: 0.8rem; font-weight: 600; word-break: break-word; }
     </style>
 </head>
 <body>
 
     <div class="login-card">
-        <h2>Entrar no Sistema</h2>
-        <div class="form-group">
-            <label for="email">E-mail</label>
-            <input type="email" id="email" placeholder="seu@email.com" required>
+        <div class="logo-icon">↓</div>
+        <h1>STEP</h1>
+        <h2>MÃO DE OBRA</h2>
+        <div class="subtitle">OIL & GAS WORKFORCE INTELLIGENCE PLATFORM</div>
+
+        <div class="input-group">
+            <input type="email" id="email" placeholder="Seu e-mail">
         </div>
-        <div class="form-group">
-            <label for="password">Senha</label>
-            <input type="password" id="password" placeholder="Sua senha" required>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Sua senha">
         </div>
-        <button class="btn" onclick="login()">Entrar</button>
-        <button class="btn btn-secondary" onclick="signUp()">Cadastrar Nova Conta</button>
+
+        <button class="btn-main" onclick="login()">Enter Platform</button>
+        <button class="btn-sub" onclick="signUp()">Cadastrar Nova Pessoa</button>
+
         <div id="message" class="msg"></div>
     </div>
 
@@ -43,28 +106,21 @@
         const SUPABASE_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        async function checkSession() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                window.location.href = 'platform.html';
-            }
-        }
-        checkSession();
-
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const msg = document.getElementById('message');
             msg.textContent = '';
+            msg.style.color = 'red';
 
             if(!email || !password) {
-                msg.textContent = 'Por favor, preencha todos os campos.';
+                msg.textContent = 'Informe e-mail e senha.';
                 return;
             }
 
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
             if (error) {
-                msg.textContent = 'Erro ao entrar: ' + error.message;
+                msg.textContent = error.message;
             } else {
                 window.location.href = 'platform.html';
             }
@@ -77,22 +133,20 @@
             msg.textContent = '';
 
             if(!email || !password) {
-                msg.textContent = 'Preencha o e-mail e a senha para cadastrar.';
+                msg.style.color = 'red';
+                msg.textContent = 'Digite e-mail e senha para cadastrar.';
                 return;
             }
 
             const { data, error } = await supabaseClient.auth.signUp({ email, password });
             if (error) {
+                msg.style.color = 'red';
                 msg.textContent = 'Erro ao cadastrar: ' + error.message;
             } else {
-                msg.style.color = '#28a745';
-                msg.textContent = 'Conta criada com sucesso! Você já pode efetuar o login.';
+                msg.style.color = 'green';
+                msg.textContent = 'Pessoa cadastrada com sucesso! Clique em Enter Platform.';
             }
         }
     </script>
 </body>
 </html>
-</body>
-</html>
-
-
