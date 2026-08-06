@@ -1,560 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>STEP – Mão de Obra | Secure Access</title>
-<meta name="description" content="Secure access to the STEP Mão de Obra oil & gas workforce intelligence platform." />
-
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
-<style>
-  /* ============================================================
-     STEP — Mão de Obra · Secure Access
-     Design language: control-room / rig-deck instrumentation
-     Signature: seismic reflection lines + hexagon lattice
-     ============================================================ */
-
-  :root{
-    --bg-0:#04070c;
-    --bg-1:#081018;
-    --bg-2:#0d1c28;
-    --steel:#4a5b6c;
-    --steel-soft:#8393a1;
-    --ink:#ffffff;
-    --ink-dim:#aab8c2;
-    --accent:#38bdf8;
-    --accent-2:#7dd3fc;
-    --accent-dim:rgba(56,189,248,0.16);
-    --success:#10b981;
-    --error:#ef4444;
-    --border:rgba(255,255,255,0.09);
-    --card-bg:rgba(13, 28, 40, 0.68);
-    --radius-card:22px;
-    --radius-input:14px;
-    --ease:cubic-bezier(.4,0,.2,1);
-  }
-
-  @media (prefers-color-scheme: light){
-    :root{
-      --bg-0:#eef2f5;
-      --bg-1:#e4eaef;
-      --bg-2:#d9e1e8;
-      --ink:#0f1a24;
-      --ink-dim:#4a5b6c;
-      --border:rgba(15,26,38,0.10);
-      --card-bg:rgba(255,255,255,0.72);
-    }
-  }
-
-  *{ margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-
-  html,body{ height:100%; }
-
-  body{
-    font-family:'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background:
-      radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,0.14), transparent 60%),
-      radial-gradient(1000px 700px at 85% 90%, rgba(16,185,129,0.10), transparent 60%),
-      radial-gradient(800px 600px at 50% 50%, rgba(13,28,40,0.8), var(--bg-0)),
-      linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
-    color:var(--ink);
-    min-height:100dvh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow-x:hidden;
-    position:relative;
-    padding:24px;
-  }
-
-  /* custom scrollbar */
-  ::-webkit-scrollbar{ width:10px; }
-  ::-webkit-scrollbar-track{ background:transparent; }
-  ::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.14); border-radius:10px; }
-
-  /* ---------- background atmosphere with wow-effect elements ---------- */
-
-  /* Digital Grid Matrix Overlay */
-  .grid-matrix{
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image: 
-      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 40px 40px;
-    mask-image: radial-gradient(circle at center, black 40%, transparent 85%);
-  }
-
-  /* Glowing Aurora Orbs */
-  .aurora-glow{
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; filter: blur(80px); opacity: 0.5;
-  }
-  .aurora-orb{
-    position: absolute; border-radius: 50%;
-    animation: orbFloat 18s ease-in-out infinite alternate;
-  }
-  .aurora-orb.orb-1{
-    width: 400px; height: 400px; top: -100px; left: -100px;
-    background: rgba(56, 189, 248, 0.18);
-  }
-  .aurora-orb.orb-2{
-    width: 450px; height: 450px; bottom: -120px; right: -100px;
-    background: rgba(16, 185, 129, 0.15);
-    animation-delay: -5s;
-    animation-duration: 22s;
-  }
-  .aurora-orb.orb-3{
-    width: 300px; height: 300px; top: 40%; left: 60%;
-    background: rgba(14, 165, 233, 0.12);
-    animation-delay: -9s;
-    animation-duration: 25s;
-  }
-
-  @keyframes orbFloat{
-    0%{ transform: translate(0, 0) scale(1); }
-    50%{ transform: translate(40px, -50px) scale(1.1); }
-    100%{ transform: translate(-30px, 40px) scale(0.95); }
-  }
-
-  .rig-scale{
-    position:fixed; top:0; bottom:0; width:34px;
-    display:flex; flex-direction:column; justify-content:space-between;
-    padding:40px 0; opacity:.35; z-index:1; pointer-events:none;
-  }
-  .rig-scale.left{ left:18px; }
-  .rig-scale.right{ right:18px; }
-  .rig-scale span{
-    display:block; height:1px; width:100%; background:var(--steel-soft);
-    position:relative;
-  }
-  .rig-scale span::after{
-    content:attr(data-d); position:absolute; left:14px; top:-6px;
-    font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:.04em;
-    color:var(--steel-soft);
-  }
-  .rig-scale.right span::after{ left:auto; right:14px; }
-
-  .hex-field{ position:fixed; inset:0; z-index:1; overflow:hidden; pointer-events:none; }
-  .hex{
-    position:absolute; border:1px solid rgba(56,189,248,0.18);
-    filter:blur(0.5px);
-    clip-path:polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0% 50%);
-    animation:hexDrift 26s ease-in-out infinite;
-  }
-  .hex.h1{ width:260px; height:260px; top:-60px; left:-60px; background:rgba(56,189,248,0.06); animation-duration:32s; }
-  .hex.h2{ width:180px; height:180px; bottom:8%; right:-40px; background:rgba(16,185,129,0.05); animation-duration:24s; animation-delay:-6s; }
-  .hex.h3{ width:120px; height:120px; top:14%; right:12%; border-color:rgba(255,255,255,0.08); animation-duration:20s; animation-delay:-3s; }
-  .hex.h4{ width:90px; height:90px; bottom:16%; left:8%; border-color:rgba(56,189,248,0.14); animation-duration:22s; animation-delay:-10s; }
-
-  @keyframes hexDrift{
-    0%,100%{ transform:translate(0,0) rotate(0deg); }
-    50%{ transform:translate(14px,-18px) rotate(6deg); }
-  }
-
-  /* seismic reflection strips */
-  .seismic{
-    position:fixed; left:0; width:200%; height:64px; z-index:1; opacity:.6; pointer-events:none;
-  }
-  .seismic.top{ top:0; }
-  .seismic.bottom{ bottom:0; transform:scaleY(-1); }
-  .seismic svg{ width:100%; height:100%; display:block; }
-  .seismic .top-track, .seismic .bottom-track{ animation:seismicScroll 34s linear infinite; }
-  @keyframes seismicScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-
-  @media (prefers-reduced-motion:reduce){
-    .hex, .top-track, .bottom-track, .logo-mark, .aurora-orb{ animation:none !important; }
-  }
-
-  /* ---------- content ---------- */
-
-  .stage{ position:relative; z-index:2; width:100%; max-width:400px; display:flex; flex-direction:column; align-items:center; }
-
-  .brandmark{
-    display:flex; flex-direction:column; align-items:center; gap:18px;
-    margin-bottom:34px;
-    opacity:0; transform:translateY(10px);
-    animation:riseIn .7s var(--ease) forwards;
-  }
-
-  .logo-mark{
-    width:64px; height:64px; position:relative;
-    animation:logoBreathe 5s ease-in-out infinite;
-  }
-  .logo-mark svg{ width:100%; height:100%; }
-  @keyframes logoBreathe{ 0%,100%{ filter:drop-shadow(0 0 0 rgba(56,189,248,0)); } 50%{ filter:drop-shadow(0 0 20px rgba(56,189,248,0.5)); } }
-
-  .wordmark{ text-align:center; }
-  .wordmark .step{
-    font-family:'Outfit', sans-serif; font-weight:800; font-size:40px; letter-spacing:-0.02em;
-    line-height:1; background:linear-gradient(135deg, var(--ink), var(--ink));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .wordmark .sub{
-    font-family:'Outfit', sans-serif; font-weight:600; font-size:15px; letter-spacing:.14em;
-    text-transform:uppercase; color:#ffffff; margin-top:4px;
-  }
-  .wordmark .tagline{
-    font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.12em;
-    text-transform:uppercase; color:#ffffff; margin-top:12px;
-  }
-
-  .card{
-    width:100%;
-    background:var(--card-bg);
-    backdrop-filter:blur(24px) saturate(1.4);
-    -webkit-backdrop-filter:blur(24px) saturate(1.4);
-    border:1px solid var(--border);
-    border-radius:var(--radius-card);
-    padding:32px 28px 28px;
-    box-shadow:0 30px 70px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
-    opacity:0; transform:translateY(22px);
-    animation:riseIn .7s var(--ease) .15s forwards;
-    position:relative;
-    overflow:hidden;
-  }
-  .card::before{
-    content:''; position:absolute; top:0; left:0; right:0; height:1.5px;
-    background:linear-gradient(90deg, transparent, var(--accent), var(--success), transparent);
-    opacity:.8;
-  }
-
-  @keyframes riseIn{ to{ opacity:1; transform:translateY(0); } }
-
-  .card-label{
-    display:flex; align-items:center; gap:8px;
-    font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.14em;
-    text-transform:uppercase; color:var(--ink-dim); margin-bottom:18px;
-  }
-  .card-label .dot{ width:6px; height:6px; border-radius:50%; background:var(--success); box-shadow:0 0 10px var(--success); flex-shrink:0; }
-
-  form{ display:flex; flex-direction:column; gap:14px; }
-
-  .field{ position:relative; }
-
-  .input-wrap{ position:relative; }
-
-  #password{
-    width:100%; height:54px; border-radius:var(--radius-input);
-    background:rgba(255,255,255,0.04); border:1px solid var(--border);
-    color:var(--ink); font-size:15px; font-family:'Plus Jakarta Sans', sans-serif;
-    padding:0 46px 0 18px; outline:none;
-    transition:border-color .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
-    letter-spacing:0.02em;
-  }
-  #password::placeholder{ color:var(--steel-soft); }
-  #password:focus{
-    border-color:var(--accent);
-    background:rgba(56,189,248,0.06);
-    box-shadow:0 0 0 4px var(--accent-dim);
-  }
-  #password.error{ border-color:var(--error); animation:shake .42s var(--ease); }
-  #password.success{ border-color:var(--success); }
-
-  @keyframes shake{
-    10%,90%{ transform:translateX(-1px); }
-    20%,80%{ transform:translateX(3px); }
-    30%,50%,70%{ transform:translateX(-6px); }
-    40%,60%{ transform:translateX(6px); }
-  }
-
-  .toggle-visibility{
-    position:absolute; right:14px; top:50%; transform:translateY(-50%);
-    background:none; border:none; cursor:pointer; padding:6px;
-    color:var(--steel-soft); display:flex; align-items:center; justify-content:center;
-    border-radius:8px; transition:color .2s, background .2s;
-  }
-  .toggle-visibility:hover{ color:var(--ink); background:rgba(255,255,255,0.06); }
-  .toggle-visibility svg{ width:18px; height:18px; }
-
-  .capslock-note{
-    display:flex; align-items:center; gap:6px;
-    font-size:11.5px; color:var(--accent-2); min-height:0; overflow:hidden;
-    max-height:0; opacity:0; transition:max-height .25s var(--ease), opacity .2s, margin-top .25s var(--ease);
-  }
-  .capslock-note.show{ max-height:24px; opacity:1; margin-top:2px; }
-
-  .error-msg{
-    display:flex; align-items:center; gap:7px;
-    font-size:12.5px; color:var(--error); font-weight:500;
-    max-height:0; opacity:0; overflow:hidden;
-    transition:max-height .25s var(--ease), opacity .2s;
-  }
-  .error-msg.show{ max-height:30px; opacity:1; }
-
-  .row-between{ display:flex; align-items:center; justify-content:space-between; margin-top:2px; }
-
-  .remember{ display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
-  .remember input{ display:none; }
-  .checkbox{
-    width:17px; height:17px; border-radius:5px; border:1.5px solid var(--border);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
-    transition:all .2s var(--ease); background:rgba(255,255,255,0.03);
-  }
-  .remember input:checked + .checkbox{ background:var(--accent); border-color:var(--accent); }
-  .checkbox svg{ width:11px; height:11px; opacity:0; transform:scale(.5); transition:all .18s var(--ease); }
-  .remember input:checked + .checkbox svg{ opacity:1; transform:scale(1); }
-  .remember span.label{ font-size:12.5px; color:var(--ink-dim); }
-
-  .forgot{ font-size:12.5px; color:var(--steel-soft); text-decoration:none; cursor:not-allowed; opacity:.6; }
-
-  .enter-btn{
-    margin-top:6px; width:100%; height:54px; border:none; border-radius:var(--radius-input);
-    background:linear-gradient(135deg, var(--accent), #0284c7);
-    color:#0b0f14; font-family:'Outfit', sans-serif; font-weight:700; font-size:15px; letter-spacing:.02em;
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    cursor:pointer; position:relative; overflow:hidden;
-    box-shadow:0 10px 28px rgba(56,189,248,0.32);
-    transition:transform .18s var(--ease), box-shadow .18s var(--ease);
-  }
-  .enter-btn:hover{ transform:translateY(-1px) scale(1.008); box-shadow:0 14px 34px rgba(56,189,248,0.4); }
-  .enter-btn:active{ transform:scale(.98); }
-  .enter-btn:focus-visible{ outline:2px solid var(--ink); outline-offset:3px; }
-  .enter-btn[disabled]{ cursor:default; opacity:.9; }
-
-  .btn-text, .btn-gauge, .btn-check{ display:flex; align-items:center; gap:9px; }
-  .btn-gauge, .btn-check{ display:none; }
-  .enter-btn.loading .btn-text{ display:none; }
-  .enter-btn.loading .btn-gauge{ display:flex; }
-  .enter-btn.success .btn-text, .enter-btn.success .btn-gauge{ display:none; }
-  .enter-btn.success .btn-check{ display:flex; }
-  .enter-btn.success{ background:linear-gradient(135deg, var(--success), #059669); box-shadow:0 14px 34px rgba(16,185,129,0.35); }
-
-  .gauge{ width:19px; height:19px; position:relative; flex-shrink:0; }
-  .gauge svg{ width:100%; height:100%; animation:gaugeSpin 1s linear infinite; }
-  @keyframes gaugeSpin{ to{ transform:rotate(360deg); } }
-
-  .btn-check svg{ width:19px; height:19px; }
-  .check-path{ stroke-dasharray:20; stroke-dashoffset:20; animation:drawCheck .35s var(--ease) forwards; }
-  @keyframes drawCheck{ to{ stroke-dashoffset:0; } }
-
-  .footline{
-    margin-top:22px; text-align:center;
-    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.1em;
-    color:#ffffff; opacity:0; animation:riseIn .7s var(--ease) .35s forwards;
-  }
-  .footline b{ color:#ffffff; font-weight:500; }
-
-  @media (max-width:420px){
-    .rig-scale{ display:none; }
-    .wordmark .step{ font-size:32px; }
-    .card{ padding:24px 20px 22px; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso - Plataforma STEP</title>
+    <!-- SDK do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card { background: #ffffff; padding: 2.5rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
+        .login-card h2 { text-align: center; color: #333; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 0.4rem; color: #555; font-size: 0.9rem; }
+        .form-group input { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; }
+        .btn { width: 100%; padding: 0.75rem; background-color: #0066cc; color: #fff; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; transition: background 0.2s; }
+        .btn:hover { background-color: #0052a3; }
+        .btn-secondary { background-color: #6c757d; margin-top: 0.5rem; }
+        .btn-secondary:hover { background-color: #5a6268; }
+        .msg { margin-top: 1rem; font-size: 0.88rem; text-align: center; color: #d9534f; word-break: break-word; }
+    </style>
 </head>
 <body>
 
-  <!-- Wow-effect atmospheric backgrounds: Aurora Orbs & Grid Matrix -->
-  <div class="aurora-glow" aria-hidden="true">
-    <div class="aurora-orb orb-1"></div>
-    <div class="aurora-orb orb-2"></div>
-    <div class="aurora-orb orb-3"></div>
-  </div>
-  <div class="grid-matrix" aria-hidden="true"></div>
-
-  <!-- decorative depth scale, purely atmospheric -->
-  <div class="rig-scale left" aria-hidden="true">
-    <span data-d="0m"></span><span data-d="450m"></span><span data-d="900m"></span><span data-d="1350m"></span><span data-d="1800m"></span>
-  </div>
-  <div class="rig-scale right" aria-hidden="true">
-    <span data-d="RIG-04"></span><span data-d="SEC-A"></span><span data-d="SEC-B"></span><span data-d="SEC-C"></span><span data-d="AUTH"></span>
-  </div>
-
-  <div class="hex-field" aria-hidden="true">
-    <div class="hex h1"></div>
-    <div class="hex h2"></div>
-    <div class="hex h3"></div>
-    <div class="hex h4"></div>
-  </div>
-
-  <div class="seismic top" aria-hidden="true">
-    <svg viewBox="0 0 1600 64" preserveAspectRatio="none"><path class="top-track" d="M0 32 C 40 10, 80 54, 120 32 S 200 10, 240 32 S 320 54, 360 32 S 440 10, 480 32 S 560 54, 600 32 S 680 10, 720 32 S 800 54, 840 32 S 920 10, 960 32 S 1040 54, 1080 32 S 1160 10, 1200 32 S 1280 54, 1320 32 S 1400 10, 1440 32 S 1520 54, 1560 32 S 1640 10, 1680 32 S 1760 54, 1800 32 S 1880 10, 1920 32 S 2000 54, 2040 32 S 2120 10, 2160 32 S 2240 54, 2280 32 S 2360 10, 2400 32 S 2480 54, 2520 32 S 2600 10, 2640 32 S 2720 54, 2760 32 S 2840 10, 2880 32 S 2960 54, 3000 32 S 3080 10, 3120 32 S 3200 54, 3200 32" fill="none" stroke="#38bdf8" stroke-width="1"/></svg>
-  </div>
-  <div class="seismic bottom" aria-hidden="true">
-    <svg viewBox="0 0 1600 64" preserveAspectRatio="none"><path class="bottom-track" d="M0 32 C 40 54, 80 10, 120 32 S 200 54, 240 32 S 320 10, 360 32 S 440 54, 480 32 S 560 10, 600 32 S 680 54, 720 32 S 800 10, 840 32 S 920 54, 960 32 S 1040 10, 1080 32 S 1160 54, 1200 32 S 1280 10, 1320 32 S 1400 54, 1440 32 S 1520 10, 1560 32 S 1640 54, 1680 32 S 1760 10, 1800 32 S 1880 54, 1920 32 S 2000 10, 2040 32 S 2120 54, 2160 32 S 2240 10, 2280 32 S 2360 54, 2400 32 S 2480 10, 2520 32 S 2600 54, 2640 32 S 2720 10, 2760 32 S 2840 54, 2880 32 S 2960 10, 3000 32 S 3080 54, 3120 32 S 3200 10, 3200 32" fill="none" stroke="#10b981" stroke-width="1"/></svg>
-  </div>
-
-  <main class="stage">
-    <div class="brandmark">
-      <div class="logo-mark" aria-hidden="true">
-        <svg viewBox="0 0 56 56" fill="none">
-          <polygon points="28,3 50,15.5 50,40.5 28,53 6,40.5 6,15.5" stroke="#38bdf8" stroke-width="1.6" fill="rgba(56,189,248,0.06)"/>
-          <path d="M28 16 L28 30 M20 22 L28 30 L36 22" stroke="#eef2f5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="28" cy="38" r="2" fill="#38bdf8"/>
-        </svg>
-      </div>
-      <div class="wordmark">
-        <div class="step">STEP</div>
-        <div class="sub">Mão de Obra</div>
-        <div class="tagline">Oil &amp; Gas Workforce Intelligence Platform</div>
-      </div>
+    <div class="login-card">
+        <h2>Entrar no Sistema</h2>
+        <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Senha</label>
+            <input type="password" id="password" placeholder="Sua senha" required>
+        </div>
+        <button class="btn" onclick="login()">Entrar</button>
+        <button class="btn btn-secondary" onclick="signUp()">Cadastrar Nova Conta</button>
+        <div id="message" class="msg"></div>
     </div>
 
-    <div class="card" role="region" aria-labelledby="cardLabel">
-      <div class="card-label" id="cardLabel"><span class="dot" aria-hidden="true"></span> Secure Access · Field Personnel Only</div>
+    <script>
+        const SUPABASE_URL = 'COLE_A_URL_DO_SUPABASE_AQUI';
+        const SUPABASE_KEY = 'COLE_A_CHAVE_ANON_AQUI';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      <form id="loginForm" novalidate>
-        <div class="field">
-          <div class="input-wrap">
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter Password"
-              autocomplete="current-password"
-              aria-describedby="capsNote errorMsg"
-              autofocus
-              required
-            />
-            <button type="button" class="toggle-visibility" id="toggleVisibility" aria-label="Show password" aria-pressed="false">
-              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            </button>
-          </div>
-          <div class="capslock-note" id="capsNote" role="status">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L20 10 L15 10 L15 16 L9 16 L9 10 L4 10 Z"/></svg>
-            Caps Lock is on
-          </div>
-          <div class="error-msg" id="errorMsg" role="alert">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Incorrect password. Please try again.
-          </div>
-        </div>
+        async function checkSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                window.location.href = 'platform.html';
+            }
+        }
+        checkSession();
 
-        <div class="row-between">
-          <label class="remember">
-            <input type="checkbox" id="rememberMe" />
-            <span class="checkbox">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#0b0f14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </span>
-            <span class="label">Remember this device</span>
-          </label>
-          <a href="#" class="forgot" aria-disabled="true" tabindex="-1" onclick="return false;">Forgot password?</a>
-        </div>
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+            msg.textContent = '';
 
-        <button type="submit" class="enter-btn" id="enterBtn" aria-label="Enter Platform">
-          <span class="btn-text">Enter Platform</span>
-          <span class="btn-gauge">
-            <span class="gauge">
-              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="rgba(11,15,20,0.25)" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="#0b0f14" stroke-width="3" stroke-linecap="round"/></svg>
-            </span>
-            Verifying credentials…
-          </span>
-          <span class="btn-check">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#062b22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="check-path" points="4 12 9 17 20 6"/></svg>
-            Access granted
-          </span>
-        </button>
-      </form>
-    </div>
+            if(!email || !password) {
+                msg.textContent = 'Por favor, preencha todos os campos.';
+                return;
+            }
 
-    <div class="footline">AUTH-STEP-01 &nbsp;//&nbsp; <b>Encrypted session</b> &nbsp;//&nbsp; Unauthorized access prohibited</div>
-  </main>
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+                msg.textContent = 'Erro ao entrar: ' + error.message;
+            } else {
+                window.location.href = 'platform.html';
+            }
+        }
 
-<script>
-(function(){
-  'use strict';
+        async function signUp() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+            msg.textContent = '';
 
-  var CONFIG = {
-    correctPassword: 'Step2026',
-    redirectUrl: 'platform.html',
-    rememberKey: 'step_mdo_remember_device'
-  };
+            if(!email || !password) {
+                msg.textContent = 'Preencha o e-mail e a senha para cadastrar.';
+                return;
+            }
 
-  var form        = document.getElementById('loginForm');
-  var input       = document.getElementById('password');
-  var toggleBtn   = document.getElementById('toggleVisibility');
-  var eyeIcon     = document.getElementById('eyeIcon');
-  var capsNote    = document.getElementById('capsNote');
-  var errorMsg    = document.getElementById('errorMsg');
-  var enterBtn    = document.getElementById('enterBtn');
-  var rememberBox = document.getElementById('rememberMe');
-
-  try {
-    if (localStorage.getItem(CONFIG.rememberKey) === '1') {
-      rememberBox.checked = true;
-    }
-  } catch (e) { /* ignore */ }
-
-  toggleBtn.addEventListener('click', function () {
-    var showing = input.type === 'text';
-    input.type = showing ? 'password' : 'text';
-    toggleBtn.setAttribute('aria-pressed', String(!showing));
-    toggleBtn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
-    eyeIcon.innerHTML = showing
-      ? '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>'
-      : '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a19.87 19.87 0 0 1 4.22-5.19M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a19.86 19.86 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23"/>';
-    input.focus();
-  });
-
-  input.addEventListener('keyup', function (e) {
-    var caps = typeof e.getModifierState === 'function' && e.getModifierState('CapsLock');
-    capsNote.classList.toggle('show', !!caps);
-  });
-  input.addEventListener('blur', function () { capsNote.classList.remove('show'); });
-
-  input.addEventListener('input', function () {
-    input.classList.remove('error');
-    errorMsg.classList.remove('show');
-  });
-
-  function validatePassword(candidate) {
-    return Promise.resolve(candidate === CONFIG.correctPassword);
-  }
-
-  function setLoading(isLoading) {
-    enterBtn.classList.toggle('loading', isLoading);
-    enterBtn.disabled = isLoading;
-  }
-
-  function showError() {
-    input.classList.remove('success');
-    input.classList.add('error');
-    errorMsg.classList.add('show');
-    input.select();
-    setTimeout(function () { input.classList.remove('error'); }, 450);
-  }
-
-  function showSuccessAndRedirect() {
-    input.classList.add('success');
-    enterBtn.classList.remove('loading');
-    enterBtn.classList.add('success');
-    try {
-      if (rememberBox.checked) { localStorage.setItem(CONFIG.rememberKey, '1'); }
-      else { localStorage.removeItem(CONFIG.rememberKey); }
-    } catch (e) { /* ignore */ }
-
-    document.body.style.transition = 'opacity .5s ease';
-    setTimeout(function () {
-      document.body.style.opacity = '0';
-      setTimeout(function () { window.location.href = CONFIG.redirectUrl; }, 480);
-    }, 550);
-  }
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (enterBtn.disabled) return;
-
-    var value = input.value;
-    if (!value) { showError(); return; }
-
-    setLoading(true);
-
-    var start = Date.now();
-    validatePassword(value).then(function (ok) {
-      var elapsed = Date.now() - start;
-      var wait = Math.max(0, 650 - elapsed);
-      setTimeout(function () {
-        if (ok) { showSuccessAndRedirect(); }
-        else { setLoading(false); showError(); }
-      }, wait);
-    });
-  });
-})();
-</script>
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) {
+                msg.textContent = 'Erro ao cadastrar: ' + error.message;
+            } else {
+                msg.style.color = '#28a745';
+                msg.textContent = 'Conta criada com sucesso! Você já pode efetuar o login.';
+            }
+        }
+    </script>
+</body>
+</html>
 </body>
 </html>
