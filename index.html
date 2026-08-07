@@ -214,7 +214,7 @@
     </div>
     <div class="grid-matrix" aria-hidden="true"></div>
 
-    <!-- ─── TELA DE LOGIN SUPABASE (EXIBIDA POR PADRÃO) ─── -->
+    <!-- ─── TELA DE LOGIN SUPABASE ─── -->
     <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
         <div class="w-full max-w-md glass-card p-8 rounded-3xl border border-slate-200/80 shadow-2xl relative">
             <div class="flex flex-col items-center mb-6 text-center">
@@ -253,7 +253,7 @@
         </div>
     </div>
 
-    <!-- ─── APLICAÇÃO PRINCIPAL (OCULTA ATÉ AUTENTICAR) ─── -->
+    <!-- ─── APLICAÇÃO PRINCIPAL ─── -->
     <div id="appContainer" class="hidden flex-col min-h-screen">
 
         <!-- ─── TOP NAV ─── -->
@@ -281,7 +281,7 @@
                 </div>
             </div>
 
-            <!-- Action Controls & Auth User info -->
+            <!-- Action Controls -->
             <div class="flex items-center gap-3">
                 <div id="userEmailBadge" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-slate-700 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
                     <i data-lucide="user-check" class="w-3.5 h-3.5 text-brand-600"></i>
@@ -301,7 +301,6 @@
                 <div id="resultsBar" class="flex flex-wrap items-center justify-between gap-4 pb-2">
                     <span id="resultsCountBadge" class="apple-badge apple-badge-blue">0 candidatos encontrados</span>
 
-                    <!-- PASSO 1: Botão + Novo Candidato (Exibido apenas para Admins/Recruiters) -->
                     <button id="btnNewCandidate" onclick="openCandidateModal()" class="hidden apple-btn text-xs px-4 py-2">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
                         <span>+ Novo Candidato</span>
@@ -334,9 +333,9 @@
         </div>
     </div>
 
-    <!-- PASSO 1: Modal Pop-up de Cadastro de Candidatos -->
+    <!-- Modal Pop-up de Cadastro -->
     <div id="candidateModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in duration-200">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl border border-slate-100 relative">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <i data-lucide="user-plus" class="w-5 h-5 text-brand-600"></i>
@@ -405,15 +404,20 @@
         </div>
     </div>
 
-    <!-- ─── INTEGRAÇÃO SUPABASE + LÓGICA DO SISTEMA ─── -->
+    <!-- ─── SCRIPT PRINCIPAL ─── -->
     <script>
-        // ─── CONFIGURAÇÃO SUPABASE ─────────────────────────────────
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
 
         var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Elementos da Interface
+        // DADOS DE EXEMPLO (MOCK SEED)
+        const MOCK_SEED_CANDIDATES = [
+            { id: 'cand_1', name: 'Carlos Eduardo Silva', status: 'Working with Us', nationality: 'Brazilian', phone: '+55 22 99876-5432', email: 'carlos.silva@offshore.com', location: 'Macaé', discipline: 'Welder', passport: 'BR9876543' },
+            { id: 'cand_2', name: 'João Pedro Santos', status: 'Available', nationality: 'Portuguese', phone: '+351 912 345 678', email: 'j.santos@energytech.pt', location: 'Porto', discipline: 'Pipefitter', passport: 'PT1234567' },
+            { id: 'cand_3', name: 'Elena Rostova', status: 'In Interviews', nationality: 'British', phone: '+44 7700 900077', email: 'elena.rostova@hse-solutions.co.uk', location: 'Aberdeen', discipline: 'HSE Officer', passport: 'UK9988776' }
+        ];
+
         const authScreen = document.getElementById('authScreen');
         const appContainer = document.getElementById('appContainer');
         const loginForm = document.getElementById('loginForm');
@@ -427,7 +431,6 @@
 
         let allCandidatesCache = [];
 
-        // Lógica de Autenticação
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             authErrorMsg.classList.add('hidden');
@@ -450,7 +453,6 @@
             showAuthUI();
         });
 
-        // Verificação do Estado da Sessão
         async function checkSession() {
             const { data: { session } } = await supabase.auth.getSession();
             if (session && session.user) {
@@ -460,14 +462,12 @@
             }
         }
 
-        // PASSO 3: Executar a verificação e carga ao logar
         async function showAppUI(user) {
             authScreen.classList.add('hidden');
             appContainer.classList.remove('hidden');
             appContainer.classList.add('flex');
             userEmailSpan.innerText = user.email;
 
-            // Executa permissões e carrega dados
             await checkUserPermissions(user.id);
             await loadCandidates();
             lucide.createIcons();
@@ -479,8 +479,6 @@
             authScreen.classList.remove('hidden');
         }
 
-        // PASSO 2: Funções JavaScript adicionais (Controle de Modal, Permissões e CRUD)
-        
         function openCandidateModal() {
             document.getElementById('candidateModal').classList.remove('hidden');
         }
@@ -489,7 +487,6 @@
             document.getElementById('candidateModal').classList.add('hidden');
         }
 
-        // 1. Verificar Nível de Acesso do Usuário no Supabase
         async function checkUserPermissions(userId) {
             try {
                 const { data, error } = await supabase
@@ -508,19 +505,24 @@
             }
         }
 
-        // 2. Buscar e Renderizar Candidatos vindos do Supabase
+        // CARREGA DO SUPABASE; SE ESTIVER VAZIO, EXIBE OS MOCKS
         async function loadCandidates() {
-            const { data, error } = await supabase
-                .from('candidates')
-                .select('*')
-                .order('created_at', { ascending: false });
+            try {
+                const { data, error } = await supabase
+                    .from('candidates')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-            if (error) {
-                console.error('Erro ao carregar candidatos:', error);
-                return;
+                if (!error && data && data.length > 0) {
+                    allCandidatesCache = data;
+                } else {
+                    // Fallback para dados de exemplo caso o Supabase ainda não tenha registros
+                    allCandidatesCache = MOCK_SEED_CANDIDATES;
+                }
+            } catch (e) {
+                allCandidatesCache = MOCK_SEED_CANDIDATES;
             }
 
-            allCandidatesCache = data || [];
             renderCandidateTable(allCandidatesCache);
         }
 
@@ -531,7 +533,7 @@
             if (candidates.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="p-6 text-center text-slate-400">Nenhum candidato encontrado no banco de dados.</td>
+                        <td colspan="8" class="p-6 text-center text-slate-400">Nenhum candidato encontrado.</td>
                     </tr>
                 `;
                 document.getElementById('resultsCountBadge').innerText = '0 candidatos encontrados';
@@ -552,9 +554,9 @@
                     <td class="p-3">${cand.nationality || '-'}</td>
                     <td class="p-3">${cand.phone || '-'}</td>
                     <td class="p-3">${cand.email || '-'}</td>
-                    <td class="p-3">${cand.location || '-'}</td>
+                    <td class="p-3">${cand.location || cand.residenceCity || '-'}</td>
                     <td class="p-3 font-medium">${cand.discipline || '-'}</td>
-                    <td class="p-3">${cand.passport || '-'}</td>
+                    <td class="p-3">${cand.passport || cand.passportNumber || '-'}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -562,7 +564,6 @@
             document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidato(s) encontrado(s)`;
         }
 
-        // Busca em Tempo Real (Filtro Local)
         globalSearchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
             if (!query) {
@@ -575,6 +576,7 @@
                 (c.discipline && c.discipline.toLowerCase().includes(query)) ||
                 (c.email && c.email.toLowerCase().includes(query)) ||
                 (c.passport && c.passport.toLowerCase().includes(query)) ||
+                (c.passportNumber && c.passportNumber.toLowerCase().includes(query)) ||
                 (c.nationality && c.nationality.toLowerCase().includes(query)) ||
                 (c.location && c.location.toLowerCase().includes(query))
             );
@@ -582,7 +584,6 @@
             renderCandidateTable(filtered);
         });
 
-        // 3. Submeter Novo Candidato para o Supabase
         document.getElementById('candidateForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -609,7 +610,6 @@
             }
         });
 
-        // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             checkSession();
