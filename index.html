@@ -397,9 +397,9 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Perfil / Role *</label>
                         <select id="newUserRole" class="apple-input">
+                            <option value="viewer">Viewer (Apenas Visualizar)</option>
                             <option value="recruiter">Recruiter (Pode cadastrar)</option>
                             <option value="admin">Admin (Acesso Total)</option>
-                            <option value="viewer">Viewer (Apenas Visualizar)</option>
                         </select>
                     </div>
                 </div>
@@ -521,17 +521,19 @@
         }
         function closeUsersModal() { document.getElementById('usersModal').classList.add('hidden'); }
 
-        // Verificação de Permissões
+        // Verificação de Permissões com Fallback Seguro
         async function checkUserPermissions(userId) {
             try {
                 const { data, error } = await supabase
                     .from('profiles')
                     .select('role')
                     .eq('id', userId)
-                    .single();
+                    .maybeSingle();
 
-                if (data) {
+                if (data && data.role) {
                     currentUserRole = data.role;
+                } else {
+                    currentUserRole = 'viewer';
                 }
 
                 if (currentUserRole === 'admin') {
@@ -546,6 +548,9 @@
                 }
             } catch (err) {
                 console.error('Erro ao verificar permissões:', err);
+                currentUserRole = 'viewer';
+                document.getElementById('btnNewCandidate').classList.add('hidden');
+                document.getElementById('btnAdminUsers').classList.add('hidden');
             }
         }
 
@@ -582,15 +587,22 @@
             });
         }
 
-        // Criar Novo Usuário
+        // Criar Novo Usuário (Passando a Role no Metadata para o Trigger do Supabase)
         document.getElementById('newUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('newUserEmail').value.trim();
             const password = document.getElementById('newUserPassword').value;
             const role = document.getElementById('newUserRole').value;
 
-            // Insere no auth.signUp (O Supabase cria a conta e envia a confirmação)
-            const { data, error } = await supabase.auth.signUp({ email, password });
+            const { data, error } = await supabase.auth.signUp({ 
+                email, 
+                password,
+                options: {
+                    data: {
+                        role: role
+                    }
+                }
+            });
 
             if (error) {
                 alert('Erro ao criar usuário: ' + error.message);
@@ -598,9 +610,8 @@
             }
 
             if (data.user) {
-                // Atualiza o perfil na tabela public.profiles
                 await supabase.from('profiles').upsert({ id: data.user.id, email: email, role: role });
-                alert('Usuário criado com sucesso!');
+                alert('Usuário cadastrado com sucesso!');
                 document.getElementById('newUserForm').reset();
                 loadSystemUsers();
             }
