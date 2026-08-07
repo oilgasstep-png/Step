@@ -175,6 +175,7 @@
         }
 
         .apple-badge-blue { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+        .apple-badge-red { background: #ffe4e6; color: #e11d48; border-color: #fecdd3; }
 
         .status-working { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
         .status-interviews { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
@@ -375,7 +376,7 @@
 
     <!-- MODAL DE GESTÃO DE USUÁRIOS E PERFIS (ADMIN) -->
     <div id="usersModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-2xl border border-slate-100 relative">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-3xl shadow-2xl border border-slate-100 relative">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <i data-lucide="shield-check" class="w-5 h-5 text-brand-600"></i>
@@ -420,18 +421,19 @@
             <!-- Tabela de Usuários Existentes -->
             <div>
                 <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Usuários Cadastrados no Banco</h4>
-                <div class="max-h-48 overflow-y-auto border border-slate-200 rounded-xl">
+                <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl">
                     <table class="w-full text-left text-xs whitespace-nowrap">
                         <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
                             <tr>
                                 <th class="p-2.5">E-mail</th>
-                                <th class="p-2.5">Perfil atual</th>
+                                <th class="p-2.5">Perfil</th>
+                                <th class="p-2.5">Status</th>
                                 <th class="p-2.5 text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="usersListBody" class="divide-y divide-slate-100">
                             <tr>
-                                <td colspan="3" class="p-4 text-center text-slate-400">Carregando usuários...</td>
+                                <td colspan="4" class="p-4 text-center text-slate-400">Carregando usuários...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -445,7 +447,6 @@
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
 
-        // Função de fábrica para criar clientes Supabase sem colidir namespace
         function getSupabaseClient(options = {}) {
             const createFn = (window.supabase && window.supabase.createClient) || 
                              (window.supabase_js && window.supabase_js.createClient);
@@ -455,10 +456,8 @@
             return createFn(SUPABASE_URL, SUPABASE_ANON_KEY, options);
         }
 
-        // Cliente principal
         let supabaseClient = getSupabaseClient();
 
-        // MOCK DE CANDIDATOS CASO O BANCO ESTEJA VAZIO
         const MOCK_SEED_CANDIDATES = [
             { id: 'cand_1', name: 'Carlos Eduardo Silva', status: 'Working with Us', nationality: 'Brazilian', phone: '+55 22 99876-5432', email: 'carlos.silva@offshore.com', location: 'Macaé', discipline: 'Welder', passport: 'BR9876543' },
             { id: 'cand_2', name: 'João Pedro Santos', status: 'Available', nationality: 'Portuguese', phone: '+351 912 345 678', email: 'j.santos@energytech.pt', location: 'Porto', discipline: 'Pipefitter', passport: 'PT1234567' },
@@ -479,6 +478,7 @@
         let allCandidatesCache = [];
         let currentUserRole = 'viewer';
 
+        // LÓGICA DE LOGIN COM CONTROLE DE TENTATIVAS INCORRETAS (MÁX. 3)
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             authErrorMsg.classList.add('hidden');
@@ -486,12 +486,44 @@
             const email = loginEmailInput.value.trim();
             const password = loginPasswordInput.value;
 
+            // 1. Verificar se o perfil já está bloqueado
+            const { data: profile } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('email', email)
+                .maybeSingle();
+
+            if (profile && profile.is_blocked) {
+                authErrorText.innerText = 'Sua conta está bloqueada por segurança. Contate o administrador.';
+                authErrorMsg.classList.remove('hidden');
+                return;
+            }
+
+            // 2. Tentar autenticação no Supabase
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
             if (error) {
-                authErrorText.innerText = error.message || 'Erro ao realizar login. Verifique as credenciais.';
+                let attempts = (profile?.failed_attempts || 0) + 1;
+
+                if (profile) {
+                    if (attempts >= 3) {
+                        // Bloqueia após 3 falhas
+                        await supabaseClient.from('profiles').update({ failed_attempts: attempts, is_blocked: true }).eq('id', profile.id);
+                        authErrorText.innerText = 'Conta bloqueada! Você errou a senha 3 vezes seguidas.';
+                    } else {
+                        await supabaseClient.from('profiles').update({ failed_attempts: attempts }).eq('id', profile.id);
+                        authErrorText.innerText = `Senha incorreta (${attempts}/3 tentativas).`;
+                    }
+                } else {
+                    authErrorText.innerText = error.message || 'Erro ao realizar login.';
+                }
+
                 authErrorMsg.classList.remove('hidden');
             } else {
+                // Resetar tentativas em caso de sucesso
+                if (profile) {
+                    await supabaseClient.from('profiles').update({ failed_attempts: 0 }).eq('id', profile.id);
+                }
                 await showAppUI(data.user);
             }
         });
@@ -527,7 +559,6 @@
             authScreen.classList.remove('hidden');
         }
 
-        // Modais de Controle
         function openCandidateModal() { document.getElementById('candidateModal').classList.remove('hidden'); }
         function closeCandidateModal() { document.getElementById('candidateModal').classList.add('hidden'); }
         
@@ -537,20 +568,15 @@
         }
         function closeUsersModal() { document.getElementById('usersModal').classList.add('hidden'); }
 
-        // Verificação de Permissões
         async function checkUserPermissions(userId) {
             try {
-                const { data, error } = await supabaseClient
+                const { data } = await supabaseClient
                     .from('profiles')
                     .select('role')
                     .eq('id', userId)
                     .maybeSingle();
 
-                if (data && data.role) {
-                    currentUserRole = data.role;
-                } else {
-                    currentUserRole = 'viewer';
-                }
+                currentUserRole = data?.role || 'viewer';
 
                 if (currentUserRole === 'admin') {
                     document.getElementById('btnNewCandidate').classList.remove('hidden');
@@ -563,24 +589,21 @@
                     document.getElementById('btnAdminUsers').classList.add('hidden');
                 }
             } catch (err) {
-                console.error('Erro ao verificar permissões:', err);
                 currentUserRole = 'viewer';
-                document.getElementById('btnNewCandidate').classList.add('hidden');
-                document.getElementById('btnAdminUsers').classList.add('hidden');
             }
         }
 
-        // Carregar Usuários do Sistema para o Admin
+        // CARREGAR LISTA DE USUÁRIOS NO PAINEL ADMIN COM CONTROLES
         async function loadSystemUsers() {
             const tbody = document.getElementById('usersListBody');
-            tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">Carregando...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">Carregando...</td></tr>';
 
             const { data, error } = await supabaseClient
                 .from('profiles')
                 .select('*');
 
             if (error || !data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">Nenhum perfil encontrado.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum perfil encontrado.</td></tr>';
                 return;
             }
 
@@ -588,101 +611,136 @@
             data.forEach(u => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-50';
+                
+                const isBlocked = u.is_blocked;
+                const statusBadge = isBlocked 
+                    ? `<span class="apple-badge apple-badge-red">Bloqueado</span>` 
+                    : `<span class="apple-badge status-working">Ativo</span>`;
+
                 tr.innerHTML = `
                     <td class="p-2.5 font-medium text-slate-800">${u.email || '-'}</td>
-                    <td class="p-2.5"><span class="apple-badge apple-badge-blue">${u.role || 'viewer'}</span></td>
-                    <td class="p-2.5 text-right">
+                    <td class="p-2.5">
                         <select onchange="updateUserRole('${u.id}', this.value)" class="text-xs p-1 border rounded bg-white">
                             <option value="viewer" ${u.role === 'viewer' ? 'selected' : ''}>Viewer</option>
                             <option value="recruiter" ${u.role === 'recruiter' ? 'selected' : ''}>Recruiter</option>
                             <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
                         </select>
                     </td>
+                    <td class="p-2.5">${statusBadge}</td>
+                    <td class="p-2.5 text-right space-x-1">
+                        <button onclick="toggleBlockUser('${u.id}', ${!isBlocked})" class="px-2 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700">
+                            ${isBlocked ? 'Desbloquear' : 'Bloquear'}
+                        </button>
+                        <button onclick="sendPasswordReset('${u.email}')" class="px-2 py-1 text-xs font-semibold rounded bg-sky-50 hover:bg-sky-100 text-sky-700" title="Enviar e-mail de redefinição">
+                            Reset Senha
+                        </button>
+                        <button onclick="deleteUser('${u.id}')" class="px-2 py-1 text-xs font-semibold rounded bg-rose-50 hover:bg-rose-100 text-rose-700" title="Excluir Usuário">
+                            Excluir
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // Criar Novo Usuário
-        document.getElementById('newUserForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.innerHTML;
-            
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span>Criando...</span>';
+        // BLOQUEAR OU DESBLOQUEAR USUÁRIO
+        async function toggleBlockUser(userId, blockState) {
+            const updatePayload = { is_blocked: blockState };
+            if (!blockState) updatePayload.failed_attempts = 0; // Se desbloquear, reseta falhas
 
-            const email = document.getElementById('newUserEmail').value.trim();
-            const password = document.getElementById('newUserPassword').value;
-            const role = document.getElementById('newUserRole').value;
+            const { error } = await supabaseClient
+                .from('profiles')
+                .update(updatePayload)
+                .eq('id', userId);
 
-            try {
-                // Instância isolada para não deslogar o admin atual
-                const tempSupabase = getSupabaseClient({
-                    auth: { persistSession: false, autoRefreshToken: false }
-                });
-
-                const { data, error } = await tempSupabase.auth.signUp({ 
-                    email: email, 
-                    password: password,
-                    options: {
-                        data: { role: role }
-                    }
-                });
-
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                if (data.user) {
-                    const { error: profileError } = await supabaseClient
-                        .from('profiles')
-                        .upsert({ 
-                            id: data.user.id, 
-                            email: email, 
-                            role: role 
-                        }, { onConflict: 'id' });
-
-                    if (profileError) {
-                        console.warn('Aviso no perfil:', profileError);
-                        alert(`Usuário criado na autenticação! (Aviso no perfil: ${profileError.message})`);
-                    } else {
-                        alert(`Usuário ${email} cadastrado com sucesso!`);
-                    }
-
-                    document.getElementById('newUserForm').reset();
-                    await loadSystemUsers();
-                } else {
-                    alert('Usuário cadastrado com sucesso!');
-                }
-
-            } catch (err) {
-                console.error('Erro na criação:', err);
-                alert('Erro ao criar usuário: ' + err.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnText;
-                if (window.lucide) lucide.createIcons();
+            if (error) {
+                alert('Erro ao alterar status: ' + error.message);
+            } else {
+                loadSystemUsers();
             }
-        });
+        }
 
-        // Alterar Role de um Usuário
+        // ENVIAR EMAIL DE RESET DE SENHA
+        async function sendPasswordReset(email) {
+            if (!email) return alert('E-mail inválido.');
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+
+            if (error) {
+                alert('Erro ao enviar e-mail de redefinição: ' + error.message);
+            } else {
+                alert(`Instruções de redefinição de senha enviadas para ${email}!`);
+            }
+        }
+
+        // EXCLUIR REGISTRO DO USUÁRIO
+        async function deleteUser(userId) {
+            if (!confirm('Deseja realmente remover o registro deste usuário?')) return;
+
+            const { error } = await supabaseClient
+                .from('profiles')
+                .delete()
+                .eq('id', userId);
+
+            if (error) {
+                alert('Erro ao remover usuário: ' + error.message);
+            } else {
+                alert('Usuário removido da base com sucesso!');
+                loadSystemUsers();
+            }
+        }
+
+        // ALTERAR ROLE
         async function updateUserRole(userId, newRole) {
             const { error } = await supabaseClient
                 .from('profiles')
                 .update({ role: newRole })
                 .eq('id', userId);
 
-            if (error) {
-                alert('Erro ao atualizar permissão: ' + error.message);
-            } else {
-                alert('Permissão atualizada com sucesso!');
-                loadSystemUsers();
-            }
+            if (error) alert('Erro ao atualizar permissão: ' + error.message);
+            else loadSystemUsers();
         }
 
-        // Carregar Candidatos
+        // CRIAR NOVO USUÁRIO
+        document.getElementById('newUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+
+            const email = document.getElementById('newUserEmail').value.trim();
+            const password = document.getElementById('newUserPassword').value;
+            const role = document.getElementById('newUserRole').value;
+
+            try {
+                const tempSupabase = getSupabaseClient({ auth: { persistSession: false, autoRefreshToken: false } });
+                const { data, error } = await tempSupabase.auth.signUp({ 
+                    email: email, 
+                    password: password,
+                    options: { data: { role: role } }
+                });
+
+                if (error) throw error;
+
+                if (data.user) {
+                    await supabaseClient.from('profiles').upsert({ 
+                        id: data.user.id, 
+                        email: email, 
+                        role: role,
+                        is_blocked: false,
+                        failed_attempts: 0
+                    }, { onConflict: 'id' });
+
+                    alert(`Usuário ${email} cadastrado com sucesso!`);
+                    document.getElementById('newUserForm').reset();
+                    await loadSystemUsers();
+                }
+            } catch (err) {
+                alert('Erro ao criar usuário: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        // CARREGAR CANDIDATOS
         async function loadCandidates() {
             try {
                 const { data, error } = await supabaseClient
@@ -690,15 +748,10 @@
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                if (!error && data && data.length > 0) {
-                    allCandidatesCache = data;
-                } else {
-                    allCandidatesCache = MOCK_SEED_CANDIDATES;
-                }
+                allCandidatesCache = (!error && data && data.length > 0) ? data : MOCK_SEED_CANDIDATES;
             } catch (e) {
                 allCandidatesCache = MOCK_SEED_CANDIDATES;
             }
-
             renderCandidateTable(allCandidatesCache);
         }
 
@@ -738,17 +791,13 @@
 
         globalSearchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
-            if (!query) {
-                renderCandidateTable(allCandidatesCache);
-                return;
-            }
+            if (!query) return renderCandidateTable(allCandidatesCache);
 
             const filtered = allCandidatesCache.filter(c => 
                 (c.name && c.name.toLowerCase().includes(query)) ||
                 (c.discipline && c.discipline.toLowerCase().includes(query)) ||
                 (c.email && c.email.toLowerCase().includes(query)) ||
                 (c.passport && c.passport.toLowerCase().includes(query)) ||
-                (c.passportNumber && c.passportNumber.toLowerCase().includes(query)) ||
                 (c.nationality && c.nationality.toLowerCase().includes(query)) ||
                 (c.location && c.location.toLowerCase().includes(query))
             );
