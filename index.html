@@ -446,7 +446,8 @@
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
 
-        var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Inicialização global corrigida para o SDK v2
+        var supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         // MOCK DE CANDIDATOS CASO O BANCO ESTEJA VAZIO
         const MOCK_SEED_CANDIDATES = [
@@ -593,7 +594,7 @@
             });
         }
 
-        // Criar Novo Usuário (Corrigido com isolamento de sessão, feedback no botão e captura total de exceções)
+        // Criar Novo Usuário
         document.getElementById('newUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -608,8 +609,9 @@
             const role = document.getElementById('newUserRole').value;
 
             try {
-                // Instância temporária para não derrubar a sessão atual do Admin
-                const tempSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                // Instância temporária usando o SDK v2 correto
+                const createClientFn = window.supabase?.createClient || supabase.createClient;
+                const tempSupabase = createClientFn(SUPABASE_URL, SUPABASE_ANON_KEY, {
                     auth: { persistSession: false, autoRefreshToken: false }
                 });
 
