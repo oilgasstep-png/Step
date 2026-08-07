@@ -1,186 +1,458 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STEP – Mão de Obra | Secure Access</title>
-    <!-- SDK do Supabase -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STEP – Mão de Obra | Premium Workforce & Candidate Platform</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['"Outfit"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- External CDNs -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
     <style>
+        :root {
+            --bg-0: #f8fafc;
+            --bg-1: #edf2f7;
+            --bg-2: #e2e8f0;
+            --steel: #4a5b6c;
+            --steel-soft: #64748b;
+            --ink: #0f172a;
+            --ink-dim: #475569;
+            --accent: #0284c7;
+            --accent-2: #38bdf8;
+            --accent-dim: rgba(2, 132, 199, 0.12);
+            --success: #10b981;
+            --error: #ef4444;
+            --border: rgba(15, 23, 42, 0.08);
+            --card-bg: rgba(255, 255, 255, 0.82);
+            --radius-card: 22px;
+            --radius-input: 14px;
+            --ease: cubic-bezier(.4,0,.2,1);
+        }
+
         * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
+
         body {
-            background: radial-gradient(circle at center, #7b9ba6 0%, #4a5c66 100%);
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background:
+                radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,0.22), transparent 60%),
+                radial-gradient(1000px 700px at 85% 90%, rgba(16,185,129,0.18), transparent 60%),
+                radial-gradient(800px 600px at 50% 50%, rgba(248, 250, 252, 0.95), #f1f5f9),
+                linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
+            color: var(--ink);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #333;
+            position: relative;
+            overflow-x: hidden;
         }
-        .login-card {
-            background: rgba(230, 235, 238, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 2.5rem 2rem;
+
+        .grid-matrix {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: 
+              linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 85%);
+        }
+
+        .aurora-glow {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; filter: blur(80px); opacity: 0.6;
+        }
+        .aurora-orb {
+            position: absolute; border-radius: 50%;
+            animation: orbFloat 18s ease-in-out infinite alternate;
+        }
+        .aurora-orb.orb-1 { width: 450px; height: 450px; top: -100px; left: -100px; background: rgba(56, 189, 248, 0.25); }
+        .aurora-orb.orb-2 { width: 500px; height: 500px; bottom: -120px; right: -100px; background: rgba(16, 185, 129, 0.20); animation-delay: -5s; animation-duration: 22s; }
+        .aurora-orb.orb-3 { width: 350px; height: 350px; top: 40%; left: 60%; background: rgba(14, 165, 233, 0.18); animation-delay: -9s; animation-duration: 25s; }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, -50px) scale(1.1); }
+            100% { transform: translate(-30px, 40px) scale(0.95); }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(20px) saturate(1.4);
+            -webkit-backdrop-filter: blur(20px) saturate(1.4);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
         }
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            border: 2px solid #0091ff;
-            border-radius: 8px;
-            display: flex;
+
+        .apple-btn {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 10px;
-            color: #0091ff;
-            font-weight: bold;
-        }
-        h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; color: #111; }
-        h2 { font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; color: #444; margin-bottom: 5px; }
-        .subtitle { font-size: 0.6rem; color: #666; letter-spacing: 1px; margin-bottom: 20px; font-weight: 600; }
-        .input-group { margin-bottom: 12px; }
-        input {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 1px solid #ccd5dc;
-            background: rgba(255, 255, 255, 0.7);
-            outline: none;
-            font-size: 0.9rem;
-        }
-        input:focus { border-color: #0091ff; background: #fff; }
-        .btn-main {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            background: #0091ff;
-            color: white;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.2s;
-        }
-        .btn-main:hover { background: #0077d6; }
-        .btn-sub {
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #0091ff;
-            background: transparent;
-            color: #0091ff;
+            gap: 6px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 13px;
+            padding: 10px 22px;
+            border-radius: 980px;
+            border: none;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff;
             cursor: pointer;
-            margin-top: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
+            letter-spacing: 0.01em;
+            text-decoration: none;
+            user-select: none;
         }
-        .btn-sub:hover { background: rgba(0, 145, 255, 0.1); }
-        .msg { margin-top: 15px; font-size: 0.8rem; font-weight: 600; word-break: break-word; }
+
+        .apple-btn:hover {
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.38);
+            transform: translateY(-1px);
+        }
+
+        .apple-btn-secondary {
+            background: rgba(15, 23, 42, 0.05);
+            color: #0f172a;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: none;
+        }
+
+        .apple-btn-secondary:hover {
+            background: rgba(15, 23, 42, 0.09);
+            border-color: rgba(15, 23, 42, 0.15);
+            transform: none;
+        }
+
+        .apple-input {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #0f172a;
+            transition: all 0.2s ease;
+            width: 100%;
+            outline: none;
+        }
+
+        .apple-input:focus {
+            border-color: #0284c7;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.14);
+        }
+
+        .apple-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+            background-color: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #0f172a;
+            transition: all 0.2s ease;
+            width: 100%;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .apple-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 14px;
+            border-radius: 980px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(15, 23, 42, 0.04);
+            color: #0f172a;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+        }
+
+        .apple-badge-blue { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+
+        .status-working { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .status-interviews { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+        .status-available { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
+        .status-archived { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
     </style>
 </head>
-<body>
+<body class="text-[#0f172a] font-sans antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white relative">
 
-    <div class="login-card">
-        <div class="logo-icon">&darr;</div>
-        <h1>STEP</h1>
-        <h2>MÃO DE OBRA</h2>
-        <div class="subtitle">OIL &amp; GAS WORKFORCE INTELLIGENCE PLATFORM</div>
+    <div class="aurora-glow" aria-hidden="true">
+        <div class="aurora-orb orb-1"></div>
+        <div class="aurora-orb orb-2"></div>
+        <div class="aurora-orb orb-3"></div>
+    </div>
+    <div class="grid-matrix" aria-hidden="true"></div>
 
-        <div class="input-group">
-            <input type="email" id="email" placeholder="Seu e-mail">
+    <!-- ─── TELA DE LOGIN SUPABASE (EXIBIDA POR PADRÃO) ─── -->
+    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+        <div class="w-full max-w-md glass-card p-8 rounded-3xl border border-slate-200/80 shadow-2xl relative">
+            <div class="flex flex-col items-center mb-6 text-center">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 font-display font-extrabold text-lg tracking-wider mb-3">
+                    STEP
+                </div>
+                <h2 class="font-display font-extrabold text-2xl text-[#0f172a]">Acesso ao Sistema</h2>
+                <p class="text-xs font-medium text-[#64748b] mt-1">Insira suas credenciais corporativas para entrar</p>
+            </div>
+
+            <form id="loginForm" class="space-y-4">
+                <div id="authErrorMsg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+                    <span id="authErrorText">Falha na autenticação</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">E-mail</label>
+                    <input type="email" id="loginEmail" required placeholder="seu.email@empresa.com" class="apple-input" />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">Senha</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="apple-input" />
+                </div>
+
+                <button type="submit" id="loginSubmitBtn" class="apple-btn w-full justify-center py-3 text-sm mt-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    <span>Entrar no Sistema</span>
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-slate-200/60 text-center text-[11px] text-[#94a3b8]">
+                <span>Acesso restrito a usuários autorizados.</span>
+            </div>
         </div>
-        <div class="input-group">
-            <input type="password" id="password" placeholder="Sua senha">
-        </div>
-
-        <button type="button" class="btn-main" onclick="login()">Enter Platform</button>
-        <button type="button" class="btn-sub" onclick="signUp()">Cadastrar Nova Pessoa</button>
-
-        <div id="message" class="msg"></div>
     </div>
 
+    <!-- ─── APLICAÇÃO PRINCIPAL (OCULTA ATÉ AUTENTICAR) ─── -->
+    <div id="appContainer" class="hidden flex-col min-h-screen">
+
+        <!-- ─── TOP NAV ─── -->
+        <header class="sticky top-0 z-30 glass-panel px-4 lg:px-8 py-2.5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('table')">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20 font-display font-extrabold text-sm tracking-wider">
+                        STEP
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <span class="font-display font-extrabold text-base tracking-tight text-[#0f172a]">STEP</span>
+                            <span class="text-[11px] font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">Mão de Obra</span>
+                        </div>
+                        <span class="text-[10px] font-medium text-[#64748b] -mt-0.5">Industrial &amp; Energy Talent Platform</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Search -->
+            <div class="flex-1 max-w-2xl mx-2 relative">
+                <div class="relative flex items-center">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-4 text-[#94a3b8] pointer-events-none"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Pesquisar por nome, passaporte, nacionalidade, e-mail, certificações..." class="w-full pl-10 pr-24 py-2.5 bg-white/90 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-[#0f172a] placeholder-[#94a3b8] transition shadow-inner" />
+                </div>
+            </div>
+
+            <!-- Action Controls & Auth User info -->
+            <div class="flex items-center gap-3">
+                <div id="userEmailBadge" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-slate-700 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
+                    <i data-lucide="user-check" class="w-3.5 h-3.5 text-brand-600"></i>
+                    <span id="userEmailSpan">usuario@empresa.com</span>
+                </div>
+
+                <button id="logoutBtn" class="apple-btn apple-btn-secondary text-xs px-3 py-1.5" title="Sair do Sistema">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ─── WORKSPACE CONTENT ─── -->
+        <div class="flex-1 flex overflow-hidden relative z-10">
+            <main class="flex-1 overflow-y-auto p-4 lg:p-6 space-y-4">
+                <div id="resultsBar" class="flex flex-wrap items-center justify-between gap-4 pb-2">
+                    <span id="resultsCountBadge" class="apple-badge apple-badge-blue">0 candidatos encontrados</span>
+                </div>
+
+                <!-- VIEW: TABLE -->
+                <section id="viewTable" class="view-section space-y-4">
+                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+                        <div class="overflow-x-auto max-h-[75vh]">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="sticky top-0 z-10 bg-slate-100/90 backdrop-blur-md text-[#475569] uppercase font-bold text-[11px] border-b border-slate-200 tracking-wider">
+                                    <tr>
+                                        <th class="p-3">Candidato</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3">Nacionalidade</th>
+                                        <th class="p-3">Contato</th>
+                                        <th class="p-3">E-mail</th>
+                                        <th class="p-3">Localização</th>
+                                        <th class="p-3">Disciplina</th>
+                                        <th class="p-3">Passaporte</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="candidateTableBody" class="divide-y divide-slate-200/80"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- ─── INTEGRAÇÃO SUPABASE + LÓGICA DO SISTEMA ORIGINAL ─── -->
     <script>
+        // ─── CONFIGURAÇÃO SUPABASE ─────────────────────────────────
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
-        
-        let supabaseClient;
-        try {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (e) {
-            console.error('Erro ao inicializar Supabase:', e);
-        }
+        const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
 
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Elementos da Interface de Login
+        const authScreen = document.getElementById('authScreen');
+        const appContainer = document.getElementById('appContainer');
+        const loginForm = document.getElementById('loginForm');
+        const loginEmailInput = document.getElementById('loginEmail');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const authErrorMsg = document.getElementById('authErrorMsg');
+        const authErrorText = document.getElementById('authErrorText');
+        const userEmailSpan = document.getElementById('userEmailSpan');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Lógica de Autenticação
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            authErrorMsg.classList.add('hidden');
+
+            const email = loginEmailInput.value.trim();
+            const password = loginPasswordInput.value;
+
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                authErrorText.innerText = error.message || 'Erro ao realizar login. Verifique as credenciais.';
+                authErrorMsg.classList.remove('hidden');
+            } else {
+                showAppUI(data.user);
+            }
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            showAuthUI();
+        });
+
+        // Verificação do Estado da Sessão
         async function checkSession() {
-            if (!supabaseClient) return;
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                window.location.href = 'platform.html';
-            }
-        }
-
-        async function login() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const msg = document.getElementById('message');
-            msg.textContent = '';
-            msg.style.color = 'red';
-
-            if (!email || !password) {
-                msg.textContent = 'Informe e-mail e senha.';
-                return;
-            }
-
-            if (!supabaseClient) {
-                msg.textContent = 'Erro ao conectar ao serviço de autenticação.';
-                return;
-            }
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) {
-                msg.textContent = error.message;
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user) {
+                showAppUI(session.user);
             } else {
-                window.location.href = 'platform.html';
+                showAuthUI();
             }
         }
 
-        async function signUp() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const msg = document.getElementById('message');
-            msg.textContent = '';
-
-            if (!email || !password) {
-                msg.style.color = 'red';
-                msg.textContent = 'Digite e-mail e senha para cadastrar.';
-                return;
-            }
-
-            if (!supabaseClient) {
-                msg.style.color = 'red';
-                msg.textContent = 'Erro ao conectar ao serviço de autenticação.';
-                return;
-            }
-
-            const { data, error } = await supabaseClient.auth.signUp({ email, password });
-            if (error) {
-                msg.style.color = 'red';
-                msg.textContent = 'Erro ao cadastrar: ' + error.message;
-            } else {
-                msg.style.color = 'green';
-                msg.textContent = 'Pessoa cadastrada com sucesso! Clique em Enter Platform.';
-            }
+        function showAppUI(user) {
+            authScreen.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+            appContainer.classList.add('flex');
+            userEmailSpan.innerText = user.email;
+            initSystemOriginal();
         }
 
-        checkSession();
+        function showAuthUI() {
+            appContainer.classList.add('hidden');
+            appContainer.classList.remove('flex');
+            authScreen.classList.remove('hidden');
+        }
+
+        // ─── DADOS DO SISTEMA ORIGINAL ──────────────────────────────
+        const MOCK_SEED_CANDIDATES = [
+            { id: 'cand_1', name: 'Carlos Eduardo Silva', status: 'Working with Us', nationality: 'Brazilian', phone: '+55 22 99876-5432', email: 'carlos.silva@offshore.com', residenceCity: 'Macaé', discipline: 'Welder', passportNumber: 'BR9876543' },
+            { id: 'cand_2', name: 'João Pedro Santos', status: 'Available', nationality: 'Portuguese', phone: '+351 912 345 678', email: 'j.santos@energytech.pt', residenceCity: 'Porto', discipline: 'Pipefitter', passportNumber: 'PT1234567' },
+            { id: 'cand_3', name: 'Elena Rostova', status: 'In Interviews', nationality: 'British', phone: '+44 7700 900077', email: 'elena.rostova@hse-solutions.co.uk', residenceCity: 'Aberdeen', discipline: 'HSE Officer', passportNumber: 'UK9988776' }
+        ];
+
+        function initSystemOriginal() {
+            renderCandidateTable(MOCK_SEED_CANDIDATES);
+            lucide.createIcons();
+        }
+
+        function renderCandidateTable(candidates) {
+            const tbody = document.getElementById('candidateTableBody');
+            tbody.innerHTML = '';
+
+            candidates.forEach(cand => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-200/60 hover:bg-slate-50 transition';
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-[#0f172a]">${cand.name}</td>
+                    <td class="p-3"><span class="apple-badge status-working">${cand.status}</span></td>
+                    <td class="p-3">${cand.nationality}</td>
+                    <td class="p-3">${cand.phone}</td>
+                    <td class="p-3">${cand.email}</td>
+                    <td class="p-3">${cand.residenceCity}</td>
+                    <td class="p-3 font-medium">${cand.discipline}</td>
+                    <td class="p-3">${cand.passportNumber}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidatos encontrados`;
+        }
+
+        // Inicialização ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            checkSession();
+        });
     </script>
 </body>
 </html>
