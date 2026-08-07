@@ -587,20 +587,24 @@
             });
         }
 
-        // Criar Novo Usuário (Passando a Role no Metadata para o Trigger do Supabase)
+        // Criar Novo Usuário Respeitando o Perfil Selecionado sem Deslogar o Admin
         document.getElementById('newUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('newUserEmail').value.trim();
             const password = document.getElementById('newUserPassword').value;
             const role = document.getElementById('newUserRole').value;
 
-            const { data, error } = await supabase.auth.signUp({ 
-                email, 
-                password,
+            // Instancia cliente isolado sem persistência de sessão local
+            const tempSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                auth: { persistSession: false, autoRefreshToken: false }
+            });
+
+            // 1. Cadastra no Auth enviando a role nos metadados
+            const { data, error } = await tempSupabase.auth.signUp({ 
+                email: email, 
+                password: password,
                 options: {
-                    data: {
-                        role: role
-                    }
+                    data: { role: role }
                 }
             });
 
@@ -610,14 +614,28 @@
             }
 
             if (data.user) {
-                await supabase.from('profiles').upsert({ id: data.user.id, email: email, role: role });
-                alert('Usuário cadastrado com sucesso!');
+                // 2. Garante a gravação do perfil selecionado na tabela 'profiles' usando o cliente do Admin
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .upsert({ 
+                        id: data.user.id, 
+                        email: email, 
+                        role: role 
+                    }, { onConflict: 'id' });
+
+                if (profileError) {
+                    console.error('Erro ao gravar profile:', profileError);
+                    alert('Usuário criado, mas houve erro ao registrar a role: ' + profileError.message);
+                } else {
+                    alert(`Usuário ${email} cadastrado com sucesso como [${role.toUpperCase()}]!`);
+                }
+
                 document.getElementById('newUserForm').reset();
-                loadSystemUsers();
+                await loadSystemUsers();
             }
         });
 
-        // Alterar Role de um Usuário
+        // Alterar Role de um Usuário Existente
         async function updateUserRole(userId, newRole) {
             const { error } = await supabase
                 .from('profiles')
@@ -626,9 +644,10 @@
 
             if (error) {
                 alert('Erro ao atualizar permissão: ' + error.message);
+                await loadSystemUsers();
             } else {
-                alert('Permissão atualizada com sucesso!');
-                loadSystemUsers();
+                alert('Permissão atualizada com sucesso para ' + newRole.toUpperCase() + '!');
+                await loadSystemUsers();
             }
         }
 
