@@ -247,7 +247,6 @@
 
             <!-- Controles de Ação / Admin / User -->
             <div class="flex items-center gap-3">
-                <!-- Botão de Gerenciar Usuários (Visível apenas para Admin) -->
                 <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden apple-btn apple-btn-secondary text-xs px-3 py-1.5" title="Gerenciar Usuários e Permissões">
                     <i data-lucide="users" class="w-3.5 h-3.5 text-brand-600"></i>
                     <span>Usuários</span>
@@ -446,8 +445,18 @@
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
 
-        // Inicialização global corrigida para o SDK v2
-        var supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+        // Função de fábrica para criar clientes Supabase sem colidir namespace
+        function getSupabaseClient(options = {}) {
+            const createFn = (window.supabase && window.supabase.createClient) || 
+                             (window.supabase_js && window.supabase_js.createClient);
+            if (!createFn) {
+                throw new Error("SDK do Supabase não foi carregado corretamente.");
+            }
+            return createFn(SUPABASE_URL, SUPABASE_ANON_KEY, options);
+        }
+
+        // Cliente principal
+        let supabaseClient = getSupabaseClient();
 
         // MOCK DE CANDIDATOS CASO O BANCO ESTEJA VAZIO
         const MOCK_SEED_CANDIDATES = [
@@ -477,7 +486,7 @@
             const email = loginEmailInput.value.trim();
             const password = loginPasswordInput.value;
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
             if (error) {
                 authErrorText.innerText = error.message || 'Erro ao realizar login. Verifique as credenciais.';
@@ -488,12 +497,12 @@
         });
 
         logoutBtn.addEventListener('click', async () => {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
             showAuthUI();
         });
 
         async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
                 await showAppUI(session.user);
             } else {
@@ -509,7 +518,7 @@
 
             await checkUserPermissions(user.id);
             await loadCandidates();
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
         }
 
         function showAuthUI() {
@@ -528,10 +537,10 @@
         }
         function closeUsersModal() { document.getElementById('usersModal').classList.add('hidden'); }
 
-        // Verificação de Permissões com Fallback Seguro
+        // Verificação de Permissões
         async function checkUserPermissions(userId) {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('profiles')
                     .select('role')
                     .eq('id', userId)
@@ -566,7 +575,7 @@
             const tbody = document.getElementById('usersListBody');
             tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">Carregando...</td></tr>';
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('profiles')
                 .select('*');
 
@@ -594,7 +603,7 @@
             });
         }
 
-        // Criar Novo Usuário (Corrigido usando a API v2 do Supabase global)
+        // Criar Novo Usuário
         document.getElementById('newUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -609,8 +618,8 @@
             const role = document.getElementById('newUserRole').value;
 
             try {
-                // Instância temporária isolada criada via window.supabase.createClient
-                const tempSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                // Instância isolada para não deslogar o admin atual
+                const tempSupabase = getSupabaseClient({
                     auth: { persistSession: false, autoRefreshToken: false }
                 });
 
@@ -627,7 +636,7 @@
                 }
 
                 if (data.user) {
-                    const { error: profileError } = await supabase
+                    const { error: profileError } = await supabaseClient
                         .from('profiles')
                         .upsert({ 
                             id: data.user.id, 
@@ -637,7 +646,7 @@
 
                     if (profileError) {
                         console.warn('Aviso no perfil:', profileError);
-                        alert(`Usuário criado no Auth! (Nota sobre perfil: ${profileError.message})`);
+                        alert(`Usuário criado na autenticação! (Aviso no perfil: ${profileError.message})`);
                     } else {
                         alert(`Usuário ${email} cadastrado com sucesso!`);
                     }
@@ -645,7 +654,7 @@
                     document.getElementById('newUserForm').reset();
                     await loadSystemUsers();
                 } else {
-                    alert('Usuário cadastrado. Verifique a confirmação de e-mail se necessário.');
+                    alert('Usuário cadastrado com sucesso!');
                 }
 
             } catch (err) {
@@ -660,7 +669,7 @@
 
         // Alterar Role de um Usuário
         async function updateUserRole(userId, newRole) {
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('profiles')
                 .update({ role: newRole })
                 .eq('id', userId);
@@ -673,10 +682,10 @@
             }
         }
 
-        // Carregar Candidatos (Com Fallback)
+        // Carregar Candidatos
         async function loadCandidates() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('candidates')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -761,7 +770,7 @@
                 nationality: document.getElementById('candNationality').value
             };
 
-            const { error } = await supabase.from('candidates').insert([candidateData]);
+            const { error } = await supabaseClient.from('candidates').insert([candidateData]);
 
             if (error) {
                 alert('Erro ao cadastrar candidato: ' + error.message);
@@ -774,7 +783,7 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
             checkSession();
         });
     </script>
