@@ -125,6 +125,12 @@
             transform: translateY(-1px);
         }
 
+        .apple-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
         .apple-btn-secondary {
             background: rgba(15, 23, 42, 0.05);
             color: #0f172a;
@@ -587,55 +593,71 @@
             });
         }
 
-        // Criar Novo Usuário Respeitando o Perfil Selecionado sem Deslogar o Admin
+        // Criar Novo Usuário (Corrigido com isolamento de sessão, feedback no botão e captura total de exceções)
         document.getElementById('newUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>Criando...</span>';
+
             const email = document.getElementById('newUserEmail').value.trim();
             const password = document.getElementById('newUserPassword').value;
             const role = document.getElementById('newUserRole').value;
 
-            // Instancia cliente isolado sem persistência de sessão local
-            const tempSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-                auth: { persistSession: false, autoRefreshToken: false }
-            });
+            try {
+                // Instância temporária para não derrubar a sessão atual do Admin
+                const tempSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    auth: { persistSession: false, autoRefreshToken: false }
+                });
 
-            // 1. Cadastra no Auth enviando a role nos metadados
-            const { data, error } = await tempSupabase.auth.signUp({ 
-                email: email, 
-                password: password,
-                options: {
-                    data: { role: role }
+                const { data, error } = await tempSupabase.auth.signUp({ 
+                    email: email, 
+                    password: password,
+                    options: {
+                        data: { role: role }
+                    }
+                });
+
+                if (error) {
+                    throw new Error(error.message);
                 }
-            });
 
-            if (error) {
-                alert('Erro ao criar usuário: ' + error.message);
-                return;
-            }
+                if (data.user) {
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .upsert({ 
+                            id: data.user.id, 
+                            email: email, 
+                            role: role 
+                        }, { onConflict: 'id' });
 
-            if (data.user) {
-                // 2. Garante a gravação do perfil selecionado na tabela 'profiles' usando o cliente do Admin
-                const { error: profileError } = await supabase
-                    .from('profiles')
-                    .upsert({ 
-                        id: data.user.id, 
-                        email: email, 
-                        role: role 
-                    }, { onConflict: 'id' });
+                    if (profileError) {
+                        console.warn('Aviso no perfil:', profileError);
+                        alert(`Usuário criado no Auth! (Nota sobre perfil: ${profileError.message})`);
+                    } else {
+                        alert(`Usuário ${email} cadastrado com sucesso!`);
+                    }
 
-                if (profileError) {
-                    console.error('Erro ao gravar profile:', profileError);
-                    alert('Usuário criado, mas houve erro ao registrar a role: ' + profileError.message);
+                    document.getElementById('newUserForm').reset();
+                    await loadSystemUsers();
                 } else {
-                    alert(`Usuário ${email} cadastrado com sucesso como [${role.toUpperCase()}]!`);
+                    alert('Usuário cadastrado. Verifique a confirmação de e-mail se necessário.');
                 }
 
-                document.getElementById('newUserForm').reset();
-                await loadSystemUsers();
+            } catch (err) {
+                console.error('Erro na criação:', err);
+                alert('Erro ao criar usuário: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                if (window.lucide) lucide.createIcons();
             }
         });
 
-        // Alterar Role de um Usuário Existente
+        // Alterar Role de um Usuário
         async function updateUserRole(userId, newRole) {
             const { error } = await supabase
                 .from('profiles')
@@ -644,10 +666,9 @@
 
             if (error) {
                 alert('Erro ao atualizar permissão: ' + error.message);
-                await loadSystemUsers();
             } else {
-                alert('Permissão atualizada com sucesso para ' + newRole.toUpperCase() + '!');
-                await loadSystemUsers();
+                alert('Permissão atualizada com sucesso!');
+                loadSystemUsers();
             }
         }
 
