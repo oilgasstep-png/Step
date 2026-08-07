@@ -185,25 +185,6 @@
             box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.14);
         }
 
-        .apple-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            padding-right: 40px;
-            background-color: #ffffff;
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 12px;
-            padding: 10px 14px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #0f172a;
-            transition: all 0.2s ease;
-            width: 100%;
-            outline: none;
-            cursor: pointer;
-        }
-
         .apple-badge {
             display: inline-flex;
             align-items: center;
@@ -278,7 +259,7 @@
         <!-- ─── TOP NAV ─── -->
         <header class="sticky top-0 z-30 glass-panel px-4 lg:px-8 py-2.5 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('table')">
+                <div class="flex items-center gap-3 cursor-pointer">
                     <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20 font-display font-extrabold text-sm tracking-wider">
                         STEP
                     </div>
@@ -296,7 +277,7 @@
             <div class="flex-1 max-w-2xl mx-2 relative">
                 <div class="relative flex items-center">
                     <i data-lucide="search" class="w-4 h-4 absolute left-4 text-[#94a3b8] pointer-events-none"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Pesquisar por nome, passaporte, nacionalidade, e-mail, certificações..." class="w-full pl-10 pr-24 py-2.5 bg-white/90 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-[#0f172a] placeholder-[#94a3b8] transition shadow-inner" />
+                    <input type="text" id="globalSearchInput" placeholder="Pesquisar por nome, passaporte, nacionalidade, e-mail, disciplina..." class="w-full pl-10 pr-24 py-2.5 bg-white/90 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-[#0f172a] placeholder-[#94a3b8] transition shadow-inner" />
                 </div>
             </div>
 
@@ -319,6 +300,12 @@
             <main class="flex-1 overflow-y-auto p-4 lg:p-6 space-y-4">
                 <div id="resultsBar" class="flex flex-wrap items-center justify-between gap-4 pb-2">
                     <span id="resultsCountBadge" class="apple-badge apple-badge-blue">0 candidatos encontrados</span>
+
+                    <!-- PASSO 1: Botão + Novo Candidato (Exibido apenas para Admins/Recruiters) -->
+                    <button id="btnNewCandidate" onclick="openCandidateModal()" class="hidden apple-btn text-xs px-4 py-2">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span>+ Novo Candidato</span>
+                    </button>
                 </div>
 
                 <!-- VIEW: TABLE -->
@@ -347,15 +334,86 @@
         </div>
     </div>
 
-    <!-- ─── INTEGRAÇÃO SUPABASE + LÓGICA DO SISTEMA ORIGINAL ─── -->
+    <!-- PASSO 1: Modal Pop-up de Cadastro de Candidatos -->
+    <div id="candidateModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in duration-200">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="user-plus" class="w-5 h-5 text-brand-600"></i>
+                    <span>Cadastrar Novo Profissional</span>
+                </h3>
+                <button onclick="closeCandidateModal()" class="text-slate-400 hover:text-slate-600 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="candidateForm" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo *</label>
+                    <input type="text" id="candName" required placeholder="Ex: João da Silva" class="apple-input">
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Disciplina / Cargo *</label>
+                        <input type="text" id="candDiscipline" required placeholder="Ex: Welder, Pipefitter" class="apple-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                        <select id="candStatus" class="apple-input">
+                            <option value="Available">Available</option>
+                            <option value="Working with Us">Working with Us</option>
+                            <option value="In Interviews">In Interviews</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
+                        <input type="email" id="candEmail" placeholder="email@exemplo.com" class="apple-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone / Contato</label>
+                        <input type="text" id="candPhone" placeholder="+55 22 99999-9999" class="apple-input">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Localização</label>
+                        <input type="text" id="candLocation" placeholder="Ex: Macaé" class="apple-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Passaporte</label>
+                        <input type="text" id="candPassport" placeholder="Ex: BR123456" class="apple-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nacionalidade</label>
+                        <input type="text" id="candNationality" placeholder="Ex: Brazilian" class="apple-input">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-4 border-t border-slate-100 mt-4">
+                    <button type="button" onclick="closeCandidateModal()" class="apple-btn apple-btn-secondary text-xs">Cancelar</button>
+                    <button type="submit" class="apple-btn text-xs">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <span>Salvar Candidato</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ─── INTEGRAÇÃO SUPABASE + LÓGICA DO SISTEMA ─── -->
     <script>
         // ─── CONFIGURAÇÃO SUPABASE ─────────────────────────────────
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
 
-  var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Elementos da Interface de Login
+        // Elementos da Interface
         const authScreen = document.getElementById('authScreen');
         const appContainer = document.getElementById('appContainer');
         const loginForm = document.getElementById('loginForm');
@@ -365,6 +423,9 @@
         const authErrorText = document.getElementById('authErrorText');
         const userEmailSpan = document.getElementById('userEmailSpan');
         const logoutBtn = document.getElementById('logoutBtn');
+        const globalSearchInput = document.getElementById('globalSearchInput');
+
+        let allCandidatesCache = [];
 
         // Lógica de Autenticação
         loginForm.addEventListener('submit', async (e) => {
@@ -380,7 +441,7 @@
                 authErrorText.innerText = error.message || 'Erro ao realizar login. Verifique as credenciais.';
                 authErrorMsg.classList.remove('hidden');
             } else {
-                showAppUI(data.user);
+                await showAppUI(data.user);
             }
         });
 
@@ -393,18 +454,23 @@
         async function checkSession() {
             const { data: { session } } = await supabase.auth.getSession();
             if (session && session.user) {
-                showAppUI(session.user);
+                await showAppUI(session.user);
             } else {
                 showAuthUI();
             }
         }
 
-        function showAppUI(user) {
+        // PASSO 3: Executar a verificação e carga ao logar
+        async function showAppUI(user) {
             authScreen.classList.add('hidden');
             appContainer.classList.remove('hidden');
             appContainer.classList.add('flex');
             userEmailSpan.innerText = user.email;
-            initSystemOriginal();
+
+            // Executa permissões e carrega dados
+            await checkUserPermissions(user.id);
+            await loadCandidates();
+            lucide.createIcons();
         }
 
         function showAuthUI() {
@@ -413,42 +479,137 @@
             authScreen.classList.remove('hidden');
         }
 
-        // ─── DADOS DO SISTEMA ORIGINAL ──────────────────────────────
-        const MOCK_SEED_CANDIDATES = [
-            { id: 'cand_1', name: 'Carlos Eduardo Silva', status: 'Working with Us', nationality: 'Brazilian', phone: '+55 22 99876-5432', email: 'carlos.silva@offshore.com', residenceCity: 'Macaé', discipline: 'Welder', passportNumber: 'BR9876543' },
-            { id: 'cand_2', name: 'João Pedro Santos', status: 'Available', nationality: 'Portuguese', phone: '+351 912 345 678', email: 'j.santos@energytech.pt', residenceCity: 'Porto', discipline: 'Pipefitter', passportNumber: 'PT1234567' },
-            { id: 'cand_3', name: 'Elena Rostova', status: 'In Interviews', nationality: 'British', phone: '+44 7700 900077', email: 'elena.rostova@hse-solutions.co.uk', residenceCity: 'Aberdeen', discipline: 'HSE Officer', passportNumber: 'UK9988776' }
-        ];
+        // PASSO 2: Funções JavaScript adicionais (Controle de Modal, Permissões e CRUD)
+        
+        function openCandidateModal() {
+            document.getElementById('candidateModal').classList.remove('hidden');
+        }
 
-        function initSystemOriginal() {
-            renderCandidateTable(MOCK_SEED_CANDIDATES);
-            lucide.createIcons();
+        function closeCandidateModal() {
+            document.getElementById('candidateModal').classList.add('hidden');
+        }
+
+        // 1. Verificar Nível de Acesso do Usuário no Supabase
+        async function checkUserPermissions(userId) {
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', userId)
+                    .single();
+
+                if (data && (data.role === 'admin' || data.role === 'recruiter')) {
+                    document.getElementById('btnNewCandidate').classList.remove('hidden');
+                } else {
+                    document.getElementById('btnNewCandidate').classList.add('hidden');
+                }
+            } catch (err) {
+                console.error('Erro ao buscar permissões:', err);
+            }
+        }
+
+        // 2. Buscar e Renderizar Candidatos vindos do Supabase
+        async function loadCandidates() {
+            const { data, error } = await supabase
+                .from('candidates')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Erro ao carregar candidatos:', error);
+                return;
+            }
+
+            allCandidatesCache = data || [];
+            renderCandidateTable(allCandidatesCache);
         }
 
         function renderCandidateTable(candidates) {
             const tbody = document.getElementById('candidateTableBody');
             tbody.innerHTML = '';
 
+            if (candidates.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="p-6 text-center text-slate-400">Nenhum candidato encontrado no banco de dados.</td>
+                    </tr>
+                `;
+                document.getElementById('resultsCountBadge').innerText = '0 candidatos encontrados';
+                return;
+            }
+
             candidates.forEach(cand => {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-slate-200/60 hover:bg-slate-50 transition';
+                
+                let badgeStyle = 'status-available';
+                if (cand.status === 'Working with Us') badgeStyle = 'status-working';
+                if (cand.status === 'In Interviews') badgeStyle = 'status-interviews';
+
                 tr.innerHTML = `
-                    <td class="p-3 font-semibold text-[#0f172a]">${cand.name}</td>
-                    <td class="p-3"><span class="apple-badge status-working">${cand.status}</span></td>
-                    <td class="p-3">${cand.nationality}</td>
-                    <td class="p-3">${cand.phone}</td>
-                    <td class="p-3">${cand.email}</td>
-                    <td class="p-3">${cand.residenceCity}</td>
-                    <td class="p-3 font-medium">${cand.discipline}</td>
-                    <td class="p-3">${cand.passportNumber}</td>
+                    <td class="p-3 font-semibold text-[#0f172a]">${cand.name || '-'}</td>
+                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${cand.status || 'Available'}</span></td>
+                    <td class="p-3">${cand.nationality || '-'}</td>
+                    <td class="p-3">${cand.phone || '-'}</td>
+                    <td class="p-3">${cand.email || '-'}</td>
+                    <td class="p-3">${cand.location || '-'}</td>
+                    <td class="p-3 font-medium">${cand.discipline || '-'}</td>
+                    <td class="p-3">${cand.passport || '-'}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidatos encontrados`;
+            document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidato(s) encontrado(s)`;
         }
 
-        // Inicialização ao carregar a página
+        // Busca em Tempo Real (Filtro Local)
+        globalSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) {
+                renderCandidateTable(allCandidatesCache);
+                return;
+            }
+
+            const filtered = allCandidatesCache.filter(c => 
+                (c.name && c.name.toLowerCase().includes(query)) ||
+                (c.discipline && c.discipline.toLowerCase().includes(query)) ||
+                (c.email && c.email.toLowerCase().includes(query)) ||
+                (c.passport && c.passport.toLowerCase().includes(query)) ||
+                (c.nationality && c.nationality.toLowerCase().includes(query)) ||
+                (c.location && c.location.toLowerCase().includes(query))
+            );
+
+            renderCandidateTable(filtered);
+        });
+
+        // 3. Submeter Novo Candidato para o Supabase
+        document.getElementById('candidateForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const candidateData = {
+                name: document.getElementById('candName').value,
+                discipline: document.getElementById('candDiscipline').value,
+                status: document.getElementById('candStatus').value,
+                email: document.getElementById('candEmail').value,
+                phone: document.getElementById('candPhone').value,
+                location: document.getElementById('candLocation').value,
+                passport: document.getElementById('candPassport').value,
+                nationality: document.getElementById('candNationality').value
+            };
+
+            const { error } = await supabase.from('candidates').insert([candidateData]);
+
+            if (error) {
+                alert('Erro ao cadastrar candidato: ' + error.message);
+            } else {
+                alert('Candidato cadastrado com sucesso!');
+                closeCandidateModal();
+                document.getElementById('candidateForm').reset();
+                await loadCandidates();
+            }
+        });
+
+        // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             checkSession();
