@@ -191,8 +191,8 @@
                 <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 font-display font-extrabold text-lg tracking-wider mb-3">
                     STEP
                 </div>
-                <h2 class="font-display font-extrabold text-2xl text-[#0f172a]">Acesso ao Sistema</h2>
-                <p class="text-xs font-medium text-[#64748b] mt-1">Insira suas credenciais corporativas para entrar</p>
+                <h2 data-i18n="system_access" class="font-display font-extrabold text-2xl text-[#0f172a]">Acesso ao Sistema</h2>
+                <p data-i18n="system_subtitle" class="text-xs font-medium text-[#64748b] mt-1">Insira suas credenciais corporativas para entrar</p>
             </div>
 
             <form id="loginForm" class="space-y-4">
@@ -202,18 +202,18 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">E-mail</label>
+                    <label data-i18n="email_label" class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">E-mail</label>
                     <input type="email" id="loginEmail" required placeholder="seu.email@empresa.com" class="apple-input" />
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">Senha</label>
+                    <label data-i18n="password_label" class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">Senha</label>
                     <input type="password" id="loginPassword" required placeholder="••••••••" class="apple-input" />
                 </div>
 
                 <button type="submit" id="loginSubmitBtn" class="apple-btn w-full justify-center py-3 text-sm mt-2">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
-                    <span>Entrar no Sistema</span>
+                    <span data-i18n="btn_login">Entrar no Sistema</span>
                 </button>
             </form>
         </div>
@@ -232,7 +232,7 @@
                     <div class="flex flex-col">
                         <div class="flex items-center gap-2">
                             <span class="font-display font-extrabold text-base tracking-tight text-[#0f172a]">STEP</span>
-                            <span class="text-[11px] font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">Mão de Obra</span>
+                            <span data-i18n="brand_subtitle" class="text-[11px] font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">Mão de Obra</span>
                         </div>
                     </div>
                 </div>
@@ -242,15 +242,23 @@
             <div class="flex-1 max-w-2xl mx-2 relative">
                 <div class="relative flex items-center">
                     <i data-lucide="search" class="w-4 h-4 absolute left-4 text-[#94a3b8] pointer-events-none"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Pesquisar por nome, passaporte, nacionalidade, e-mail, disciplina..." class="w-full pl-10 pr-24 py-2.5 bg-white/90 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-[#0f172a] placeholder-[#94a3b8] transition shadow-inner" />
+                    <input type="text" id="globalSearchInput" data-i18n-placeholder="search_placeholder" placeholder="Pesquisar por nome, passaporte, nacionalidade, e-mail, disciplina..." class="w-full pl-10 pr-24 py-2.5 bg-white/90 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-[#0f172a] placeholder-[#94a3b8] transition shadow-inner" />
                 </div>
             </div>
 
-            <!-- Controles de Ação / Admin / User -->
+            <!-- Controles de Ação / Admin / User / Idioma -->
             <div class="flex items-center gap-3">
+                <!-- Seletor de Idioma -->
+                <div class="relative inline-block">
+                    <select id="languageSelect" onchange="changeLanguage(this.value)" class="apple-input text-xs py-1.5 px-2.5 bg-white/80 font-semibold cursor-pointer border border-slate-200">
+                        <option value="pt">🇧🇷 PT</option>
+                        <option value="en">🇺🇸 EN</option>
+                    </select>
+                </div>
+
                 <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden apple-btn apple-btn-secondary text-xs px-3 py-1.5" title="Gerenciar Usuários e Permissões">
                     <i data-lucide="users" class="w-3.5 h-3.5 text-brand-600"></i>
-                    <span>Usuários</span>
+                    <span data-i18n="btn_users">Usuários</span>
                 </button>
 
                 <div id="userEmailBadge" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-slate-700 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
@@ -260,7 +268,7 @@
 
                 <button id="logoutBtn" class="apple-btn apple-btn-secondary text-xs px-3 py-1.5" title="Sair do Sistema">
                     <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                    <span>Sair</span>
+                    <span data-i18n="btn_logout">Sair</span>
                 </button>
             </div>
         </header>
@@ -273,7 +281,7 @@
 
                     <button id="btnNewCandidate" onclick="openCandidateModal()" class="hidden apple-btn text-xs px-4 py-2">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>+ Novo Candidato</span>
+                        <span data-i18n="btn_new_candidate">+ Novo Candidato</span>
                     </button>
                 </div>
 
@@ -284,14 +292,14 @@
                             <table class="w-full text-left text-xs whitespace-nowrap">
                                 <thead class="sticky top-0 z-10 bg-slate-100/90 backdrop-blur-md text-[#475569] uppercase font-bold text-[11px] border-b border-slate-200 tracking-wider">
                                     <tr>
-                                        <th class="p-3">Candidato</th>
-                                        <th class="p-3">Status</th>
-                                        <th class="p-3">Nacionalidade</th>
-                                        <th class="p-3">Contato</th>
-                                        <th class="p-3">E-mail</th>
-                                        <th class="p-3">Localização</th>
-                                        <th class="p-3">Disciplina</th>
-                                        <th class="p-3">Passaporte</th>
+                                        <th data-i18n="col_candidate" class="p-3">Candidato</th>
+                                        <th data-i18n="col_status" class="p-3">Status</th>
+                                        <th data-i18n="col_nationality" class="p-3">Nacionalidade</th>
+                                        <th data-i18n="col_contact" class="p-3">Contato</th>
+                                        <th data-i18n="col_email" class="p-3">E-mail</th>
+                                        <th data-i18n="col_location" class="p-3">Localização</th>
+                                        <th data-i18n="col_discipline" class="p-3">Disciplina</th>
+                                        <th data-i18n="col_passport" class="p-3">Passaporte</th>
                                     </tr>
                                 </thead>
                                 <tbody id="candidateTableBody" class="divide-y divide-slate-200/80"></tbody>
@@ -309,7 +317,7 @@
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <i data-lucide="user-plus" class="w-5 h-5 text-brand-600"></i>
-                    <span>Cadastrar Novo Profissional</span>
+                    <span data-i18n="modal_cand_title">Cadastrar Novo Profissional</span>
                 </h3>
                 <button onclick="closeCandidateModal()" class="text-slate-400 hover:text-slate-600 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -318,56 +326,56 @@
 
             <form id="candidateForm" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo *</label>
+                    <label data-i18n="lbl_fullname" class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo *</label>
                     <input type="text" id="candName" required placeholder="Ex: João da Silva" class="apple-input">
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Disciplina / Cargo *</label>
+                        <label data-i18n="lbl_discipline" class="block text-xs font-semibold text-slate-600 mb-1">Disciplina / Cargo *</label>
                         <input type="text" id="candDiscipline" required placeholder="Ex: Welder, Pipefitter" class="apple-input">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                        <label data-i18n="col_status" class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
                         <select id="candStatus" class="apple-input">
-                            <option value="Available">Available</option>
-                            <option value="Working with Us">Working with Us</option>
-                            <option value="In Interviews">In Interviews</option>
+                            <option value="Available" data-i18n="status_available">Disponível</option>
+                            <option value="Working with Us" data-i18n="status_working">Trabalhando</option>
+                            <option value="In Interviews" data-i18n="status_interviews">Em Entrevistas</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
+                        <label data-i18n="col_email" class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
                         <input type="email" id="candEmail" placeholder="email@exemplo.com" class="apple-input">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone / Contato</label>
+                        <label data-i18n="lbl_phone" class="block text-xs font-semibold text-slate-600 mb-1">Telefone / Contato</label>
                         <input type="text" id="candPhone" placeholder="+55 22 99999-9999" class="apple-input">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Localização</label>
+                        <label data-i18n="col_location" class="block text-xs font-semibold text-slate-600 mb-1">Localização</label>
                         <input type="text" id="candLocation" placeholder="Ex: Macaé" class="apple-input">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Passaporte</label>
+                        <label data-i18n="col_passport" class="block text-xs font-semibold text-slate-600 mb-1">Passaporte</label>
                         <input type="text" id="candPassport" placeholder="Ex: BR123456" class="apple-input">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nacionalidade</label>
+                        <label data-i18n="col_nationality" class="block text-xs font-semibold text-slate-600 mb-1">Nacionalidade</label>
                         <input type="text" id="candNationality" placeholder="Ex: Brazilian" class="apple-input">
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-2 pt-4 border-t border-slate-100 mt-4">
-                    <button type="button" onclick="closeCandidateModal()" class="apple-btn apple-btn-secondary text-xs">Cancelar</button>
+                    <button type="button" onclick="closeCandidateModal()" data-i18n="btn_cancel" class="apple-btn apple-btn-secondary text-xs">Cancelar</button>
                     <button type="submit" class="apple-btn text-xs">
                         <i data-lucide="check" class="w-4 h-4"></i>
-                        <span>Salvar Candidato</span>
+                        <span data-i18n="btn_save_candidate">Salvar Candidato</span>
                     </button>
                 </div>
             </form>
@@ -380,7 +388,7 @@
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <i data-lucide="shield-check" class="w-5 h-5 text-brand-600"></i>
-                    <span>Administração de Usuários e Perfis</span>
+                    <span data-i18n="modal_users_title">Administração de Usuários e Perfis</span>
                 </h3>
                 <button onclick="closeUsersModal()" class="text-slate-400 hover:text-slate-600 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -389,19 +397,19 @@
 
             <!-- Criar Novo Usuário -->
             <form id="newUserForm" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
-                <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Criar Novo Acesso</h4>
+                <h4 data-i18n="title_create_user" class="text-xs font-bold uppercase text-slate-500 tracking-wider">Criar Novo Acesso</h4>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail *</label>
+                        <label data-i18n="col_email" class="block text-xs font-semibold text-slate-600 mb-1">E-mail *</label>
                         <input type="email" id="newUserEmail" required placeholder="usuario@step-og.com" class="apple-input">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Senha *</label>
+                        <label data-i18n="password_label" class="block text-xs font-semibold text-slate-600 mb-1">Senha *</label>
                         <input type="password" id="newUserPassword" required placeholder="••••••••" class="apple-input">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Perfil / Role *</label>
+                        <label data-i18n="lbl_role" class="block text-xs font-semibold text-slate-600 mb-1">Perfil / Role *</label>
                         <select id="newUserRole" class="apple-input">
                             <option value="viewer">Viewer (Apenas Visualizar)</option>
                             <option value="recruiter">Recruiter (Pode cadastrar)</option>
@@ -413,22 +421,22 @@
                 <div class="flex justify-end pt-2">
                     <button type="submit" class="apple-btn text-xs">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>Criar Usuário</span>
+                        <span data-i18n="btn_create_user">Criar Usuário</span>
                     </button>
                 </div>
             </form>
 
             <!-- Tabela de Usuários Existentes -->
             <div>
-                <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Usuários Cadastrados no Banco</h4>
+                <h4 data-i18n="title_registered_users" class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Usuários Cadastrados no Banco</h4>
                 <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl">
                     <table class="w-full text-left text-xs whitespace-nowrap">
                         <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
                             <tr>
-                                <th class="p-2.5">E-mail</th>
-                                <th class="p-2.5">Perfil</th>
-                                <th class="p-2.5">Status</th>
-                                <th class="p-2.5 text-right">Ações</th>
+                                <th data-i18n="col_email" class="p-2.5">E-mail</th>
+                                <th data-i18n="lbl_role" class="p-2.5">Perfil</th>
+                                <th data-i18n="col_status" class="p-2.5">Status</th>
+                                <th data-i18n="col_actions" class="p-2.5 text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="usersListBody" class="divide-y divide-slate-100">
@@ -444,6 +452,130 @@
 
     <!-- SCRIPT PRINCIPAL -->
     <script>
+        // --- MULTILINGUAGEM / I18N ---
+        const translations = {
+            pt: {
+                system_access: "Acesso ao Sistema",
+                system_subtitle: "Insira suas credenciais corporativas para entrar",
+                email_label: "E-mail",
+                password_label: "Senha",
+                btn_login: "Entrar no Sistema",
+                brand_subtitle: "Mão de Obra",
+                search_placeholder: "Pesquisar por nome, passaporte, nacionalidade, e-mail, disciplina...",
+                btn_users: "Usuários",
+                btn_logout: "Sair",
+                btn_new_candidate: "+ Novo Candidato",
+                col_candidate: "Candidato",
+                col_status: "Status",
+                col_nationality: "Nacionalidade",
+                col_contact: "Contato",
+                col_email: "E-mail",
+                col_location: "Localização",
+                col_discipline: "Disciplina",
+                col_passport: "Passaporte",
+                col_actions: "Ações",
+                modal_cand_title: "Cadastrar Novo Profissional",
+                lbl_fullname: "Nome Completo *",
+                lbl_discipline: "Disciplina / Cargo *",
+                lbl_phone: "Telefone / Contato",
+                btn_cancel: "Cancelar",
+                btn_save_candidate: "Salvar Candidato",
+                modal_users_title: "Administração de Usuários e Perfis",
+                title_create_user: "Criar Novo Acesso",
+                lbl_role: "Perfil / Role *",
+                btn_create_user: "Criar Usuário",
+                title_registered_users: "Usuários Cadastrados no Banco",
+                status_available: "Disponível",
+                status_working: "Trabalhando",
+                status_interviews: "Em Entrevistas",
+                found_candidates: "candidato(s) encontrado(s)",
+                no_candidates: "Nenhum candidato encontrado.",
+                blocked: "Bloqueado",
+                active: "Ativo",
+                unblock: "Desbloquear",
+                block: "Bloquear",
+                reset_pwd: "Reset Senha",
+                delete: "Excluir"
+            },
+            en: {
+                system_access: "System Access",
+                system_subtitle: "Enter your corporate credentials to sign in",
+                email_label: "Email",
+                password_label: "Password",
+                btn_login: "Sign In",
+                brand_subtitle: "Workforce",
+                search_placeholder: "Search by name, passport, nationality, email, discipline...",
+                btn_users: "Users",
+                btn_logout: "Sign Out",
+                btn_new_candidate: "+ New Candidate",
+                col_candidate: "Candidate",
+                col_status: "Status",
+                col_nationality: "Nationality",
+                col_contact: "Contact",
+                col_email: "Email",
+                col_location: "Location",
+                col_discipline: "Discipline",
+                col_passport: "Passport",
+                col_actions: "Actions",
+                modal_cand_title: "Register New Professional",
+                lbl_fullname: "Full Name *",
+                lbl_discipline: "Discipline / Position *",
+                lbl_phone: "Phone / Contact",
+                btn_cancel: "Cancel",
+                btn_save_candidate: "Save Candidate",
+                modal_users_title: "User & Role Management",
+                title_create_user: "Create New Access",
+                lbl_role: "Role / Profile *",
+                btn_create_user: "Create User",
+                title_registered_users: "Registered Users",
+                status_available: "Available",
+                status_working: "Working with Us",
+                status_interviews: "In Interviews",
+                found_candidates: "candidate(s) found",
+                no_candidates: "No candidates found.",
+                blocked: "Blocked",
+                active: "Active",
+                unblock: "Unblock",
+                block: "Block",
+                reset_pwd: "Reset Password",
+                delete: "Delete"
+            }
+        };
+
+        let currentLang = localStorage.getItem('app_lang') || 'pt';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('app_lang', lang);
+            applyTranslations();
+            renderCandidateTable(allCandidatesCache); // Re-renderiza a tabela com o idioma selecionado
+        }
+
+        function applyTranslations() {
+            const langData = translations[currentLang] || translations['pt'];
+
+            // Traduz textos gerais
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (langData[key]) {
+                    element.innerText = langData[key];
+                }
+            });
+
+            // Traduz placeholders de busca e formulários
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (langData[key]) {
+                    element.setAttribute('placeholder', langData[key]);
+                }
+            });
+
+            // Sincroniza o seletor de idioma no header
+            const langSelect = document.getElementById('languageSelect');
+            if (langSelect) langSelect.value = currentLang;
+        }
+
+        // --- SUPABASE ENGINE ---
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
 
@@ -478,7 +610,7 @@
         let allCandidatesCache = [];
         let currentUserRole = 'viewer';
 
-        // LÓGICA DE LOGIN COM CONTROLE DE TENTATIVAS INCORRETAS (MÁX. 3)
+        // LÓGICA DE LOGIN COM CONTROLE DE TENTATIVAS INCORRETAS
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             authErrorMsg.classList.add('hidden');
@@ -507,7 +639,6 @@
 
                 if (profile) {
                     if (attempts >= 3) {
-                        // Bloqueia após 3 falhas
                         await supabaseClient.from('profiles').update({ failed_attempts: attempts, is_blocked: true }).eq('id', profile.id);
                         authErrorText.innerText = 'Conta bloqueada! Você errou a senha 3 vezes seguidas.';
                     } else {
@@ -520,7 +651,6 @@
 
                 authErrorMsg.classList.remove('hidden');
             } else {
-                // Resetar tentativas em caso de sucesso
                 if (profile) {
                     await supabaseClient.from('profiles').update({ failed_attempts: 0 }).eq('id', profile.id);
                 }
@@ -550,6 +680,7 @@
 
             await checkUserPermissions(user.id);
             await loadCandidates();
+            applyTranslations();
             if (window.lucide) lucide.createIcons();
         }
 
@@ -593,17 +724,18 @@
             }
         }
 
-        // CARREGAR LISTA DE USUÁRIOS NO PAINEL ADMIN COM CONTROLES
+        // CARREGAR LISTA DE USUÁRIOS NO PAINEL ADMIN
         async function loadSystemUsers() {
             const tbody = document.getElementById('usersListBody');
-            tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">Carregando...</td></tr>';
+            const langData = translations[currentLang] || translations['pt'];
+            tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Carregando...</td></tr>`;
 
             const { data, error } = await supabaseClient
                 .from('profiles')
                 .select('*');
 
             if (error || !data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum perfil encontrado.</td></tr>';
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum perfil encontrado.</td></tr>`;
                 return;
             }
 
@@ -614,8 +746,8 @@
                 
                 const isBlocked = u.is_blocked;
                 const statusBadge = isBlocked 
-                    ? `<span class="apple-badge apple-badge-red">Bloqueado</span>` 
-                    : `<span class="apple-badge status-working">Ativo</span>`;
+                    ? `<span class="apple-badge apple-badge-red">${langData.blocked}</span>` 
+                    : `<span class="apple-badge status-working">${langData.active}</span>`;
 
                 tr.innerHTML = `
                     <td class="p-2.5 font-medium text-slate-800">${u.email || '-'}</td>
@@ -629,13 +761,13 @@
                     <td class="p-2.5">${statusBadge}</td>
                     <td class="p-2.5 text-right space-x-1">
                         <button onclick="toggleBlockUser('${u.id}', ${!isBlocked})" class="px-2 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700">
-                            ${isBlocked ? 'Desbloquear' : 'Bloquear'}
+                            ${isBlocked ? langData.unblock : langData.block}
                         </button>
-                        <button onclick="sendPasswordReset('${u.email}')" class="px-2 py-1 text-xs font-semibold rounded bg-sky-50 hover:bg-sky-100 text-sky-700" title="Enviar e-mail de redefinição">
-                            Reset Senha
+                        <button onclick="sendPasswordReset('${u.email}')" class="px-2 py-1 text-xs font-semibold rounded bg-sky-50 hover:bg-sky-100 text-sky-700">
+                            ${langData.reset_pwd}
                         </button>
-                        <button onclick="deleteUser('${u.id}')" class="px-2 py-1 text-xs font-semibold rounded bg-rose-50 hover:bg-rose-100 text-rose-700" title="Excluir Usuário">
-                            Excluir
+                        <button onclick="deleteUser('${u.id}')" class="px-2 py-1 text-xs font-semibold rounded bg-rose-50 hover:bg-rose-100 text-rose-700">
+                            ${langData.delete}
                         </button>
                     </td>
                 `;
@@ -646,7 +778,7 @@
         // BLOQUEAR OU DESBLOQUEAR USUÁRIO
         async function toggleBlockUser(userId, blockState) {
             const updatePayload = { is_blocked: blockState };
-            if (!blockState) updatePayload.failed_attempts = 0; // Se desbloquear, reseta falhas
+            if (!blockState) updatePayload.failed_attempts = 0;
 
             const { error } = await supabaseClient
                 .from('profiles')
@@ -758,10 +890,11 @@
         function renderCandidateTable(candidates) {
             const tbody = document.getElementById('candidateTableBody');
             tbody.innerHTML = '';
+            const langData = translations[currentLang] || translations['pt'];
 
             if (candidates.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">Nenhum candidato encontrado.</td></tr>`;
-                document.getElementById('resultsCountBadge').innerText = '0 candidatos encontrados';
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">${langData.no_candidates}</td></tr>`;
+                document.getElementById('resultsCountBadge').innerText = `0 ${langData.found_candidates}`;
                 return;
             }
 
@@ -770,12 +903,19 @@
                 tr.className = 'border-b border-slate-200/60 hover:bg-slate-50 transition';
                 
                 let badgeStyle = 'status-available';
-                if (cand.status === 'Working with Us') badgeStyle = 'status-working';
-                if (cand.status === 'In Interviews') badgeStyle = 'status-interviews';
+                let statusLabel = langData.status_available;
+
+                if (cand.status === 'Working with Us' || cand.status === 'Trabalhando') {
+                    badgeStyle = 'status-working';
+                    statusLabel = langData.status_working;
+                } else if (cand.status === 'In Interviews' || cand.status === 'Em Entrevistas') {
+                    badgeStyle = 'status-interviews';
+                    statusLabel = langData.status_interviews;
+                }
 
                 tr.innerHTML = `
                     <td class="p-3 font-semibold text-[#0f172a]">${cand.name || '-'}</td>
-                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${cand.status || 'Available'}</span></td>
+                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${statusLabel}</span></td>
                     <td class="p-3">${cand.nationality || '-'}</td>
                     <td class="p-3">${cand.phone || '-'}</td>
                     <td class="p-3">${cand.email || '-'}</td>
@@ -786,7 +926,7 @@
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidato(s) encontrado(s)`;
+            document.getElementById('resultsCountBadge').innerText = `${candidates.length} ${langData.found_candidates}`;
         }
 
         globalSearchInput.addEventListener('input', (e) => {
@@ -832,6 +972,7 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
+            applyTranslations();
             if (window.lucide) lucide.createIcons();
             checkSession();
         });
