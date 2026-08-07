@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STEP – Mão de Obra | Secure Access</title>
+    <!-- SDK do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -118,6 +119,14 @@
             console.error('Erro ao inicializar Supabase:', e);
         }
 
+        async function checkSession() {
+            if (!supabaseClient) return;
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                window.location.href = 'platform.html';
+            }
+        }
+
         async function login() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -170,6 +179,8 @@
                 msg.textContent = 'Pessoa cadastrada com sucesso! Clique em Enter Platform.';
             }
         }
+
+        checkSession();
     </script>
 </body>
-</html> 
+</html>
