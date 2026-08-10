@@ -771,10 +771,22 @@
                 status: 'Working with Us',
                 nationality: 'Brazilian',
                 age: 38,
+                dob: '1988-03-15',
+                gender: 'Male',
                 phone: '+55 22 99876-5432',
+                whatsapp: '+55 22 99876-5432',
                 email: 'carlos.silva@offshore.com',
                 location: 'Brazil (Macaé)',
+                country: 'Brazil',
+                city: 'Macaé',
+                address: 'Rua Principal, 123',
+                driver: 'Yes',
+                driverCat: 'B',
+                emergName: 'Maria Silva',
+                emergPhone: '+55 22 99999-8888',
                 available: 'Available Immediately',
+                availWindow: 'Available Immediately',
+                availDate: '2026-08-10',
                 discipline: 'Welder, NDT Technician',
                 skills: 'TIG Welding • MIG Welding • FCAW Welding',
                 ogExp: '12 yrs OFFSHORE',
@@ -799,10 +811,22 @@
                 status: 'Available',
                 nationality: 'Portuguese',
                 age: 33,
+                dob: '1993-07-22',
+                gender: 'Male',
                 phone: '+351 912 345 678',
+                whatsapp: '+351 912 345 678',
                 email: 'j.santos@energytech.pt',
                 location: 'Portugal (Porto)',
+                country: 'Portugal',
+                city: 'Porto',
+                address: 'Av. Liberdade, 45',
+                driver: 'Yes',
+                driverCat: 'C',
+                emergName: 'Ana Santos',
+                emergPhone: '+351 912 000 000',
                 available: 'Available Immediately',
+                availWindow: 'Available Immediately',
+                availDate: '2026-08-10',
                 discipline: 'Pipefitter, Mechanical Technician',
                 skills: 'Pipe Installation • Hydro Testing • Shutdown Exp',
                 ogExp: '8 yrs OFFSHORE',
@@ -824,10 +848,22 @@
                 status: 'In Interviews',
                 nationality: 'British',
                 age: 40,
+                dob: '1986-11-05',
+                gender: 'Female',
                 phone: '+44 7700 900077',
+                whatsapp: '+44 7700 900077',
                 email: 'elena.rostova@hse-solutions.co.uk',
                 location: 'United Kingdom (Aberdeen)',
+                country: 'United Kingdom',
+                city: 'Aberdeen',
+                address: 'High St, 10',
+                driver: 'No',
+                driverCat: '',
+                emergName: 'John Rostova',
+                emergPhone: '+44 7700 111222',
                 available: 'Available in 2 Weeks',
+                availWindow: 'Available in 2 Weeks',
+                availDate: '2026-08-24',
                 discipline: 'HSE Officer, Project Engineer',
                 skills: 'NEBOSH • IOSH • Offshore Experience • LNG Exp',
                 ogExp: '15 yrs OFFSHORE',
@@ -932,6 +968,47 @@
             document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidates found`;
             if (window.lucide) lucide.createIcons();
             updateDashboardMetrics(candidates);
+            renderNotificationPanel(candidates);
+        }
+
+        // PAINEL DE NOTIFICAÇÕES (ALERTAS DE EXPIRAÇÃO)
+        function renderNotificationPanel(list) {
+            const container = document.getElementById('notifListContainer');
+            const badge = document.getElementById('notifBadge');
+            if (!container || !badge) return;
+
+            container.innerHTML = '';
+            let alerts = [];
+
+            list.forEach(cand => {
+                if (cand.certs) {
+                    cand.certs.forEach(cert => {
+                        if (cert.expired) {
+                            alerts.push({ candidate: cand.name, doc: cert.name, expiry: cert.expiry });
+                        }
+                    });
+                }
+            });
+
+            badge.innerText = alerts.length;
+
+            if (alerts.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 py-2 text-center">Nenhum documento expirado.</p>`;
+                return;
+            }
+
+            alerts.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'p-2.5 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-between text-xs';
+                div.innerHTML = `
+                    <div>
+                        <div class="font-bold text-slate-800">${item.candidate}</div>
+                        <div class="text-[11px] text-amber-800">${item.doc}</div>
+                    </div>
+                    <span class="text-[10px] font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md">${item.expiry || 'Expirado'}</span>
+                `;
+                container.appendChild(div);
+            });
         }
 
         // CARREGAMENTO DE CANDIDATOS
@@ -948,7 +1025,7 @@
                     console.log('Supabase off/unconfigured, loading mock seed.');
                 }
             }
-            allCandidatesCache = MOCK_SEED_CANDIDATES;
+            allCandidatesCache = [...MOCK_SEED_CANDIDATES];
             renderCandidateTable(allCandidatesCache);
         }
 
@@ -1032,7 +1109,9 @@
                 (c.skills && c.skills.toLowerCase().includes(query)) ||
                 (c.nationality && c.nationality.toLowerCase().includes(query)) ||
                 (c.email && c.email.toLowerCase().includes(query)) ||
-                (c.location && c.location.toLowerCase().includes(query))
+                (c.location && c.location.toLowerCase().includes(query)) ||
+                (c.passport && c.passport.toLowerCase().includes(query)) ||
+                (c.city && c.city.toLowerCase().includes(query))
             );
             renderCandidateTable(filtered);
         }
@@ -1055,10 +1134,15 @@
             renderCandidateTable(filtered);
         }
 
+        function toggleFilterMenu() {
+            alert('Menu de filtros detalhado ativo.');
+        }
+
         // CADASTRO / EDIÇÃO DE CANDIDATO
         function openCandidateModal() {
             document.getElementById('candidateForm').reset();
             document.getElementById('candId').value = '';
+            document.getElementById('candAge').value = '';
             document.getElementById('modalTitle').innerText = 'New Candidate';
             switchModalTab('tabOverview', document.querySelector('.modal-tab-btn'));
             document.getElementById('candidateModal').classList.remove('hidden');
@@ -1071,12 +1155,24 @@
             document.getElementById('candId').value = cand.id;
             document.getElementById('candName').value = cand.name || '';
             document.getElementById('candStatus').value = cand.status || 'Available';
+            document.getElementById('candAvailWindow').value = cand.availWindow || 'Available Immediately';
+            document.getElementById('candAvailDate').value = cand.availDate || '';
             document.getElementById('candNationality').value = cand.nationality || '';
+            document.getElementById('candDob').value = cand.dob || '';
             document.getElementById('candAge').value = cand.age || '';
+            document.getElementById('candGender').value = cand.gender || 'Male';
             document.getElementById('candPhone').value = cand.phone || '';
+            document.getElementById('candWhatsapp').value = cand.whatsapp || '';
             document.getElementById('candEmail').value = cand.email || '';
             document.getElementById('candPassport').value = cand.passport || '';
             document.getElementById('candPassportExpiry').value = cand.expiry || '';
+            document.getElementById('candCountry').value = cand.country || '';
+            document.getElementById('candCity').value = cand.city || '';
+            document.getElementById('candAddress').value = cand.address || '';
+            document.getElementById('candDriver').value = cand.driver || 'Yes';
+            document.getElementById('candDriverCat').value = cand.driverCat || '';
+            document.getElementById('candEmergName').value = cand.emergName || '';
+            document.getElementById('candEmergPhone').value = cand.emergPhone || '';
             document.getElementById('candDiscipline').value = cand.discipline || '';
             document.getElementById('candSkills').value = cand.skills || '';
             document.getElementById('candOgExp').value = cand.ogExp || '';
@@ -1090,47 +1186,83 @@
             document.getElementById('candidateModal').classList.add('hidden');
         }
 
-        function handleCandidateSubmit(e) {
+        async function handleCandidateSubmit(e) {
             e.preventDefault();
             const id = document.getElementById('candId').value || 'cand_' + Date.now();
             const name = document.getElementById('candName').value;
             const status = document.getElementById('candStatus').value;
+            const availWindow = document.getElementById('candAvailWindow').value;
+            const availDate = document.getElementById('candAvailDate').value;
             const nationality = document.getElementById('candNationality').value;
+            const dob = document.getElementById('candDob').value;
             const age = document.getElementById('candAge').value;
+            const gender = document.getElementById('candGender').value;
             const phone = document.getElementById('candPhone').value;
+            const whatsapp = document.getElementById('candWhatsapp').value;
             const email = document.getElementById('candEmail').value;
             const passport = document.getElementById('candPassport').value;
             const expiry = document.getElementById('candPassportExpiry').value;
+            const country = document.getElementById('candCountry').value;
+            const city = document.getElementById('candCity').value;
+            const address = document.getElementById('candAddress').value;
+            const driver = document.getElementById('candDriver').value;
+            const driverCat = document.getElementById('candDriverCat').value;
+            const emergName = document.getElementById('candEmergName').value;
+            const emergPhone = document.getElementById('candEmergPhone').value;
             const discipline = document.getElementById('candDiscipline').value;
             const skills = document.getElementById('candSkills').value;
             const ogExp = document.getElementById('candOgExp').value;
 
             const existingIndex = allCandidatesCache.findIndex(c => c.id === id);
-            const newCand = {
-                id, name, status, nationality, age, phone, email, passport, expiry, discipline, skills, ogExp,
-                available: 'Available Immediately',
-                location: 'Brazil',
-                cvPdf: 'CV_' + name.replace(/\s+/g, '_') + '.pdf',
-                certs: [], medicals: [], visas: []
+            const prevCandidate = existingIndex >= 0 ? allCandidatesCache[existingIndex] : {};
+
+            const locationStr = country && city ? `${country} (${city})` : (country || city || 'Brazil');
+
+            const updatedCand = {
+                ...prevCandidate,
+                id, name, status, availWindow, availDate, nationality, dob, age, gender,
+                phone, whatsapp, email, passport, expiry, country, city, address,
+                driver, driverCat, emergName, emergPhone, discipline, skills, ogExp,
+                available: availWindow,
+                location: locationStr,
+                cvPdf: prevCandidate.cvPdf || ('CV_' + name.replace(/\s+/g, '_') + '.pdf'),
+                certs: prevCandidate.certs || [],
+                medicals: prevCandidate.medicals || [],
+                visas: prevCandidate.visas || []
             };
 
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('candidates').upsert(updatedCand);
+                } catch (err) {
+                    console.log('Erro ao salvar no Supabase, mantendo no cache local.', err);
+                }
+            }
+
             if (existingIndex >= 0) {
-                allCandidatesCache[existingIndex] = { ...allCandidatesCache[existingIndex], ...newCand };
+                allCandidatesCache[existingIndex] = updatedCand;
             } else {
-                allCandidatesCache.push(newCand);
+                allCandidatesCache.push(updatedCand);
             }
 
             renderCandidateTable(allCandidatesCache);
             closeCandidateModal();
         }
 
-        function deleteCurrentCandidate() {
+        async function deleteCurrentCandidate() {
             const id = document.getElementById('candId').value;
             if (!id) {
                 closeCandidateModal();
                 return;
             }
             if (confirm('Tem certeza que deseja remover este candidato?')) {
+                if (supabaseClient) {
+                    try {
+                        await supabaseClient.from('candidates').delete().eq('id', id);
+                    } catch (err) {
+                        console.log('Erro ao remover do Supabase', err);
+                    }
+                }
                 allCandidatesCache = allCandidatesCache.filter(c => c.id !== id);
                 renderCandidateTable(allCandidatesCache);
                 closeCandidateModal();
@@ -1163,12 +1295,22 @@
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
 
+            const tabTableBtn = document.getElementById('tabTable');
+            const tabDashBtn = document.getElementById('tabDashboard');
+            const tabActiveBtn = document.getElementById('tabActive');
+
+            if (tabTableBtn) tabTableBtn.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
+            if (tabDashBtn) tabDashBtn.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
+            if (tabActiveBtn) tabActiveBtn.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
+
             if (view === 'table') {
                 document.getElementById('viewTable').classList.remove('hidden');
                 document.getElementById('navTable').classList.add('active');
+                if (tabTableBtn) tabTableBtn.className = "px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition";
             } else {
                 document.getElementById('viewDashboard').classList.remove('hidden');
                 document.getElementById('navDashboard').classList.add('active');
+                if (tabDashBtn) tabDashBtn.className = "px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition";
             }
         }
 
