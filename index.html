@@ -199,13 +199,14 @@
         .cert-ok { background: #f1f5f9; color: #334155; }
 
         .modal-tab-btn {
-            padding: 6px 12px;
-            font-size: 11px;
+            padding: 8px 14px;
+            font-size: 12px;
             font-weight: 600;
             color: #64748b;
             border-bottom: 2px solid transparent;
             cursor: pointer;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         .modal-tab-btn.active {
             color: #0284c7;
@@ -234,12 +235,12 @@
 
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">E-mail</label>
-                    <input type="email" id="loginEmail" required placeholder="seu.email@empresa.com" class="apple-input" />
+                    <input type="email" id="loginEmail" required placeholder="seu.email@empresa.com" class="apple-input" value="admin@step.com" />
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">Senha</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••" class="apple-input" />
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="apple-input" value="123456" />
                 </div>
 
                 <button type="submit" class="apple-btn w-full justify-center py-3 text-sm mt-2">
@@ -530,7 +531,7 @@
             </div>
 
             <!-- ABAS DO FORMULÁRIO -->
-            <div class="flex items-center gap-2 px-5 border-b border-slate-200 bg-slate-50/30 overflow-x-auto text-xs">
+            <div class="flex items-center gap-1 px-5 border-b border-slate-200 bg-slate-50/30 overflow-x-auto text-xs">
                 <button type="button" class="modal-tab-btn active" onclick="switchModalTab('tabOverview', this)">Overview</button>
                 <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabSkills', this)">Skills & Disciplines</button>
                 <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabCerts', this)">Certifications</button>
@@ -548,7 +549,6 @@
                     
                     <!-- CONTEÚDO TAB OVERVIEW -->
                     <div id="tabOverview" class="modal-tab-content space-y-6">
-                        
                         <!-- SEÇÃO STATUS & AVAILABILITY -->
                         <div>
                             <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">STATUS & AVAILABILITY</h4>
@@ -663,27 +663,91 @@
 
                     <!-- ABA SKILLS -->
                     <div id="tabSkills" class="modal-tab-content hidden space-y-4">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">SKILLS & QUALIFICATIONS</h4>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Discipline / Position</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Primary Discipline / Position</label>
                             <input type="text" id="candDiscipline" placeholder="Welder, NDT Technician" class="apple-input">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Skills (Separadas por vírgula)</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Skills & Technical Competencies (Comma separated)</label>
                             <input type="text" id="candSkills" placeholder="TIG Welding, MIG Welding, FCAW Welding" class="apple-input">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">O&G Experience</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">O&G / Offshore Experience Summary</label>
                             <input type="text" id="candOgExp" placeholder="12 yrs OFFSHORE" class="apple-input">
                         </div>
                     </div>
 
-                    <!-- OUTRAS ABAS -->
-                    <div id="tabCerts" class="modal-tab-content hidden p-4 text-center text-slate-400">Anexos e Registros de Certificações (BOSIET, HUET, CSWIP)</div>
-                    <div id="tabMedicals" class="modal-tab-content hidden p-4 text-center text-slate-400">Exames Médicos Ocupacionais (OGUK, ASO)</div>
-                    <div id="tabVisas" class="modal-tab-content hidden p-4 text-center text-slate-400">Controle de Vistos de Trabalho</div>
-                    <div id="tabDocs" class="modal-tab-content hidden p-4 text-center text-slate-400">Upload de Currículos e Documentos em PDF</div>
-                    <div id="tabAssignment" class="modal-tab-content hidden p-4 text-center text-slate-400">Histórico de Embarques e Contratos Ativos</div>
-                    <div id="tabNotes" class="modal-tab-content hidden p-4 text-center text-slate-400">Anotações do Recrutador</div>
+                    <!-- ABA CERTIFICATIONS -->
+                    <div id="tabCerts" class="modal-tab-content hidden space-y-4">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">CERTIFICATIONS (BOSIET, HUET, CSWIP, etc.)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Certification Name</label>
+                                <input type="text" id="candCertName" placeholder="Ex: BOSIET + OPITO" class="apple-input">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Expiry Date</label>
+                                <input type="date" id="candCertExpiry" class="apple-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA MEDICALS -->
+                    <div id="tabMedicals" class="modal-tab-content hidden space-y-4">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">MEDICAL EXAMINATIONS (OGUK, ASO, FIT TO WORK)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Medical Certificate</label>
+                                <input type="text" id="candMedName" placeholder="Ex: OGUK Medical Certificate" class="apple-input">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Expiry Date</label>
+                                <input type="date" id="candMedExpiry" class="apple-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA VISAS -->
+                    <div id="tabVisas" class="modal-tab-content hidden space-y-4">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">WORK VISAS & PERMITS</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Visa / Permit Type</label>
+                                <input type="text" id="candVisaName" placeholder="Ex: Work Visa (Angola)" class="apple-input">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Expiration Date</label>
+                                <input type="date" id="candVisaExpiry" class="apple-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA DOCS -->
+                    <div id="tabDocs" class="modal-tab-content hidden space-y-4">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">ATTACHMENTS & CURRICULUM VITAE</h4>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">CV File (PDF / DOCX)</label>
+                            <input type="file" id="candCvFile" class="apple-input" accept=".pdf,.doc,.docx" />
+                        </div>
+                    </div>
+
+                    <!-- ABA ASSIGNMENT -->
+                    <div id="tabAssignment" class="modal-tab-content hidden space-y-4">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">CURRENT & PAST ASSIGNMENTS</h4>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Project / Vessel Assigned</label>
+                            <input type="text" id="candAssignmentProject" placeholder="FPSO Carioca / Project XYZ" class="apple-input">
+                        </div>
+                    </div>
+
+                    <!-- ABA NOTES -->
+                    <div id="tabNotes" class="modal-tab-content hidden space-y-4">
+                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">RECRUITER NOTES & INTERNAL COMMENTS</h4>
+                        <div>
+                            <textarea id="candNotes" rows="4" placeholder="Enter recruiter comments, interview feedback..." class="apple-input"></textarea>
+                        </div>
+                    </div>
 
                     <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
                         <button type="button" onclick="closeCandidateModal()" class="apple-btn apple-btn-secondary text-xs">Cancelar</button>
@@ -743,7 +807,14 @@
                             <th class="p-2.5 text-right">Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="usersListBody" class="divide-y divide-slate-100"></tbody>
+                    <tbody id="usersListBody" class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="p-2.5 font-medium">admin@step.com</td>
+                            <td class="p-2.5"><span class="apple-badge apple-badge-blue">Admin</span></td>
+                            <td class="p-2.5"><span class="apple-badge status-working">Ativo</span></td>
+                            <td class="p-2.5 text-right"><span class="text-slate-400">Padrão</span></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -1135,7 +1206,7 @@
         }
 
         function toggleFilterMenu() {
-            alert('Menu de filtros detalhado ativo.');
+            alert('Menu de filtros avançados ativado.');
         }
 
         // CADASTRO / EDIÇÃO DE CANDIDATO
@@ -1176,6 +1247,20 @@
             document.getElementById('candDiscipline').value = cand.discipline || '';
             document.getElementById('candSkills').value = cand.skills || '';
             document.getElementById('candOgExp').value = cand.ogExp || '';
+            document.getElementById('candNotes').value = cand.notes || '';
+
+            if (cand.certs && cand.certs.length > 0) {
+                document.getElementById('candCertName').value = cand.certs[0].name || '';
+                document.getElementById('candCertExpiry').value = cand.certs[0].expiry || '';
+            }
+            if (cand.medicals && cand.medicals.length > 0) {
+                document.getElementById('candMedName').value = cand.medicals[0].name || '';
+                document.getElementById('candMedExpiry').value = cand.medicals[0].expiry || '';
+            }
+            if (cand.visas && cand.visas.length > 0) {
+                document.getElementById('candVisaName').value = cand.visas[0].name || '';
+                document.getElementById('candVisaExpiry').value = cand.visas[0].expiry || '';
+            }
 
             document.getElementById('modalTitle').innerText = 'Edit Candidate';
             switchModalTab('tabOverview', document.querySelector('.modal-tab-btn'));
@@ -1212,23 +1297,44 @@
             const discipline = document.getElementById('candDiscipline').value;
             const skills = document.getElementById('candSkills').value;
             const ogExp = document.getElementById('candOgExp').value;
+            const notes = document.getElementById('candNotes').value;
+
+            const certName = document.getElementById('candCertName').value;
+            const certExpiry = document.getElementById('candCertExpiry').value;
+            const medName = document.getElementById('candMedName').value;
+            const medExpiry = document.getElementById('candMedExpiry').value;
+            const visaName = document.getElementById('candVisaName').value;
+            const visaExpiry = document.getElementById('candVisaExpiry').value;
 
             const existingIndex = allCandidatesCache.findIndex(c => c.id === id);
             const prevCandidate = existingIndex >= 0 ? allCandidatesCache[existingIndex] : {};
 
             const locationStr = country && city ? `${country} (${city})` : (country || city || 'Brazil');
 
+            let certs = prevCandidate.certs || [];
+            if (certName) {
+                certs = [{ name: certName, expiry: certExpiry, expired: certExpiry ? new Date(certExpiry) < new Date() : false }];
+            }
+
+            let medicals = prevCandidate.medicals || [];
+            if (medName) {
+                medicals = [{ name: medName, expiry: medExpiry }];
+            }
+
+            let visas = prevCandidate.visas || [];
+            if (visaName) {
+                visas = [{ name: visaName, expiry: visaExpiry }];
+            }
+
             const updatedCand = {
                 ...prevCandidate,
                 id, name, status, availWindow, availDate, nationality, dob, age, gender,
                 phone, whatsapp, email, passport, expiry, country, city, address,
-                driver, driverCat, emergName, emergPhone, discipline, skills, ogExp,
+                driver, driverCat, emergName, emergPhone, discipline, skills, ogExp, notes,
                 available: availWindow,
                 location: locationStr,
                 cvPdf: prevCandidate.cvPdf || ('CV_' + name.replace(/\s+/g, '_') + '.pdf'),
-                certs: prevCandidate.certs || [],
-                medicals: prevCandidate.medicals || [],
-                visas: prevCandidate.visas || []
+                certs, medicals, visas
             };
 
             if (supabaseClient) {
@@ -1278,7 +1384,6 @@
             document.getElementById('appContainer').classList.add('flex');
             document.getElementById('userEmailSpan').innerText = email;
             
-            // Exibir botões administrativos
             document.getElementById('btnAdminUsers').classList.remove('hidden');
             document.getElementById('btnNewCandidate').classList.remove('hidden');
 
@@ -1326,8 +1431,37 @@
 
         function triggerImport() { document.getElementById('importFileInput').click(); }
         function handleFileImport(e) { alert("Arquivo selecionado: " + e.target.files[0]?.name); }
-        function exportCSV() { alert("Exportando dados em formato CSV/Excel..."); }
-        function downloadAllDocs() { alert("Iniciando download de todos os comprovantes e PDFs..."); }
+
+        function exportCSV() {
+            if (!allCandidatesCache || allCandidatesCache.length === 0) {
+                alert("Nenhum dado para exportar.");
+                return;
+            }
+            const headers = ["Name", "Status", "Nationality", "Age", "Phone", "Email", "Location", "Discipline", "Skills", "Passport"];
+            const rows = allCandidatesCache.map(c => [
+                `"${c.name || ''}"`,
+                `"${c.status || ''}"`,
+                `"${c.nationality || ''}"`,
+                `"${c.age || ''}"`,
+                `"${c.phone || ''}"`,
+                `"${c.email || ''}"`,
+                `"${c.location || ''}"`,
+                `"${c.discipline || ''}"`,
+                `"${c.skills || ''}"`,
+                `"${c.passport || ''}"`
+            ]);
+
+            const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "candidates_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function downloadAllDocs() { alert("Iniciando download em lote dos arquivos e comprovantes..."); }
 
         // AUTO-CÁLCULO DE IDADE
         document.getElementById('candDob')?.addEventListener('change', (e) => {
