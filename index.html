@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>STEP – Mão de Obra | Industrial & Energy Talent Platform</title>
+    <title>STEP – Mão de Obra | Portal &amp; Gestão de Candidatos</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -37,10 +37,8 @@
         }
     </script>
 
-    <!-- Supabase JS Client v2 -->
+    <!-- External CDNs -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Lucide Icons & Chart.js -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -49,34 +47,36 @@
             --bg-0: #f8fafc;
             --bg-1: #edf2f7;
             --bg-2: #e2e8f0;
+            --steel-soft: #64748b;
             --ink: #0f172a;
-            --brand-blue: #0284c7;
+            --accent: #0284c7;
+            --radius-card: 22px;
+            --radius-input: 14px;
         }
 
-        * {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+        * { -webkit-font-smoothing: antialiased; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(160deg, #f8fafc, #edf2f7 55%, #e2e8f0);
+            background: radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,0.22), transparent 60%),
+                        radial-gradient(1000px 700px at 85% 90%, rgba(16,185,129,0.18), transparent 60%),
+                        linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
             color: var(--ink);
             min-height: 100vh;
         }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(15, 23, 42, 0.08);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(16px);
             border: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
-            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+            border-radius: 20px;
         }
 
         .apple-btn {
@@ -86,14 +86,12 @@
             gap: 6px;
             font-weight: 600;
             font-size: 13px;
-            padding: 8px 18px;
+            padding: 9px 20px;
             border-radius: 980px;
-            border: none;
             background: linear-gradient(135deg, #0284c7, #0369a1);
             color: #ffffff;
-            cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+            cursor: pointer;
         }
 
         .apple-btn:hover {
@@ -105,396 +103,206 @@
             background: rgba(15, 23, 42, 0.05);
             color: #0f172a;
             border: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: none;
         }
 
-        .apple-btn-secondary:hover {
-            background: rgba(15, 23, 42, 0.1);
-            transform: none;
-        }
+        .apple-btn-danger { background: #ef4444; color: #fff; }
 
-        .apple-btn-green {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-        }
-
-        .apple-input {
+        .apple-input, .apple-select {
             background: #ffffff;
             border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 10px;
-            padding: 7px 12px;
-            font-size: 12px;
-            font-weight: 500;
+            border-radius: 12px;
+            padding: 9px 13px;
+            font-size: 13px;
             color: #0f172a;
-            outline: none;
             width: 100%;
+            outline: none;
         }
 
-        .apple-input:focus {
+        .apple-input:focus, .apple-select:focus {
             border-color: #0284c7;
             box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14);
         }
 
-        .apple-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 3px 10px;
-            border-radius: 980px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .apple-badge-blue { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-        .apple-badge-red { background: #ffe4e6; color: #e11d48; border: 1px solid #fecdd3; }
-        .status-working { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-        .status-interviews { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
-        .status-available { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #475569;
-            transition: all 0.15s ease;
-            cursor: pointer;
-        }
-
-        .sidebar-link:hover, .sidebar-link.active {
-            background: #e0f2fe;
-            color: #0369a1;
-        }
-
-        .doc-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            color: #0369a1;
+        .role-badge {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
             padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            text-decoration: none;
+            border-radius: 980px;
+            letter-spacing: 0.05em;
         }
-        .doc-chip:hover {
-            background: #e0f2fe;
-        }
+        .role-admin { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .role-recruit { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+        .role-viewer { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
 
-        .cert-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-        .cert-expired { background: #ffe4e6; color: #be123c; }
-        .cert-ok { background: #f1f5f9; color: #334155; }
-
-        .modal-tab-btn {
-            padding: 8px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #64748b;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .modal-tab-btn.active {
-            color: #0284c7;
-            border-bottom-color: #0284c7;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 980px; }
     </style>
 </head>
-<body class="text-[#0f172a] font-sans antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+<body class="text-[#0f172a] min-h-screen flex flex-col relative">
 
-    <!-- LOGIN SCREEN -->
-    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
-        <div class="w-full max-w-md glass-card p-8 rounded-3xl border border-slate-200/80 shadow-2xl relative">
-            <div class="flex flex-col items-center mb-6 text-center">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 font-display font-extrabold text-lg tracking-wider mb-3">
+    <!-- ─── TELA DE LOGIN (SUPABASE AUTH) ─── -->
+    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+        <div class="glass-card w-full max-w-md p-8 border border-white/20 shadow-2xl relative overflow-hidden bg-slate-900 text-white">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 mx-auto flex items-center justify-center font-extrabold text-xl font-display shadow-lg shadow-sky-500/30 mb-3">
                     STEP
                 </div>
-                <h2 class="font-display font-extrabold text-2xl text-[#0f172a]">Acesso ao Sistema</h2>
-                <p class="text-xs font-medium text-[#64748b] mt-1">Insira suas credenciais corporativas para entrar</p>
+                <h1 class="text-2xl font-extrabold font-display">STEP – Mão de Obra</h1>
+                <p class="text-xs text-slate-400 mt-1">Plataforma de Gestão de Talentos Oil &amp; Gas</p>
             </div>
 
-            <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
-                <div id="authErrorMsg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2">
-                    <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
-                    <span id="authErrorText">Falha na autenticação</span>
-                </div>
-
+            <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">E-mail</label>
-                    <input type="email" id="loginEmail" required placeholder="seu.email@empresa.com" class="apple-input" value="admin@step.com" />
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">E-mail Corporativo</label>
+                    <input type="email" id="loginEmail" class="apple-input bg-slate-800 border-slate-700 text-white" placeholder="usuario@empresa.com" required />
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">Senha</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••" class="apple-input" value="123456" />
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Senha</label>
+                    <input type="password" id="loginPassword" class="apple-input bg-slate-800 border-slate-700 text-white" placeholder="••••••••" required />
                 </div>
-
-                <button type="submit" class="apple-btn w-full justify-center py-3 text-sm mt-2">
-                    <i data-lucide="log-in" class="w-4 h-4"></i>
-                    <span>Entrar no Sistema</span>
+                <div id="authErrorMessage" class="hidden text-xs text-rose-400 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20"></div>
+                <button type="submit" id="loginSubmitBtn" class="apple-btn w-full py-3 font-bold text-sm bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500">
+                    Entrar na Plataforma
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
-    <div id="appContainer" class="hidden flex-col h-screen overflow-hidden">
+    <!-- ─── APLICAÇÃO PRINCIPAL ─── -->
+    <div id="appScreen" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
 
-        <!-- HEADER BAR -->
-        <header class="sticky top-0 z-30 glass-panel px-6 py-3 flex items-center justify-between gap-4 border-b border-slate-200">
-            <div class="flex items-center gap-3 w-64">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20 font-display font-extrabold text-sm">
+        <!-- NAV SUPERIOR -->
+        <header class="sticky top-0 z-30 glass-panel px-6 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
                     STEP
                 </div>
                 <div>
-                    <div class="font-display font-extrabold text-base tracking-tight text-[#0f172a] leading-none">STEP <span class="text-xs font-medium text-brand-600">Mão de Obra</span></div>
-                    <div class="text-[10px] text-slate-500">Industrial & Energy Talent Platform</div>
-                </div>
-            </div>
-
-            <!-- SEARCH BAR -->
-            <div class="flex-1 max-w-2xl flex items-center gap-2">
-                <div class="relative flex-1">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-2.5 text-slate-400"></i>
-                    <input type="text" id="globalSearchInput" oninput="handleGlobalSearch(event)" placeholder="Search name, passport, nationality, email, certs, skills, city..." class="w-full pl-10 pr-4 py-2 bg-white/90 border border-slate-200 rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-[#0f172a]" />
-                </div>
-                <button onclick="toggleFilterMenu()" class="apple-btn apple-btn-secondary text-xs px-3 py-2 flex items-center gap-1.5">
-                    <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
-                    <span>Filters</span>
-                </button>
-            </div>
-
-            <!-- ACTIONS / USER HEADER -->
-            <div class="flex items-center gap-3 relative">
-                <span class="apple-badge apple-badge-blue text-[11px]"><i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> Saved</span>
-                
-                <div class="relative">
-                    <button onclick="toggleNotificationPanel()" class="relative p-1.5 text-slate-600 hover:text-slate-900 transition focus:outline-none">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
-                        <span id="notifBadge" class="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
-                    </button>
-
-                    <div id="notificationPanel" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-2xl z-50 p-4">
-                        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
-                            <div class="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-amber-700">
-                                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
-                                <span>DOCUMENT EXPIRATION ALERTS</span>
-                            </div>
-                            <button onclick="toggleNotificationPanel()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
-                        </div>
-                        <div id="notifListContainer" class="max-h-80 overflow-y-auto pr-1 space-y-2"></div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-extrabold text-base tracking-tight">STEP</span>
+                        <span class="text-[11px] font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">Mão de Obra</span>
                     </div>
+                    <span class="text-[10px] font-medium text-slate-500 block -mt-1">Oil &amp; Gas Talent Platform</span>
                 </div>
+            </div>
 
-                <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden apple-btn apple-btn-secondary text-xs px-3 py-1.5">
-                    <i data-lucide="users" class="w-3.5 h-3.5 text-brand-600"></i>
-                    <span>Usuários</span>
-                </button>
+            <!-- Pesquisa Global -->
+            <div class="flex-1 max-w-xl mx-4 relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400 pointer-events-none"></i>
+                <input type="text" id="globalSearchInput" placeholder="Buscar por nome, passaporte, cargo, certificados..." class="apple-input pl-10 pr-4 py-2" />
+            </div>
 
-                <div id="userEmailBadge" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-slate-700 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
-                    <i data-lucide="user-check" class="w-3.5 h-3.5 text-brand-600"></i>
-                    <span id="userEmailSpan">usuario@empresa.com</span>
+            <!-- Usuário Conectado -->
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p id="userEmailDisplay" class="text-xs font-bold text-slate-800">user@step.com</p>
+                    <span id="userRoleBadge" class="role-badge role-viewer">VIEWER</span>
                 </div>
-
-                <button id="btnNewCandidate" onclick="openCandidateModal()" class="hidden apple-btn text-xs px-4 py-2">
+                <button id="addCandidateBtn" class="apple-btn text-xs font-bold hidden flex items-center gap-1.5" data-requires="recruit">
                     <i data-lucide="user-plus" class="w-4 h-4"></i>
-                    <span>+ Add Candidate</span>
+                    <span>Novo Candidato</span>
                 </button>
-
-                <button id="logoutBtn" onclick="handleLogout()" class="apple-btn apple-btn-secondary text-xs px-2.5 py-1.5">
-                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                <button id="logoutBtn" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition" title="Sair">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
                 </button>
             </div>
         </header>
 
-        <!-- MAIN LAYOUT -->
+        <!-- ÁREA DE TRABALHO -->
         <div class="flex-1 flex overflow-hidden">
 
             <!-- SIDEBAR -->
-            <aside class="w-64 bg-white/70 backdrop-blur-md border-r border-slate-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0">
+            <aside class="w-64 bg-white/80 backdrop-blur-md border-r border-slate-200 flex flex-col justify-between p-4 z-20">
                 <div class="space-y-6">
                     <div>
-                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Navigation</div>
+                        <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">Navegação</p>
                         <nav class="space-y-1">
-                            <div class="sidebar-link active" id="navTable" onclick="switchView('table')">
+                            <button data-view="table" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold bg-brand-50 text-brand-600">
                                 <i data-lucide="table" class="w-4 h-4"></i>
-                                <span>Candidates Table</span>
-                            </div>
-                            <div class="sidebar-link" id="navDashboard" onclick="switchView('dashboard')">
+                                <span>Candidatos</span>
+                            </button>
+                            <button data-view="dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">
                                 <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                                <span>Dashboard & Metrics</span>
-                            </div>
-                            <div class="sidebar-link justify-between" id="navActive" onclick="filterByStatus('Working with Us')">
-                                <div class="flex items-center gap-2">
-                                    <i data-lucide="user-check" class="w-4 h-4"></i>
-                                    <span>Active Workforce</span>
-                                </div>
-                                <span id="badgeActiveCount" class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
-                            </div>
+                                <span>Dashboard</span>
+                            </button>
+                            <button data-view="users" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 hidden" data-requires="admin">
+                                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                <span>Gestão de Usuários</span>
+                            </button>
                         </nav>
-                    </div>
-
-                    <div>
-                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Saved Filters</div>
-                        <div class="space-y-1">
-                            <button onclick="filterByStatus('Available')" class="w-full text-left sidebar-link justify-between py-1.5 text-xs">
-                                <span>Available Immediately</span>
-                                <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
-                            </button>
-                            <button onclick="filterByDiscipline('Welder')" class="w-full text-left sidebar-link justify-between py-1.5 text-xs">
-                                <span>Offshore Welders</span>
-                                <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
-                            </button>
-                            <button onclick="filterExpiring()" class="w-full text-left sidebar-link justify-between py-1.5 text-xs">
-                                <span>Expiring Passports/Visas</span>
-                                <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
 
-                <div class="space-y-2 pt-4 border-t border-slate-200">
-                    <button onclick="triggerImport()" class="apple-btn apple-btn-green w-full justify-center text-xs py-2">
-                        <i data-lucide="file-up" class="w-4 h-4"></i>
-                        <span>Import Excel / CSV</span>
-                    </button>
-                    <input type="file" id="importFileInput" class="hidden" accept=".csv,.xlsx" onchange="handleFileImport(event)" />
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="exportCSV()" class="apple-btn apple-btn-secondary text-xs justify-center py-1.5">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Excel
-                        </button>
-                        <button onclick="exportCSV()" class="apple-btn apple-btn-secondary text-xs justify-center py-1.5">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i> CSV
-                        </button>
-                    </div>
-
-                    <button onclick="downloadAllDocs()" class="apple-btn w-full justify-center text-xs py-2">
-                        <i data-lucide="archive" class="w-4 h-4"></i>
-                        <span>Download All Docs</span>
-                    </button>
+                <div class="pt-4 border-t border-slate-200 text-xs text-slate-400 font-mono">
+                    STEP Auth Engine v2.5
                 </div>
             </aside>
 
-            <!-- WORKSPACE -->
-            <main class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- CONTEÚDO PRINCIPAL -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
 
-                <div class="flex items-center justify-between gap-4 pb-1 border-b border-slate-200/60">
-                    <span id="resultsCountBadge" class="apple-badge apple-badge-blue">0 candidates found</span>
-
-                    <div class="bg-slate-200/60 p-1 rounded-xl flex gap-1 text-xs font-semibold">
-                        <button id="tabTable" onclick="switchView('table')" class="px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition">Full Data Table</button>
-                        <button id="tabDashboard" onclick="switchView('dashboard')" class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition">Dashboard</button>
-                        <button id="tabActive" onclick="filterByStatus('Working with Us')" class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition">Active Workforce</button>
-                    </div>
-                </div>
-
-                <!-- VIEW TABLE COMPLETA COM TODOS OS CAMPOS -->
+                <!-- VISÃO: TABELA DE CANDIDATOS -->
                 <section id="viewTable" class="view-section space-y-4">
-                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-                        <div class="overflow-x-auto max-h-[72vh]">
+                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-200">
+                        <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs whitespace-nowrap">
-                                <thead class="sticky top-0 z-10 bg-slate-100/90 backdrop-blur-md text-[#475569] uppercase font-bold text-[11px] border-b border-slate-200 tracking-wider">
+                                <thead class="bg-slate-100 text-slate-600 uppercase font-bold text-[10px] border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3">Candidate</th>
-                                        <th class="p-3 text-center">Photo</th>
+                                        <th class="p-3">Candidato</th>
                                         <th class="p-3">Status</th>
-                                        <th class="p-3">Nationality</th>
-                                        <th class="p-3">Age</th>
-                                        <th class="p-3">Contact</th>
-                                        <th class="p-3">Email</th>
-                                        <th class="p-3">Location</th>
-                                        <th class="p-3">Available</th>
-                                        <th class="p-3">Discipline</th>
-                                        <th class="p-3">Skills</th>
-                                        <th class="p-3">O&G Exp</th>
-                                        <th class="p-3">Passport</th>
-                                        <th class="p-3">Expiry</th>
-                                        <th class="p-3">Docs</th>
-                                        <th class="p-3">Certifications</th>
-                                        <th class="p-3">Medicals</th>
-                                        <th class="p-3">Visas</th>
-                                        <th class="p-3 text-center">Actions</th>
+                                        <th class="p-3">Nacionalidade</th>
+                                        <th class="p-3">Contato</th>
+                                        <th class="p-3">E-mail</th>
+                                        <th class="p-3">Passaporte</th>
+                                        <th class="p-3 text-right">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody id="candidateTableBody" class="divide-y divide-slate-200/80"></tbody>
+                                <tbody id="candidateTableBody" class="divide-y divide-slate-100"></tbody>
                             </table>
                         </div>
                     </div>
                 </section>
 
-                <!-- VIEW DASHBOARD -->
-                <section id="viewDashboard" class="view-section space-y-6 hidden">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="glass-card p-5 flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Candidates</p>
-                                <h3 id="dashTotal" class="text-3xl font-extrabold text-slate-800 mt-1">0</h3>
-                            </div>
-                            <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center">
-                                <i data-lucide="users" class="w-6 h-6"></i>
-                            </div>
+                <!-- VISÃO: DASHBOARD -->
+                <section id="viewDashboard" class="view-section hidden space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="glass-card p-5">
+                            <span class="text-xs font-semibold text-slate-500">Total Candidatos</span>
+                            <p id="metricTotal" class="text-3xl font-extrabold text-slate-900 mt-2">0</p>
                         </div>
-
-                        <div class="glass-card p-5 flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Available Immediately</p>
-                                <h3 id="dashAvailable" class="text-3xl font-extrabold text-emerald-600 mt-1">0</h3>
-                            </div>
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                                <i data-lucide="user-check" class="w-6 h-6"></i>
-                            </div>
+                        <div class="glass-card p-5">
+                            <span class="text-xs font-semibold text-slate-500">Disponíveis</span>
+                            <p id="metricAvailable" class="text-3xl font-extrabold text-emerald-600 mt-2">0</p>
                         </div>
-
-                        <div class="glass-card p-5 flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Workforce</p>
-                                <h3 id="dashActive" class="text-3xl font-extrabold text-indigo-600 mt-1">0</h3>
-                            </div>
-                            <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                                <i data-lucide="briefcase" class="w-6 h-6"></i>
-                            </div>
-                        </div>
-
-                        <div class="glass-card p-5 flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Expirations (90 Days)</p>
-                                <h3 id="dashExpiring" class="text-3xl font-extrabold text-amber-600 mt-1">0</h3>
-                            </div>
-                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
-                                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
-                            </div>
+                        <div class="glass-card p-5">
+                            <span class="text-xs font-semibold text-slate-500">Em Projeto</span>
+                            <p id="metricEmployed" class="text-3xl font-extrabold text-brand-600 mt-2">0</p>
                         </div>
                     </div>
+                </section>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="glass-card p-6">
-                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">STATUS BREAKDOWN</h4>
-                            <div class="h-64 flex items-center justify-center">
-                                <canvas id="statusChart"></canvas>
+                <!-- VISÃO: GESTÃO DE USUÁRIOS (ADMIN ONLY) -->
+                <section id="viewUsers" class="view-section hidden space-y-6" data-requires="admin">
+                    <div class="glass-card p-6 border border-slate-200">
+                        <h2 class="text-base font-bold text-slate-900 mb-4">Criar / Atualizar Nível de Acesso de Usuário</h2>
+                        <form id="createUserForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail do Usuário</label>
+                                <input type="email" id="newUserEmail" class="apple-input" placeholder="usuario@empresa.com" required />
                             </div>
-                        </div>
-
-                        <div class="glass-card p-6">
-                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">TOP DISCIPLINES HEADCOUNT</h4>
-                            <div class="h-64">
-                                <canvas id="disciplinesChart"></canvas>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Perfil (Role)</label>
+                                <select id="newUserRole" class="apple-select">
+                                    <option value="viewer">Viewer (Somente Leitura)</option>
+                                    <option value="recruit">Recruiter (Cadastro/Edição)</option>
+                                    <option value="admin">Admin (Acesso Total)</option>
+                                </select>
                             </div>
-                        </div>
+                            <div class="flex items-end">
+                                <button type="submit" class="apple-btn w-full">Salvar Usuário</button>
+                            </div>
+                        </form>
                     </div>
                 </section>
 
@@ -502,979 +310,346 @@
         </div>
     </div>
 
-    <!-- MODAL DE CADASTRO / EDIÇÃO DE CANDIDATO -->
-    <div id="candidateModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl w-full max-w-4xl shadow-2xl border border-slate-100 relative flex flex-col max-h-[90vh] overflow-hidden">
-            
-            <!-- HEADER DO MODAL -->
-            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
-                        <i data-lucide="user" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 id="modalTitle" class="text-lg font-bold text-slate-800 leading-none">New Candidate</h3>
-                            <span id="modalBadgeStatus" class="apple-badge status-available">Available</span>
-                        </div>
-                        <p id="modalSubTitle" class="text-xs text-slate-400 mt-1">Industrial Platform</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <button type="button" class="apple-btn apple-btn-secondary text-xs px-3 py-1.5">Archive</button>
-                    <button type="button" onclick="deleteCurrentCandidate()" class="apple-btn bg-rose-600 hover:bg-rose-700 text-white text-xs px-3 py-1.5">Delete</button>
-                    <button type="button" onclick="closeCandidateModal()" class="text-slate-400 hover:text-slate-600 transition ml-2">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
+    <!-- ─── MODAL DE CANDIDATO (VER/EDITAR/ADD CERTIFICADOS/EXAMES) ─── -->
+    <div id="candidateModal" class="hidden fixed inset-0 z-50 overflow-hidden bg-slate-900/40 backdrop-blur-sm flex justify-end">
+        <div class="w-full max-w-3xl bg-white h-full shadow-2xl flex flex-col">
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <h3 id="modalTitle" class="font-bold text-lg text-slate-900">Perfil do Candidato</h3>
+                <button id="closeModalBtn" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
 
-            <!-- ABAS DO FORMULÁRIO -->
-            <div class="flex items-center gap-1 px-5 border-b border-slate-200 bg-slate-50/30 overflow-x-auto text-xs">
-                <button type="button" class="modal-tab-btn active" onclick="switchModalTab('tabOverview', this)">Overview</button>
-                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabSkills', this)">Skills & Disciplines</button>
-                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabCerts', this)">Certifications</button>
-                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabMedicals', this)">Medicals</button>
-                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabVisas', this)">Visas</button>
-                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabDocs', this)">Docs</button>
-                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabAssignment', this)">Active Assignment</button>
-                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabNotes', this)">Notes & History</button>
+            <!-- Abas do Modal -->
+            <div class="flex items-center gap-2 px-5 border-b border-slate-200 bg-slate-100/50">
+                <button data-tab="tabOverview" class="modal-tab-btn px-4 py-3 text-xs font-bold border-b-2 border-brand-600 text-brand-600">Dados Gerais</button>
+                <button data-tab="tabCerts" class="modal-tab-btn px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-500">Certificados &amp; Cursos</button>
+                <button data-tab="tabExams" class="modal-tab-btn px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-500">Exames Médicos</button>
             </div>
 
-            <!-- CORPO DO FORMULÁRIO -->
-            <div class="p-6 overflow-y-auto flex-1">
-                <form id="candidateForm" onsubmit="handleCandidateSubmit(event)" class="space-y-6">
-                    <input type="hidden" id="candId" value="" />
-                    
-                    <!-- CONTEÚDO TAB OVERVIEW -->
-                    <div id="tabOverview" class="modal-tab-content space-y-6">
-                        <!-- SEÇÃO STATUS & AVAILABILITY -->
-                        <div>
-                            <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">STATUS & AVAILABILITY</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Employment Status</label>
-                                    <select id="candStatus" class="apple-input">
-                                        <option value="Available">Available</option>
-                                        <option value="Working with Us">Working with Us</option>
-                                        <option value="In Interviews">In Interviews</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Availability Window</label>
-                                    <select id="candAvailWindow" class="apple-input">
-                                        <option value="Available Immediately">Available Immediately</option>
-                                        <option value="Available in 2 Weeks">Available in 2 Weeks</option>
-                                        <option value="Available in 1 Month">Available in 1 Month</option>
-                                    </select>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Specific Availability Date</label>
-                                    <input type="date" id="candAvailDate" class="apple-input" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- SEÇÃO PERSONAL DETAILS -->
-                        <div>
-                            <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">PERSONAL DETAILS</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name *</label>
-                                    <input type="text" id="candName" required placeholder="Ex: Carlos Eduardo Silva" class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nationality</label>
-                                    <input type="text" id="candNationality" placeholder="Ex: Brazilian" class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Date of Birth</label>
-                                    <input type="date" id="candDob" class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Age (Auto-calc)</label>
-                                    <input type="number" id="candAge" placeholder="38" class="apple-input bg-slate-50" readonly>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Gender</label>
-                                    <select id="candGender" class="apple-input">
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Contact Number</label>
-                                    <input type="text" id="candPhone" placeholder="+55 22 99876-5432" class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">WhatsApp</label>
-                                    <input type="text" id="candWhatsapp" placeholder="+55 22 99876-5432" class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-                                    <input type="email" id="candEmail" placeholder="carlos.silva@offshore.com" class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Passport Number</label>
-                                    <input type="text" id="candPassport" placeholder="BR9876543" class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Passport Validity (Expiry)</label>
-                                    <input type="date" id="candPassportExpiry" class="apple-input">
-                                </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Located (Country)</label>
-                                        <input type="text" id="candCountry" placeholder="Brazil" class="apple-input">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-slate-600 mb-1">City</label>
-                                        <input type="text" id="candCity" placeholder="Macaé" class="apple-input">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Current Address</label>
-                                    <input type="text" id="candAddress" placeholder="Rua..." class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Driving License</label>
-                                    <select id="candDriver" class="apple-input">
-                                        <option value="Yes">Yes</option>
-                                        <option value="No">No</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">License Category</label>
-                                    <input type="text" id="candDriverCat" placeholder="e.g. B, C, Heavy" class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Emergency Contact Name</label>
-                                    <input type="text" id="candEmergName" placeholder="Nome do Contato" class="apple-input">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Emergency Contact Phone</label>
-                                    <input type="text" id="candEmergPhone" placeholder="+55..." class="apple-input">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ABA SKILLS -->
-                    <div id="tabSkills" class="modal-tab-content hidden space-y-4">
-                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">SKILLS & QUALIFICATIONS</h4>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Primary Discipline / Position</label>
-                            <input type="text" id="candDiscipline" placeholder="Welder, NDT Technician" class="apple-input">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Skills & Technical Competencies (Comma separated)</label>
-                            <input type="text" id="candSkills" placeholder="TIG Welding, MIG Welding, FCAW Welding" class="apple-input">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">O&G / Offshore Experience Summary</label>
-                            <input type="text" id="candOgExp" placeholder="12 yrs OFFSHORE" class="apple-input">
-                        </div>
-                    </div>
-
-                    <!-- ABA CERTIFICATIONS -->
-                    <div id="tabCerts" class="modal-tab-content hidden space-y-4">
-                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">CERTIFICATIONS (BOSIET, HUET, CSWIP, etc.)</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="flex-1 overflow-y-auto p-6">
+                <!-- ABA 1: DADOS GERAIS -->
+                <div id="tabOverview" class="modal-tab-content space-y-4">
+                    <form id="candidateForm" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Certification Name</label>
-                                <input type="text" id="candCertName" placeholder="Ex: BOSIET + OPITO" class="apple-input">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo</label>
+                                <input type="text" id="candName" class="apple-input" required />
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Expiry Date</label>
-                                <input type="date" id="candCertExpiry" class="apple-input">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                                <select id="candStatus" class="apple-select">
+                                    <option value="Available">Disponível</option>
+                                    <option value="Working with Us">Em Projeto</option>
+                                    <option value="In Interviews">Em Entrevista</option>
+                                </select>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- ABA MEDICALS -->
-                    <div id="tabMedicals" class="modal-tab-content hidden space-y-4">
-                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">MEDICAL EXAMINATIONS (OGUK, ASO, FIT TO WORK)</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Medical Certificate</label>
-                                <input type="text" id="candMedName" placeholder="Ex: OGUK Medical Certificate" class="apple-input">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Expiry Date</label>
-                                <input type="date" id="candMedExpiry" class="apple-input">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ABA VISAS -->
-                    <div id="tabVisas" class="modal-tab-content hidden space-y-4">
-                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">WORK VISAS & PERMITS</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Visa / Permit Type</label>
-                                <input type="text" id="candVisaName" placeholder="Ex: Work Visa (Angola)" class="apple-input">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Nacionalidade</label>
+                                <input type="text" id="candNationality" class="apple-input" />
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Expiration Date</label>
-                                <input type="date" id="candVisaExpiry" class="apple-input">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Passaporte</label>
+                                <input type="text" id="candPassport" class="apple-input" />
                             </div>
                         </div>
-                    </div>
-
-                    <!-- ABA DOCS -->
-                    <div id="tabDocs" class="modal-tab-content hidden space-y-4">
-                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">ATTACHMENTS & CURRICULUM VITAE</h4>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">CV File (PDF / DOCX)</label>
-                            <input type="file" id="candCvFile" class="apple-input" accept=".pdf,.doc,.docx" />
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
+                                <input type="email" id="candEmail" class="apple-input" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone / WhatsApp</label>
+                                <input type="text" id="candPhone" class="apple-input" />
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- ABA ASSIGNMENT -->
-                    <div id="tabAssignment" class="modal-tab-content hidden space-y-4">
-                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">CURRENT & PAST ASSIGNMENTS</h4>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Project / Vessel Assigned</label>
-                            <input type="text" id="candAssignmentProject" placeholder="FPSO Carioca / Project XYZ" class="apple-input">
+                        <div class="pt-4 flex justify-end">
+                            <button type="submit" class="apple-btn" data-requires="recruit">Salvar Alterações</button>
                         </div>
-                    </div>
+                    </form>
+                </div>
 
-                    <!-- ABA NOTES -->
-                    <div id="tabNotes" class="modal-tab-content hidden space-y-4">
-                        <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">RECRUITER NOTES & INTERNAL COMMENTS</h4>
-                        <div>
-                            <textarea id="candNotes" rows="4" placeholder="Enter recruiter comments, interview feedback..." class="apple-input"></textarea>
-                        </div>
+                <!-- ABA 2: CERTIFICADOS -->
+                <div id="tabCerts" class="modal-tab-content hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase text-slate-400">Certificados Cadastrados</h4>
+                        <button id="addCertBtn" class="apple-btn text-xs" data-requires="recruit">+ Adicionar Certificado</button>
                     </div>
+                    <div id="certsList" class="space-y-2"></div>
+                </div>
 
-                    <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
-                        <button type="button" onclick="closeCandidateModal()" class="apple-btn apple-btn-secondary text-xs">Cancelar</button>
-                        <button type="submit" class="apple-btn text-xs">
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                            <span>Salvar Candidato</span>
-                        </button>
+                <!-- ABA 3: EXAMES MÉDICOS -->
+                <div id="tabExams" class="modal-tab-content hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase text-slate-400">Exames &amp; ASO</h4>
+                        <button id="addExamBtn" class="apple-btn text-xs" data-requires="recruit">+ Adicionar Exame</button>
                     </div>
-                </form>
+                    <div id="examsList" class="space-y-2"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL GESTÃO DE USUÁRIOS -->
-    <div id="usersModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-3xl shadow-2xl border border-slate-100 relative">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-5 h-5 text-brand-600"></i>
-                    <span>Administração de Usuários e Perfis</span>
-                </h3>
-                <button type="button" onclick="closeUsersModal()" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-
-            <form id="newUserForm" onsubmit="handleCreateUser(event)" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
-                <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Criar Novo Acesso</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail *</label>
-                        <input type="email" id="newUserEmail" required placeholder="usuario@step-og.com" class="apple-input">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Senha *</label>
-                        <input type="password" id="newUserPassword" required placeholder="••••••••" class="apple-input">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Perfil / Role *</label>
-                        <select id="newUserRole" class="apple-input">
-                            <option value="viewer">Viewer</option>
-                            <option value="recruiter">Recruiter</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex justify-end pt-2">
-                    <button type="submit" class="apple-btn text-xs"><i data-lucide="user-plus" class="w-4 h-4"></i> Criar Usuário</button>
-                </div>
-            </form>
-
-            <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl">
-                <table class="w-full text-left text-xs whitespace-nowrap">
-                    <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
-                        <tr>
-                            <th class="p-2.5">E-mail</th>
-                            <th class="p-2.5">Perfil</th>
-                            <th class="p-2.5">Status</th>
-                            <th class="p-2.5 text-right">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersListBody" class="divide-y divide-slate-100">
-                        <tr>
-                            <td class="p-2.5 font-medium">admin@step.com</td>
-                            <td class="p-2.5"><span class="apple-badge apple-badge-blue">Admin</span></td>
-                            <td class="p-2.5"><span class="apple-badge status-working">Ativo</span></td>
-                            <td class="p-2.5 text-right"><span class="text-slate-400">Padrão</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN SCRIPT -->
+    <!-- ─── SCRIPT DE LÓGICA, AUTENTICAÇÃO E SUPABASE ─── -->
     <script>
-        const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
+        // 1. CONFIGURAÇÃO DO SUPABASE
+        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co'; // Substitua pelo seu Project URL
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';                 // Substitua pela sua Anon Key
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function getSupabaseClient(options = {}) {
-            const createFn = (window.supabase && window.supabase.createClient) || 
-                             (window.supabase_js && window.supabase_js.createClient);
-            return createFn ? createFn(SUPABASE_URL, SUPABASE_ANON_KEY, options) : null;
-        }
-
-        let supabaseClient = getSupabaseClient();
-
-        // SEED DE DADOS EM MEMÓRIA COMO FALLBACK
-        const MOCK_SEED_CANDIDATES = [
-            {
-                id: 'cand_1',
-                name: 'Carlos Eduardo Silva',
-                photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
-                status: 'Working with Us',
-                nationality: 'Brazilian',
-                age: 38,
-                dob: '1988-03-15',
-                gender: 'Male',
-                phone: '+55 22 99876-5432',
-                whatsapp: '+55 22 99876-5432',
-                email: 'carlos.silva@offshore.com',
-                location: 'Brazil (Macaé)',
-                country: 'Brazil',
-                city: 'Macaé',
-                address: 'Rua Principal, 123',
-                driver: 'Yes',
-                driverCat: 'B',
-                emergName: 'Maria Silva',
-                emergPhone: '+55 22 99999-8888',
-                available: 'Available Immediately',
-                availWindow: 'Available Immediately',
-                availDate: '2026-08-10',
-                discipline: 'Welder, NDT Technician',
-                skills: 'TIG Welding • MIG Welding • FCAW Welding',
-                ogExp: '12 yrs OFFSHORE',
-                passport: 'BR9876543',
-                expiry: '2026-10-15',
-                cvPdf: 'Curriculum_Vitae_Carlos_Silva.pdf',
-                certs: [
-                    { name: 'BOSIET Cert', expiry: '2026-05-10', expired: true },
-                    { name: 'HUET Cert', expiry: '2026-06-10', expired: true }
-                ],
-                medicals: [
-                    { name: 'OGUK Medical', expiry: '2026-09-01' }
-                ],
-                visas: [
-                    { name: 'Work Visa (Angola)', expiry: '2027-01-20' }
-                ]
-            },
-            {
-                id: 'cand_2',
-                name: 'João Pedro Santos',
-                photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
-                status: 'Available',
-                nationality: 'Portuguese',
-                age: 33,
-                dob: '1993-07-22',
-                gender: 'Male',
-                phone: '+351 912 345 678',
-                whatsapp: '+351 912 345 678',
-                email: 'j.santos@energytech.pt',
-                location: 'Portugal (Porto)',
-                country: 'Portugal',
-                city: 'Porto',
-                address: 'Av. Liberdade, 45',
-                driver: 'Yes',
-                driverCat: 'C',
-                emergName: 'Ana Santos',
-                emergPhone: '+351 912 000 000',
-                available: 'Available Immediately',
-                availWindow: 'Available Immediately',
-                availDate: '2026-08-10',
-                discipline: 'Pipefitter, Mechanical Technician',
-                skills: 'Pipe Installation • Hydro Testing • Shutdown Exp',
-                ogExp: '8 yrs OFFSHORE',
-                passport: 'PT1234567',
-                expiry: '2026-08-25',
-                cvPdf: 'CV_Joao_Santos.pdf',
-                certs: [
-                    { name: 'CSWIP 3.1', expiry: '2026-08-01', expired: true }
-                ],
-                medicals: [
-                    { name: 'Fit to Work', expiry: '2025-08-01' }
-                ],
-                visas: []
-            },
-            {
-                id: 'cand_3',
-                name: 'Elena Rostova',
-                photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
-                status: 'In Interviews',
-                nationality: 'British',
-                age: 40,
-                dob: '1986-11-05',
-                gender: 'Female',
-                phone: '+44 7700 900077',
-                whatsapp: '+44 7700 900077',
-                email: 'elena.rostova@hse-solutions.co.uk',
-                location: 'United Kingdom (Aberdeen)',
-                country: 'United Kingdom',
-                city: 'Aberdeen',
-                address: 'High St, 10',
-                driver: 'No',
-                driverCat: '',
-                emergName: 'John Rostova',
-                emergPhone: '+44 7700 111222',
-                available: 'Available in 2 Weeks',
-                availWindow: 'Available in 2 Weeks',
-                availDate: '2026-08-24',
-                discipline: 'HSE Officer, Project Engineer',
-                skills: 'NEBOSH • IOSH • Offshore Experience • LNG Exp',
-                ogExp: '15 yrs OFFSHORE',
-                passport: 'UK9988776',
-                expiry: '2029-05-10',
-                cvPdf: 'CV_Elena_Rostova.pdf',
-                certs: [
-                    { name: 'NEBOSH Diploma', expiry: '2028-06-01' }
-                ],
-                medicals: [
-                    { name: 'OGUK Medical', expiry: '2027-11-15' }
-                ],
-                visas: []
-            }
+        // Estado Global
+        let currentUser = null;
+        let currentUserRole = 'viewer';
+        let candidatesData = [
+            { id: 1, name: 'Carlos Eduardo', status: 'Available', nationality: 'Brasileira', phone: '+55 22 99999-8888', email: 'carlos@mdo.com', passport: 'BR123456', certs: ['CBSP', 'HUET'], exams: ['ASO Ocupacional'] }
         ];
+        let currentSelectedCandidate = null;
 
-        let allCandidatesCache = [];
-        let currentUserRole = 'admin';
-        let statusChartInstance = null;
-        let disciplinesChartInstance = null;
+        // Elementos DOM
+        const authScreen = document.getElementById('authScreen');
+        const appScreen = document.getElementById('appScreen');
+        const loginForm = document.getElementById('loginForm');
+        const authErrorMessage = document.getElementById('authErrorMessage');
 
-        // CONTROLE DAS ABAS DO MODAL
-        function switchModalTab(tabId, btn) {
-            document.querySelectorAll('.modal-tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.modal-tab-btn').forEach(el => el.classList.remove('active'));
+        // Inicialização dos Ícones Lucide
+        lucide.createIcons();
 
-            document.getElementById(tabId).classList.remove('hidden');
-            if (btn) btn.classList.add('active');
+        // 2. MONITORAMENTO DE SESSÃO E AUTENTICAÇÃO
+        supabase.auth.onAuthStateChange(async (event, session) => {
+            if (session) {
+                currentUser = session.user;
+                await fetchUserRole();
+                initApp();
+            } else {
+                currentUser = null;
+                currentUserRole = 'viewer';
+                showAuthScreen();
+            }
+        });
+
+        // Formulário de Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            authErrorMessage.classList.add('hidden');
+            const submitBtn = document.getElementById('loginSubmitBtn');
+            submitBtn.textContent = 'Autenticando...';
+            submitBtn.disabled = true;
+
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                authErrorMessage.textContent = error.message || 'Erro ao realizar login.';
+                authErrorMessage.classList.remove('hidden');
+            }
+            
+            submitBtn.textContent = 'Entrar na Plataforma';
+            submitBtn.disabled = false;
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+        });
+
+        // Busca o papel (role) na tabela public.profiles
+        async function fetchUserRole() {
+            if (!currentUser) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', currentUser.id)
+                    .single();
+
+                if (data && data.role) {
+                    currentUserRole = data.role;
+                } else {
+                    currentUserRole = 'viewer';
+                }
+            } catch (err) {
+                console.error('Erro ao buscar role:', err);
+                currentUserRole = 'viewer';
+            }
         }
 
-        // RENDERIZAÇÃO DA TABELA DE CANDIDATOS
-        function renderCandidateTable(candidates) {
+        // 3. CONTROLE DE INTERFACE E PERMISSÕES (RBAC)
+        function showAuthScreen() {
+            authScreen.classList.remove('hidden');
+            appScreen.classList.add('hidden');
+        }
+
+        function initApp() {
+            authScreen.classList.add('hidden');
+            appScreen.classList.remove('hidden');
+            applyRolePermissions();
+            renderCandidatesTable();
+            updateMetrics();
+        }
+
+        function applyRolePermissions() {
+            document.getElementById('userEmailDisplay').textContent = currentUser.email;
+            const badge = document.getElementById('userRoleBadge');
+            badge.textContent = currentUserRole.toUpperCase();
+            badge.className = `role-badge role-${currentUserRole}`;
+
+            // Exibir/Ocultar elementos com base no atributo data-requires
+            document.querySelectorAll('[data-requires]').forEach(el => {
+                const requiredRole = el.getAttribute('data-requires');
+                if (requiredRole === 'admin' && currentUserRole !== 'admin') {
+                    el.classList.add('hidden');
+                } else if (requiredRole === 'recruit' && (currentUserRole !== 'recruit' && currentUserRole !== 'admin')) {
+                    el.classList.add('hidden');
+                } else {
+                    el.classList.remove('hidden');
+                }
+            });
+        }
+
+        // 4. GESTÃO DE USUÁRIOS (PAINEL ADMIN)
+        const createUserForm = document.getElementById('createUserForm');
+        if (createUserForm) {
+            createUserForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (currentUserRole !== 'admin') return alert('Acesso negado.');
+
+                const targetEmail = document.getElementById('newUserEmail').value;
+                const newRole = document.getElementById('newUserRole').value;
+
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .update({ role: newRole })
+                    .eq('email', targetEmail);
+
+                if (error) {
+                    alert('Erro ao atualizar permissão: ' + error.message);
+                } else {
+                    alert(`Permissão do usuário ${targetEmail} alterada para ${newRole.toUpperCase()} com sucesso!`);
+                    createUserForm.reset();
+                }
+            });
+        }
+
+        // 5. NAVEGAÇÃO DA SIDEBAR
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetView = btn.getAttribute('data-view');
+                document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+                
+                const targetSection = document.getElementById(`view${targetView.charAt(0).toUpperCase() + targetView.slice(1)}`);
+                if (targetSection) targetSection.classList.remove('hidden');
+
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('bg-brand-50', 'text-brand-600', 'font-bold');
+                    i.classList.add('text-slate-600', 'font-semibold');
+                });
+                btn.classList.add('bg-brand-50', 'text-brand-600', 'font-bold');
+            });
+        });
+
+        // 6. RENDERIZAÇÃO DA TABELA E MÉTRICAS
+        function renderCandidatesTable() {
             const tbody = document.getElementById('candidateTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            if (!candidates || candidates.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="19" class="p-6 text-center text-slate-400">Nenhum candidato encontrado.</td></tr>`;
-                document.getElementById('resultsCountBadge').innerText = `0 candidates found`;
-                return;
-            }
-
-            candidates.forEach(cand => {
+            candidatesData.forEach(c => {
                 const tr = document.createElement('tr');
-                tr.className = 'border-b border-slate-200/60 hover:bg-slate-50 transition';
-                
-                let badgeStyle = 'status-available';
-                if (cand.status === 'Working with Us') badgeStyle = 'status-working';
-                if (cand.status === 'In Interviews') badgeStyle = 'status-interviews';
-
-                const photoHtml = cand.photo 
-                    ? `<img src="${cand.photo}" class="w-7 h-7 rounded-full object-cover border border-slate-200 mx-auto" />`
-                    : `<div class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 font-bold text-[10px] flex items-center justify-center mx-auto">${cand.name ? cand.name.charAt(0) : 'C'}</div>`;
-
-                const docHtml = cand.cvPdf 
-                    ? `<a href="#" class="doc-chip" onclick="alert('Baixando ${cand.cvPdf}...')"><i data-lucide="file-text" class="w-3 h-3"></i> ${cand.cvPdf} <i data-lucide="download" class="w-3 h-3"></i></a>`
-                    : `-`;
-
-                let certsHtml = '-';
-                if (cand.certs && cand.certs.length > 0) {
-                    certsHtml = cand.certs.map(c => {
-                        const style = c.expired ? 'cert-expired' : 'cert-ok';
-                        return `<span class="cert-tag ${style}">${c.name} <span class="text-[9px] opacity-75">${c.expiry || ''}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`;
-                    }).join(' ');
-                }
-
-                let medicalsHtml = '-';
-                if (cand.medicals && cand.medicals.length > 0) {
-                    medicalsHtml = cand.medicals.map(m => `<span class="cert-tag cert-ok">${m.name} <span class="text-[9px] text-amber-600">${m.expiry || ''}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`).join(' ');
-                }
-
-                let visasHtml = 'None';
-                if (cand.visas && cand.visas.length > 0) {
-                    visasHtml = cand.visas.map(v => `<span class="cert-tag cert-ok">${v.name} <span class="text-[9px] text-slate-500">${v.expiry || ''}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`).join(' ');
-                }
-
+                tr.className = 'hover:bg-slate-50 transition cursor-pointer';
                 tr.innerHTML = `
-                    <td class="p-3 font-semibold text-[#0f172a]">${cand.name || '-'}</td>
-                    <td class="p-3 text-center">${photoHtml}</td>
-                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${cand.status || 'Available'}</span></td>
-                    <td class="p-3">${cand.nationality || '-'}</td>
-                    <td class="p-3 font-semibold">${cand.age || '-'}</td>
-                    <td class="p-3 text-slate-600">${cand.phone || '-'}</td>
-                    <td class="p-3 text-sky-600 underline cursor-pointer">${cand.email || '-'}</td>
-                    <td class="p-3">${cand.location || '-'}</td>
-                    <td class="p-3 text-amber-700 font-medium">${cand.available || '-'}</td>
-                    <td class="p-3 font-bold">${cand.discipline || '-'}</td>
-                    <td class="p-3 text-slate-600">${cand.skills || '-'}</td>
-                    <td class="p-3 font-semibold">${cand.ogExp || '-'}</td>
-                    <td class="p-3">${cand.passport || '-'}</td>
-                    <td class="p-3">${cand.expiry || '-'}</td>
-                    <td class="p-3">${docHtml}</td>
-                    <td class="p-3">${certsHtml}</td>
-                    <td class="p-3">${medicalsHtml}</td>
-                    <td class="p-3">${visasHtml}</td>
-                    <td class="p-3 text-center">
-                        <button onclick="editCandidate('${cand.id}')" class="text-slate-400 hover:text-slate-700"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                    <td class="p-3 font-bold text-slate-800">${c.name}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${c.status}</span></td>
+                    <td class="p-3 text-slate-600">${c.nationality}</td>
+                    <td class="p-3 text-slate-600">${c.phone}</td>
+                    <td class="p-3 text-slate-600">${c.email}</td>
+                    <td class="p-3 text-slate-600">${c.passport}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="openCandidateModal(${c.id})" class="text-brand-600 font-bold hover:underline">Ver / Editar</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidates found`;
-            if (window.lucide) lucide.createIcons();
-            updateDashboardMetrics(candidates);
-            renderNotificationPanel(candidates);
         }
 
-        // PAINEL DE NOTIFICAÇÕES (ALERTAS DE EXPIRAÇÃO)
-        function renderNotificationPanel(list) {
-            const container = document.getElementById('notifListContainer');
-            const badge = document.getElementById('notifBadge');
-            if (!container || !badge) return;
-
-            container.innerHTML = '';
-            let alerts = [];
-
-            list.forEach(cand => {
-                if (cand.certs) {
-                    cand.certs.forEach(cert => {
-                        if (cert.expired) {
-                            alerts.push({ candidate: cand.name, doc: cert.name, expiry: cert.expiry });
-                        }
-                    });
-                }
-            });
-
-            badge.innerText = alerts.length;
-
-            if (alerts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 py-2 text-center">Nenhum documento expirado.</p>`;
-                return;
-            }
-
-            alerts.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'p-2.5 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-between text-xs';
-                div.innerHTML = `
-                    <div>
-                        <div class="font-bold text-slate-800">${item.candidate}</div>
-                        <div class="text-[11px] text-amber-800">${item.doc}</div>
-                    </div>
-                    <span class="text-[10px] font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md">${item.expiry || 'Expirado'}</span>
-                `;
-                container.appendChild(div);
-            });
+        function updateMetrics() {
+            document.getElementById('metricTotal').textContent = candidatesData.length;
+            document.getElementById('metricAvailable').textContent = candidatesData.filter(c => c.status === 'Available').length;
+            document.getElementById('metricEmployed').textContent = candidatesData.filter(c => c.status === 'Working with Us').length;
         }
 
-        // CARREGAMENTO DE CANDIDATOS
-        async function loadCandidates() {
-            if (supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient.from('candidates').select('*');
-                    if (!error && data && data.length > 0) {
-                        allCandidatesCache = data;
-                        renderCandidateTable(allCandidatesCache);
-                        return;
-                    }
-                } catch (e) {
-                    console.log('Supabase off/unconfigured, loading mock seed.');
-                }
-            }
-            allCandidatesCache = [...MOCK_SEED_CANDIDATES];
-            renderCandidateTable(allCandidatesCache);
-        }
+        // 7. MODAL DE CANDIDATOS, CERTIFICADOS E EXAMES
+        window.openCandidateModal = function(id) {
+            currentSelectedCandidate = candidatesData.find(c => c.id === id);
+            if (!currentSelectedCandidate) return;
 
-        // DASHBOARD E GRÁFICOS
-        function updateDashboardMetrics(list) {
-            const total = list.length;
-            const available = list.filter(c => c.status === 'Available').length;
-            const active = list.filter(c => c.status === 'Working with Us').length;
+            document.getElementById('candName').value = currentSelectedCandidate.name;
+            document.getElementById('candStatus').value = currentSelectedCandidate.status;
+            document.getElementById('candNationality').value = currentSelectedCandidate.nationality;
+            document.getElementById('candPassport').value = currentSelectedCandidate.passport;
+            document.getElementById('candEmail').value = currentSelectedCandidate.email;
+            document.getElementById('candPhone').value = currentSelectedCandidate.phone;
 
-            document.getElementById('dashTotal').innerText = total;
-            document.getElementById('dashAvailable').innerText = available;
-            document.getElementById('dashActive').innerText = active;
-            document.getElementById('badgeActiveCount').innerText = active;
-
-            let expiringCount = 0;
-            list.forEach(c => {
-                if (c.certs) expiringCount += c.certs.filter(cert => cert.expired).length;
-            });
-            document.getElementById('dashExpiring').innerText = expiringCount;
-
-            renderCharts(list);
-        }
-
-        function renderCharts(list) {
-            if (typeof Chart === 'undefined') return;
-
-            const statusCtx = document.getElementById('statusChart')?.getContext('2d');
-            const discCtx = document.getElementById('disciplinesChart')?.getContext('2d');
-
-            if (!statusCtx || !discCtx) return;
-
-            const counts = { Available: 0, 'Working with Us': 0, 'In Interviews': 0 };
-            const disciplines = {};
-
-            list.forEach(c => {
-                const st = c.status || 'Available';
-                counts[st] = (counts[st] || 0) + 1;
-
-                const disc = c.discipline || 'Unassigned';
-                disciplines[disc] = (disciplines[disc] || 0) + 1;
-            });
-
-            if (statusChartInstance) statusChartInstance.destroy();
-            statusChartInstance = new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(counts),
-                    datasets: [{
-                        data: Object.values(counts),
-                        backgroundColor: ['#fde047', '#86efac', '#7dd3fc']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
-            if (disciplinesChartInstance) disciplinesChartInstance.destroy();
-            disciplinesChartInstance = new Chart(discCtx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(disciplines),
-                    datasets: [{
-                        label: 'Candidates',
-                        data: Object.values(disciplines),
-                        backgroundColor: '#0284c7'
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        // PESQUISA E FILTROS
-        function handleGlobalSearch(e) {
-            const query = e.target.value.toLowerCase().trim();
-            if (!query) {
-                renderCandidateTable(allCandidatesCache);
-                return;
-            }
-            const filtered = allCandidatesCache.filter(c => 
-                (c.name && c.name.toLowerCase().includes(query)) ||
-                (c.discipline && c.discipline.toLowerCase().includes(query)) ||
-                (c.skills && c.skills.toLowerCase().includes(query)) ||
-                (c.nationality && c.nationality.toLowerCase().includes(query)) ||
-                (c.email && c.email.toLowerCase().includes(query)) ||
-                (c.location && c.location.toLowerCase().includes(query)) ||
-                (c.passport && c.passport.toLowerCase().includes(query)) ||
-                (c.city && c.city.toLowerCase().includes(query))
-            );
-            renderCandidateTable(filtered);
-        }
-
-        function filterByStatus(status) {
-            switchView('table');
-            const filtered = allCandidatesCache.filter(c => c.status === status);
-            renderCandidateTable(filtered);
-        }
-
-        function filterByDiscipline(discKey) {
-            switchView('table');
-            const filtered = allCandidatesCache.filter(c => c.discipline && c.discipline.toLowerCase().includes(discKey.toLowerCase()));
-            renderCandidateTable(filtered);
-        }
-
-        function filterExpiring() {
-            switchView('table');
-            const filtered = allCandidatesCache.filter(c => c.certs && c.certs.some(cert => cert.expired));
-            renderCandidateTable(filtered);
-        }
-
-        function toggleFilterMenu() {
-            alert('Menu de filtros avançados ativado.');
-        }
-
-        // CADASTRO / EDIÇÃO DE CANDIDATO
-        function openCandidateModal() {
-            document.getElementById('candidateForm').reset();
-            document.getElementById('candId').value = '';
-            document.getElementById('candAge').value = '';
-            document.getElementById('modalTitle').innerText = 'New Candidate';
-            switchModalTab('tabOverview', document.querySelector('.modal-tab-btn'));
+            renderCertsAndExams();
             document.getElementById('candidateModal').classList.remove('hidden');
+        };
+
+        function renderCertsAndExams() {
+            const certsList = document.getElementById('certsList');
+            certsList.innerHTML = currentSelectedCandidate.certs.map(cert => `
+                <div class="p-3 rounded-xl bg-slate-100 flex items-center justify-between text-xs font-semibold">
+                    <span>${cert}</span>
+                    <span class="text-emerald-600">Válido</span>
+                </div>
+            `).join('');
+
+            const examsList = document.getElementById('examsList');
+            examsList.innerHTML = currentSelectedCandidate.exams.map(exam => `
+                <div class="p-3 rounded-xl bg-slate-100 flex items-center justify-between text-xs font-semibold">
+                    <span>${exam}</span>
+                    <span class="text-emerald-600">Apto</span>
+                </div>
+            `).join('');
         }
 
-        function editCandidate(id) {
-            const cand = allCandidatesCache.find(c => c.id === id);
-            if (!cand) return;
-
-            document.getElementById('candId').value = cand.id;
-            document.getElementById('candName').value = cand.name || '';
-            document.getElementById('candStatus').value = cand.status || 'Available';
-            document.getElementById('candAvailWindow').value = cand.availWindow || 'Available Immediately';
-            document.getElementById('candAvailDate').value = cand.availDate || '';
-            document.getElementById('candNationality').value = cand.nationality || '';
-            document.getElementById('candDob').value = cand.dob || '';
-            document.getElementById('candAge').value = cand.age || '';
-            document.getElementById('candGender').value = cand.gender || 'Male';
-            document.getElementById('candPhone').value = cand.phone || '';
-            document.getElementById('candWhatsapp').value = cand.whatsapp || '';
-            document.getElementById('candEmail').value = cand.email || '';
-            document.getElementById('candPassport').value = cand.passport || '';
-            document.getElementById('candPassportExpiry').value = cand.expiry || '';
-            document.getElementById('candCountry').value = cand.country || '';
-            document.getElementById('candCity').value = cand.city || '';
-            document.getElementById('candAddress').value = cand.address || '';
-            document.getElementById('candDriver').value = cand.driver || 'Yes';
-            document.getElementById('candDriverCat').value = cand.driverCat || '';
-            document.getElementById('candEmergName').value = cand.emergName || '';
-            document.getElementById('candEmergPhone').value = cand.emergPhone || '';
-            document.getElementById('candDiscipline').value = cand.discipline || '';
-            document.getElementById('candSkills').value = cand.skills || '';
-            document.getElementById('candOgExp').value = cand.ogExp || '';
-            document.getElementById('candNotes').value = cand.notes || '';
-
-            if (cand.certs && cand.certs.length > 0) {
-                document.getElementById('candCertName').value = cand.certs[0].name || '';
-                document.getElementById('candCertExpiry').value = cand.certs[0].expiry || '';
-            }
-            if (cand.medicals && cand.medicals.length > 0) {
-                document.getElementById('candMedName').value = cand.medicals[0].name || '';
-                document.getElementById('candMedExpiry').value = cand.medicals[0].expiry || '';
-            }
-            if (cand.visas && cand.visas.length > 0) {
-                document.getElementById('candVisaName').value = cand.visas[0].name || '';
-                document.getElementById('candVisaExpiry').value = cand.visas[0].expiry || '';
-            }
-
-            document.getElementById('modalTitle').innerText = 'Edit Candidate';
-            switchModalTab('tabOverview', document.querySelector('.modal-tab-btn'));
-            document.getElementById('candidateModal').classList.remove('hidden');
-        }
-
-        function closeCandidateModal() {
+        document.getElementById('closeModalBtn')?.addEventListener('click', () => {
             document.getElementById('candidateModal').classList.add('hidden');
-        }
-
-        async function handleCandidateSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('candId').value || 'cand_' + Date.now();
-            const name = document.getElementById('candName').value;
-            const status = document.getElementById('candStatus').value;
-            const availWindow = document.getElementById('candAvailWindow').value;
-            const availDate = document.getElementById('candAvailDate').value;
-            const nationality = document.getElementById('candNationality').value;
-            const dob = document.getElementById('candDob').value;
-            const age = document.getElementById('candAge').value;
-            const gender = document.getElementById('candGender').value;
-            const phone = document.getElementById('candPhone').value;
-            const whatsapp = document.getElementById('candWhatsapp').value;
-            const email = document.getElementById('candEmail').value;
-            const passport = document.getElementById('candPassport').value;
-            const expiry = document.getElementById('candPassportExpiry').value;
-            const country = document.getElementById('candCountry').value;
-            const city = document.getElementById('candCity').value;
-            const address = document.getElementById('candAddress').value;
-            const driver = document.getElementById('candDriver').value;
-            const driverCat = document.getElementById('candDriverCat').value;
-            const emergName = document.getElementById('candEmergName').value;
-            const emergPhone = document.getElementById('candEmergPhone').value;
-            const discipline = document.getElementById('candDiscipline').value;
-            const skills = document.getElementById('candSkills').value;
-            const ogExp = document.getElementById('candOgExp').value;
-            const notes = document.getElementById('candNotes').value;
-
-            const certName = document.getElementById('candCertName').value;
-            const certExpiry = document.getElementById('candCertExpiry').value;
-            const medName = document.getElementById('candMedName').value;
-            const medExpiry = document.getElementById('candMedExpiry').value;
-            const visaName = document.getElementById('candVisaName').value;
-            const visaExpiry = document.getElementById('candVisaExpiry').value;
-
-            const existingIndex = allCandidatesCache.findIndex(c => c.id === id);
-            const prevCandidate = existingIndex >= 0 ? allCandidatesCache[existingIndex] : {};
-
-            const locationStr = country && city ? `${country} (${city})` : (country || city || 'Brazil');
-
-            let certs = prevCandidate.certs || [];
-            if (certName) {
-                certs = [{ name: certName, expiry: certExpiry, expired: certExpiry ? new Date(certExpiry) < new Date() : false }];
-            }
-
-            let medicals = prevCandidate.medicals || [];
-            if (medName) {
-                medicals = [{ name: medName, expiry: medExpiry }];
-            }
-
-            let visas = prevCandidate.visas || [];
-            if (visaName) {
-                visas = [{ name: visaName, expiry: visaExpiry }];
-            }
-
-            const updatedCand = {
-                ...prevCandidate,
-                id, name, status, availWindow, availDate, nationality, dob, age, gender,
-                phone, whatsapp, email, passport, expiry, country, city, address,
-                driver, driverCat, emergName, emergPhone, discipline, skills, ogExp, notes,
-                available: availWindow,
-                location: locationStr,
-                cvPdf: prevCandidate.cvPdf || ('CV_' + name.replace(/\s+/g, '_') + '.pdf'),
-                certs, medicals, visas
-            };
-
-            if (supabaseClient) {
-                try {
-                    await supabaseClient.from('candidates').upsert(updatedCand);
-                } catch (err) {
-                    console.log('Erro ao salvar no Supabase, mantendo no cache local.', err);
-                }
-            }
-
-            if (existingIndex >= 0) {
-                allCandidatesCache[existingIndex] = updatedCand;
-            } else {
-                allCandidatesCache.push(updatedCand);
-            }
-
-            renderCandidateTable(allCandidatesCache);
-            closeCandidateModal();
-        }
-
-        async function deleteCurrentCandidate() {
-            const id = document.getElementById('candId').value;
-            if (!id) {
-                closeCandidateModal();
-                return;
-            }
-            if (confirm('Tem certeza que deseja remover este candidato?')) {
-                if (supabaseClient) {
-                    try {
-                        await supabaseClient.from('candidates').delete().eq('id', id);
-                    } catch (err) {
-                        console.log('Erro ao remover do Supabase', err);
-                    }
-                }
-                allCandidatesCache = allCandidatesCache.filter(c => c.id !== id);
-                renderCandidateTable(allCandidatesCache);
-                closeCandidateModal();
-            }
-        }
-
-        // AUTENTICAÇÃO E NAVEGAÇÃO
-        function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
-            document.getElementById('appContainer').classList.add('flex');
-            document.getElementById('userEmailSpan').innerText = email;
-            
-            document.getElementById('btnAdminUsers').classList.remove('hidden');
-            document.getElementById('btnNewCandidate').classList.remove('hidden');
-
-            loadCandidates();
-        }
-
-        function handleLogout() {
-            document.getElementById('appContainer').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('flex');
-            document.getElementById('authScreen').classList.remove('hidden');
-        }
-
-        function switchView(view) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
-
-            const tabTableBtn = document.getElementById('tabTable');
-            const tabDashBtn = document.getElementById('tabDashboard');
-            const tabActiveBtn = document.getElementById('tabActive');
-
-            if (tabTableBtn) tabTableBtn.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
-            if (tabDashBtn) tabDashBtn.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
-            if (tabActiveBtn) tabActiveBtn.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
-
-            if (view === 'table') {
-                document.getElementById('viewTable').classList.remove('hidden');
-                document.getElementById('navTable').classList.add('active');
-                if (tabTableBtn) tabTableBtn.className = "px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition";
-            } else {
-                document.getElementById('viewDashboard').classList.remove('hidden');
-                document.getElementById('navDashboard').classList.add('active');
-                if (tabDashBtn) tabDashBtn.className = "px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition";
-            }
-        }
-
-        // MODAL USUÁRIOS E NOTIFICAÇÕES
-        function toggleNotificationPanel() { document.getElementById('notificationPanel').classList.toggle('hidden'); }
-        function openUsersModal() { document.getElementById('usersModal').classList.remove('hidden'); }
-        function closeUsersModal() { document.getElementById('usersModal').classList.add('hidden'); }
-        function handleCreateUser(e) {
-            e.preventDefault();
-            alert('Usuário criado com sucesso!');
-            document.getElementById('newUserForm').reset();
-        }
-
-        function triggerImport() { document.getElementById('importFileInput').click(); }
-        function handleFileImport(e) { alert("Arquivo selecionado: " + e.target.files[0]?.name); }
-
-        function exportCSV() {
-            if (!allCandidatesCache || allCandidatesCache.length === 0) {
-                alert("Nenhum dado para exportar.");
-                return;
-            }
-            const headers = ["Name", "Status", "Nationality", "Age", "Phone", "Email", "Location", "Discipline", "Skills", "Passport"];
-            const rows = allCandidatesCache.map(c => [
-                `"${c.name || ''}"`,
-                `"${c.status || ''}"`,
-                `"${c.nationality || ''}"`,
-                `"${c.age || ''}"`,
-                `"${c.phone || ''}"`,
-                `"${c.email || ''}"`,
-                `"${c.location || ''}"`,
-                `"${c.discipline || ''}"`,
-                `"${c.skills || ''}"`,
-                `"${c.passport || ''}"`
-            ]);
-
-            const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "candidates_export.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function downloadAllDocs() { alert("Iniciando download em lote dos arquivos e comprovantes..."); }
-
-        // AUTO-CÁLCULO DE IDADE
-        document.getElementById('candDob')?.addEventListener('change', (e) => {
-            if (!e.target.value) return;
-            const dob = new Date(e.target.value);
-            const diff = Date.now() - dob.getTime();
-            const ageDate = new Date(diff);
-            document.getElementById('candAge').value = Math.abs(ageDate.getUTCFullYear() - 1970);
         });
 
-        // INICIALIZAÇÃO DA PÁGINA
-        window.addEventListener('DOMContentLoaded', () => {
-            if (window.lucide) lucide.createIcons();
+        // Alternância de Abas do Modal
+        document.querySelectorAll('.modal-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.getAttribute('data-tab');
+                document.querySelectorAll('.modal-tab-content').forEach(tc => tc.classList.add('hidden'));
+                document.getElementById(targetTab).classList.remove('hidden');
+
+                document.querySelectorAll('.modal-tab-btn').forEach(b => {
+                    b.classList.remove('border-brand-600', 'text-brand-600', 'font-bold');
+                    b.classList.add('border-transparent', 'text-slate-500');
+                });
+                btn.classList.add('border-brand-600', 'text-brand-600', 'font-bold');
+            });
+        });
+
+        // Adição de Certificados e Exames
+        document.getElementById('addCertBtn')?.addEventListener('click', () => {
+            if (currentUserRole === 'viewer') return alert('Permissão insuficiente.');
+            const certName = prompt('Nome do Certificado/Treinamento:');
+            if (certName && currentSelectedCandidate) {
+                currentSelectedCandidate.certs.push(certName);
+                renderCertsAndExams();
+            }
+        });
+
+        document.getElementById('addExamBtn')?.addEventListener('click', () => {
+            if (currentUserRole === 'viewer') return alert('Permissão insuficiente.');
+            const examName = prompt('Nome do Exame Médico / ASO:');
+            if (examName && currentSelectedCandidate) {
+                currentSelectedCandidate.exams.push(examName);
+                renderCertsAndExams();
+            }
         });
     </script>
 </body>
