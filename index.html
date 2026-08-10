@@ -72,242 +72,332 @@
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-radius: var(--radius-card);
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+            border-radius: 20px;
+        }
+
+        .apple-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 9px 20px;
+            border-radius: 980px;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .apple-btn:hover {
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+            transform: translateY(-1px);
+        }
+
+        .apple-btn-secondary {
+            background: rgba(15, 23, 42, 0.05);
+            color: #0f172a;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .apple-btn-danger { background: #ef4444; color: #fff; }
+
+        .apple-input, .apple-select {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 12px;
+            padding: 9px 13px;
+            font-size: 13px;
+            color: #0f172a;
+            width: 100%;
+            outline: none;
+        }
+
+        .apple-input:focus, .apple-select:focus {
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14);
         }
 
         .role-badge {
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 10px;
+            font-weight: 800;
             text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 980px;
+            letter-spacing: 0.05em;
         }
         .role-admin { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-        .role-recruit { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
-        .role-viewer { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        .role-recruit { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+        .role-viewer { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 980px; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="text-[#0f172a] min-h-screen flex flex-col relative">
 
-    <!-- ─── TELA DE LOGIN / AUTENTICAÇÃO ─── -->
+    <!-- ─── TELA DE LOGIN (SUPABASE AUTH) ─── -->
     <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
-        <div class="glass-card w-full max-w-md p-8 shadow-2xl space-y-6">
-            <div class="text-center space-y-2">
-                <div class="inline-flex items-center justify-center w-12 h-12 bg-brand-500 text-white rounded-2xl font-bold text-xl shadow-lg shadow-brand-500/30">
+        <div class="glass-card w-full max-w-md p-8 border border-white/20 shadow-2xl relative overflow-hidden bg-slate-900 text-white">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 mx-auto flex items-center justify-center font-extrabold text-xl font-display shadow-lg shadow-sky-500/30 mb-3">
                     STEP
                 </div>
-                <h1 class="text-2xl font-bold font-display text-slate-800">STEP – Mão de Obra</h1>
-                <p class="text-xs text-slate-500">Plataforma de Gestão de Talentos Oil &amp; Gas</p>
+                <h1 class="text-2xl font-extrabold font-display">STEP – Mão de Obra</h1>
+                <p class="text-xs text-slate-400 mt-1">Plataforma de Gestão de Talentos Oil &amp; Gas</p>
             </div>
-
-            <!-- Alerta de Erro -->
-            <div id="authErrorMessage" class="hidden p-3 rounded-xl bg-red-50 text-red-600 text-xs font-semibold border border-red-200"></div>
 
             <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">E-mail Corporativo</label>
-                    <input type="email" id="loginEmail" required placeholder="usuario@empresa.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/80 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm" />
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">E-mail Corporativo</label>
+                    <input type="email" id="loginEmail" class="apple-input bg-slate-800 border-slate-700 text-white" placeholder="usuario@empresa.com" required />
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Senha</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/80 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm" />
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Senha</label>
+                    <input type="password" id="loginPassword" class="apple-input bg-slate-800 border-slate-700 text-white" placeholder="••••••••" required />
                 </div>
-                <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-500/25 transition text-sm">
+                <div id="authErrorMessage" class="hidden text-xs text-rose-400 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20"></div>
+                <button type="submit" id="loginSubmitBtn" class="apple-btn w-full py-3 font-bold text-sm bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500">
                     Entrar na Plataforma
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- ─── TELA PRINCIPAL (APLICAÇÃO) ─── -->
-    <div id="appScreen" class="hidden flex-1 flex flex-col">
-        <!-- HEADER -->
-        <header class="glass-panel sticky top-0 z-40 px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-brand-500 text-white font-bold rounded-xl flex items-center justify-center text-lg shadow-md shadow-brand-500/20">
+    <!-- ─── APLICAÇÃO PRINCIPAL ─── -->
+    <div id="appScreen" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
+
+        <!-- NAV SUPERIOR -->
+        <header class="sticky top-0 z-30 glass-panel px-6 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
                     STEP
                 </div>
                 <div>
-                    <h2 class="font-bold font-display text-slate-800 leading-tight">STEP – Mão de Obra</h2>
-                    <p class="text-[11px] text-slate-500 font-medium">Portal de Candidatos</p>
+                    <div class="flex items-center gap-2">
+                        <span class="font-extrabold text-base tracking-tight">STEP</span>
+                        <span class="text-[11px] font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">Mão de Obra</span>
+                    </div>
+                    <span class="text-[10px] font-medium text-slate-500 block -mt-1">Oil &amp; Gas Talent Platform</span>
                 </div>
             </div>
 
-            <!-- Perfil do Usuário Logado -->
-            <div class="flex items-center space-x-4">
-                <div class="text-right">
-                    <span id="userEmailDisplay" class="block text-xs font-bold text-slate-800">carregando...</span>
+            <!-- Pesquisa Global -->
+            <div class="flex-1 max-w-xl mx-4 relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400 pointer-events-none"></i>
+                <input type="text" id="globalSearchInput" placeholder="Buscar por nome, passaporte, cargo, certificados..." class="apple-input pl-10 pr-4 py-2" />
+            </div>
+
+            <!-- Usuário Conectado -->
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p id="userEmailDisplay" class="text-xs font-bold text-slate-800">user@step.com</p>
                     <span id="userRoleBadge" class="role-badge role-viewer">VIEWER</span>
                 </div>
-                <button id="logoutBtn" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition">
+                <button id="addCandidateBtn" class="apple-btn text-xs font-bold hidden flex items-center gap-1.5" data-requires="recruit">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    <span>Novo Candidato</span>
+                </button>
+                <button id="logoutBtn" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition" title="Sair">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
                 </button>
             </div>
         </header>
 
-        <!-- LAYOUT PRINCIPAL -->
-        <div class="flex-1 flex max-w-7xl w-full mx-auto p-6 gap-6">
+        <!-- ÁREA DE TRABALHO -->
+        <div class="flex-1 flex overflow-hidden">
+
             <!-- SIDEBAR -->
-            <aside class="w-64 glass-card p-4 space-y-2 flex-shrink-0 self-start">
-                <button data-view="candidates" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-brand-50 text-brand-600 font-bold text-xs transition">
-                    <i data-lucide="users" class="w-4 h-4"></i>
-                    <span>Candidatos</span>
-                </button>
-                <button data-view="admin" data-requires="admin" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-100 font-semibold text-xs transition">
-                    <i data-lucide="shield" class="w-4 h-4"></i>
-                    <span>Painel Admin</span>
-                </button>
+            <aside class="w-64 bg-white/80 backdrop-blur-md border-r border-slate-200 flex flex-col justify-between p-4 z-20">
+                <div class="space-y-6">
+                    <div>
+                        <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">Navegação</p>
+                        <nav class="space-y-1">
+                            <button data-view="table" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold bg-brand-50 text-brand-600">
+                                <i data-lucide="table" class="w-4 h-4"></i>
+                                <span>Candidatos</span>
+                            </button>
+                            <button data-view="dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">
+                                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                                <span>Dashboard</span>
+                            </button>
+                            <button data-view="users" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 hidden" data-requires="admin">
+                                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                <span>Gestão de Usuários</span>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-200 text-xs text-slate-400 font-mono">
+                    STEP Auth Engine v2.5
+                </div>
             </aside>
 
-            <!-- CONTEÚDO -->
-            <main class="flex-1 space-y-6">
-                <!-- VIEW: CANDIDATOS -->
-                <section id="viewCandidates" class="view-section space-y-6">
-                    <!-- Métricas -->
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="glass-card p-5">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Banco</span>
-                            <div id="metricTotal" class="text-2xl font-bold font-display text-slate-800 mt-1">0</div>
-                        </div>
-                        <div class="glass-card p-5">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Disponíveis</span>
-                            <div id="metricAvailable" class="text-2xl font-bold font-display text-emerald-600 mt-1">0</div>
-                        </div>
-                        <div class="glass-card p-5">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Embarcados</span>
-                            <div id="metricEmployed" class="text-2xl font-bold font-display text-brand-600 mt-1">0</div>
-                        </div>
-                    </div>
+            <!-- CONTEÚDO PRINCIPAL -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
 
-                    <!-- Tabela de Candidatos -->
-                    <div class="glass-card overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-                            <h3 class="font-bold text-slate-800 text-sm">Lista de Profissionais</h3>
-                        </div>
+                <!-- VISÃO: TABELA DE CANDIDATOS -->
+                <section id="viewTable" class="view-section space-y-4">
+                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-200">
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs">
-                                <thead class="bg-slate-50 text-slate-400 uppercase font-bold tracking-wider border-b border-slate-100">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="bg-slate-100 text-slate-600 uppercase font-bold text-[10px] border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3">Nome</th>
+                                        <th class="p-3">Candidato</th>
                                         <th class="p-3">Status</th>
                                         <th class="p-3">Nacionalidade</th>
-                                        <th class="p-3">Telefone</th>
+                                        <th class="p-3">Contato</th>
                                         <th class="p-3">E-mail</th>
                                         <th class="p-3">Passaporte</th>
-                                        <th class="p-3 text-right">Ação</th>
+                                        <th class="p-3 text-right">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody id="candidateTableBody" class="divide-y divide-slate-100">
-                                    <!-- Preenchido via JavaScript -->
-                                </tbody>
+                                <tbody id="candidateTableBody" class="divide-y divide-slate-100"></tbody>
                             </table>
                         </div>
                     </div>
                 </section>
 
-                <!-- VIEW: ADMIN (RESTREITA) -->
-                <section id="viewAdmin" class="view-section hidden space-y-6">
-                    <div class="glass-card p-6 space-y-4">
-                        <h3 class="text-lg font-bold text-slate-800">Gerenciamento de Permissões de Usuários</h3>
-                        <p class="text-xs text-slate-500">Altere o nível de acesso (`role`) dos usuários cadastrados no Supabase.</p>
+                <!-- VISÃO: DASHBOARD -->
+                <section id="viewDashboard" class="view-section hidden space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="glass-card p-5">
+                            <span class="text-xs font-semibold text-slate-500">Total Candidatos</span>
+                            <p id="metricTotal" class="text-3xl font-extrabold text-slate-900 mt-2">0</p>
+                        </div>
+                        <div class="glass-card p-5">
+                            <span class="text-xs font-semibold text-slate-500">Disponíveis</span>
+                            <p id="metricAvailable" class="text-3xl font-extrabold text-emerald-600 mt-2">0</p>
+                        </div>
+                        <div class="glass-card p-5">
+                            <span class="text-xs font-semibold text-slate-500">Em Projeto</span>
+                            <p id="metricEmployed" class="text-3xl font-extrabold text-brand-600 mt-2">0</p>
+                        </div>
+                    </div>
+                </section>
 
-                        <form id="createUserForm" class="space-y-4 max-w-md">
+                <!-- VISÃO: GESTÃO DE USUÁRIOS (ADMIN ONLY) -->
+                <section id="viewUsers" class="view-section hidden space-y-6" data-requires="admin">
+                    <div class="glass-card p-6 border border-slate-200">
+                        <h2 class="text-base font-bold text-slate-900 mb-4">Criar / Atualizar Nível de Acesso de Usuário</h2>
+                        <form id="createUserForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">E-mail do Usuário Target</label>
-                                <input type="email" id="newUserEmail" required placeholder="email@empresa.com" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500" />
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail do Usuário</label>
+                                <input type="email" id="newUserEmail" class="apple-input" placeholder="usuario@empresa.com" required />
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Perfil / Role</label>
-                                <select id="newUserRole" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500">
-                                    <option value="viewer">VIEWER (Apenas Leitura)</option>
-                                    <option value="recruit">RECRUITER (Edita Candidatos)</option>
-                                    <option value="admin">ADMIN (Acesso Total)</option>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Perfil (Role)</label>
+                                <select id="newUserRole" class="apple-select">
+                                    <option value="viewer">Viewer (Somente Leitura)</option>
+                                    <option value="recruit">Recruiter (Cadastro/Edição)</option>
+                                    <option value="admin">Admin (Acesso Total)</option>
                                 </select>
                             </div>
-                            <button type="submit" class="px-5 py-2.5 bg-brand-500 text-white font-bold rounded-xl text-xs hover:bg-brand-600 transition">
-                                Atualizar Role
-                            </button>
+                            <div class="flex items-end">
+                                <button type="submit" class="apple-btn w-full">Salvar Usuário</button>
+                            </div>
                         </form>
                     </div>
                 </section>
+
             </main>
         </div>
     </div>
 
-    <!-- ─── MODAL DE DETALHES DO CANDIDATO ─── -->
-    <div id="candidateModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-        <div class="glass-card w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-6">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                <h3 class="font-bold text-base text-slate-800">Ficha do Candidato</h3>
-                <button id="closeModalBtn" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+    <!-- ─── MODAL DE CANDIDATO ─── -->
+    <div id="candidateModal" class="hidden fixed inset-0 z-50 overflow-hidden bg-slate-900/40 backdrop-blur-sm flex justify-end">
+        <div class="w-full max-w-3xl bg-white h-full shadow-2xl flex flex-col">
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <h3 id="modalTitle" class="font-bold text-lg text-slate-900">Perfil do Candidato</h3>
+                <button id="closeModalBtn" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
 
             <!-- Abas do Modal -->
-            <div class="flex space-x-4 border-b border-slate-100">
-                <button data-tab="tabInfo" class="modal-tab-btn border-b-2 border-brand-600 text-brand-600 font-bold pb-2 text-xs">Dados Gerais</button>
-                <button data-tab="tabCerts" class="modal-tab-btn text-slate-500 font-semibold pb-2 text-xs">Certificados</button>
-                <button data-tab="tabExams" class="modal-tab-btn text-slate-500 font-semibold pb-2 text-xs">Exames Médicos</button>
+            <div class="flex items-center gap-2 px-5 border-b border-slate-200 bg-slate-100/50">
+                <button data-tab="tabOverview" class="modal-tab-btn px-4 py-3 text-xs font-bold border-b-2 border-brand-600 text-brand-600">Dados Gerais</button>
+                <button data-tab="tabCerts" class="modal-tab-btn px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-500">Certificados &amp; Cursos</button>
+                <button data-tab="tabExams" class="modal-tab-btn px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-500">Exames Médicos</button>
             </div>
 
-            <!-- Conteúdo Abas -->
-            <div id="tabInfo" class="modal-tab-content space-y-4">
-                <div class="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                        <label class="font-bold text-slate-500">Nome Completo</label>
-                        <input id="candName" readonly class="w-full mt-1 p-2 bg-slate-50 rounded-lg border border-slate-200" />
-                    </div>
-                    <div>
-                        <label class="font-bold text-slate-500">Status</label>
-                        <input id="candStatus" readonly class="w-full mt-1 p-2 bg-slate-50 rounded-lg border border-slate-200" />
-                    </div>
-                    <div>
-                        <label class="font-bold text-slate-500">Nacionalidade</label>
-                        <input id="candNationality" readonly class="w-full mt-1 p-2 bg-slate-50 rounded-lg border border-slate-200" />
-                    </div>
-                    <div>
-                        <label class="font-bold text-slate-500">Passaporte</label>
-                        <input id="candPassport" readonly class="w-full mt-1 p-2 bg-slate-50 rounded-lg border border-slate-200" />
-                    </div>
-                    <div>
-                        <label class="font-bold text-slate-500">E-mail</label>
-                        <input id="candEmail" readonly class="w-full mt-1 p-2 bg-slate-50 rounded-lg border border-slate-200" />
-                    </div>
-                    <div>
-                        <label class="font-bold text-slate-500">Telefone</label>
-                        <input id="candPhone" readonly class="w-full mt-1 p-2 bg-slate-50 rounded-lg border border-slate-200" />
-                    </div>
+            <div class="flex-1 overflow-y-auto p-6">
+                <!-- ABA 1: DADOS GERAIS -->
+                <div id="tabOverview" class="modal-tab-content space-y-4">
+                    <form id="candidateForm" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo</label>
+                                <input type="text" id="candName" class="apple-input" required />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                                <select id="candStatus" class="apple-select">
+                                    <option value="Available">Disponível</option>
+                                    <option value="Working with Us">Em Projeto</option>
+                                    <option value="In Interviews">Em Entrevista</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Nacionalidade</label>
+                                <input type="text" id="candNationality" class="apple-input" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Passaporte</label>
+                                <input type="text" id="candPassport" class="apple-input" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
+                                <input type="email" id="candEmail" class="apple-input" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone / WhatsApp</label>
+                                <input type="text" id="candPhone" class="apple-input" />
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-end">
+                            <button type="submit" class="apple-btn" data-requires="recruit">Salvar Alterações</button>
+                        </div>
+                    </form>
                 </div>
-            </div>
 
-            <div id="tabCerts" class="modal-tab-content hidden space-y-4">
-                <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold uppercase text-slate-400">Treinamentos &amp; Certificados</h4>
-                    <button id="addCertBtn" data-requires="recruit" class="text-xs text-brand-600 font-bold hover:underline">+ Adicionar</button>
+                <!-- ABA 2: CERTIFICADOS -->
+                <div id="tabCerts" class="modal-tab-content hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase text-slate-400">Certificados Cadastrados</h4>
+                        <button id="addCertBtn" class="apple-btn text-xs" data-requires="recruit">+ Adicionar Certificado</button>
+                    </div>
+                    <div id="certsList" class="space-y-2"></div>
                 </div>
-                <div id="certsList" class="space-y-2"></div>
-            </div>
 
-            <div id="tabExams" class="modal-tab-content hidden space-y-4">
-                <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold uppercase text-slate-400">Exames &amp; ASO</h4>
-                    <button id="addExamBtn" data-requires="recruit" class="text-xs text-brand-600 font-bold hover:underline">+ Adicionar Exame</button>
+                <!-- ABA 3: EXAMES MÉDICOS -->
+                <div id="tabExams" class="modal-tab-content hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase text-slate-400">Exames &amp; ASO</h4>
+                        <button id="addExamBtn" class="apple-btn text-xs" data-requires="recruit">+ Adicionar Exame</button>
+                    </div>
+                    <div id="examsList" class="space-y-2"></div>
                 </div>
-                <div id="examsList" class="space-y-2"></div>
             </div>
         </div>
     </div>
 
-    <!-- ─── SCRIPT DE LÓGICA E CONEXÃO SUPABASE (ÚNICO) ─── -->
+    <!-- ─── SCRIPT DE LÓGICA, AUTENTICAÇÃO E SUPABASE ─── -->
     <script>
-        // 1. CONFIGURAÇÃO DO SUPABASE
+        // 1. CONFIGURAÇÃO ÚNICA DO SUPABASE
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4'; // Substitua com sua chave anon/public se necessário
-
-        // Inicialização global (Declarada APENAS uma vez no arquivo inteiro)
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
+        
+        // Inicialização global com nome único para evitar conflito com o SDK CDN
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Estado Global
         let currentUser = null;
@@ -327,7 +417,7 @@
         lucide.createIcons();
 
         // 2. MONITORAMENTO DE SESSÃO E AUTENTICAÇÃO
-        supabase.auth.onAuthStateChange(async (event, session) => {
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (session) {
                 currentUser = session.user;
                 await fetchUserRole();
@@ -350,7 +440,7 @@
             submitBtn.textContent = 'Autenticando...';
             submitBtn.disabled = true;
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
             if (error) {
                 authErrorMessage.textContent = error.message || 'Erro ao realizar login.';
@@ -363,7 +453,7 @@
 
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', async () => {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
         });
 
         // Busca o papel (role) na tabela public.profiles
@@ -371,7 +461,7 @@
             if (!currentUser) return;
             
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('profiles')
                     .select('role')
                     .eq('id', currentUser.id)
@@ -430,7 +520,7 @@
                 const targetEmail = document.getElementById('newUserEmail').value;
                 const newRole = document.getElementById('newUserRole').value;
 
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('profiles')
                     .update({ role: newRole })
                     .eq('email', targetEmail);
