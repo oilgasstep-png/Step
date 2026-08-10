@@ -122,12 +122,13 @@
         .apple-input {
             background: #ffffff;
             border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 12px;
-            padding: 8px 12px;
-            font-size: 13px;
+            border-radius: 10px;
+            padding: 7px 12px;
+            font-size: 12px;
             font-weight: 500;
             color: #0f172a;
             outline: none;
+            width: 100%;
         }
 
         .apple-input:focus {
@@ -138,9 +139,9 @@
         .apple-badge {
             display: inline-flex;
             align-items: center;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 980px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
         }
 
@@ -168,49 +169,61 @@
             color: #0369a1;
         }
 
-        /* ESTILIZAÇÃO DOS CARDS DE NOTIFICAÇÃO DO PRINT */
-        .notif-card {
-            background: #fffdf0;
-            border: 1px solid #fef08a;
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            display: flex;
+        .doc-chip {
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 4px;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #0369a1;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .doc-chip:hover {
+            background: #e0f2fe;
         }
 
-        .notif-badge-expired {
-            background: #f97316;
-            color: white;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 980px;
-            text-transform: uppercase;
+        .cert-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
         }
+        .cert-expired { background: #ffe4e6; color: #be123c; }
+        .cert-ok { background: #f1f5f9; color: #334155; }
 
-        .notif-badge-days {
-            background: #facc15;
-            color: #854d0e;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 980px;
+        .modal-tab-btn {
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-tab-btn.active {
+            color: #0284c7;
+            border-bottom-color: #0284c7;
         }
     </style>
 </head>
 <body class="text-[#0f172a] font-sans antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
 
-    <!-- TELA DE LOGIN -->
+    <!-- LOGIN SCREEN -->
     <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
         <div class="w-full max-w-md glass-card p-8 rounded-3xl border border-slate-200/80 shadow-2xl relative">
             <div class="flex flex-col items-center mb-6 text-center">
                 <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 font-display font-extrabold text-lg tracking-wider mb-3">
                     STEP
                 </div>
-                <h2 data-i18n="system_access" class="font-display font-extrabold text-2xl text-[#0f172a]">Acesso ao Sistema</h2>
-                <p data-i18n="system_subtitle" class="text-xs font-medium text-[#64748b] mt-1">Insira suas credenciais corporativas para entrar</p>
+                <h2 class="font-display font-extrabold text-2xl text-[#0f172a]">Acesso ao Sistema</h2>
+                <p class="text-xs font-medium text-[#64748b] mt-1">Insira suas credenciais corporativas para entrar</p>
             </div>
 
             <form id="loginForm" class="space-y-4">
@@ -220,29 +233,28 @@
                 </div>
 
                 <div>
-                    <label data-i18n="email_label" class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">E-mail</label>
-                    <input type="email" id="loginEmail" required placeholder="seu.email@empresa.com" class="apple-input w-full" />
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">E-mail</label>
+                    <input type="email" id="loginEmail" required placeholder="seu.email@empresa.com" class="apple-input" />
                 </div>
 
                 <div>
-                    <label data-i18n="password_label" class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">Senha</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••" class="apple-input w-full" />
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">Senha</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="apple-input" />
                 </div>
 
-                <button type="submit" id="loginSubmitBtn" class="apple-btn w-full justify-center py-3 text-sm mt-2">
+                <button type="submit" class="apple-btn w-full justify-center py-3 text-sm mt-2">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
-                    <span data-i18n="btn_login">Entrar no Sistema</span>
+                    <span>Entrar no Sistema</span>
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- APLICAÇÃO PRINCIPAL -->
+    <!-- MAIN APP CONTAINER -->
     <div id="appContainer" class="hidden flex-col h-screen overflow-hidden">
 
-        <!-- TOP BAR -->
+        <!-- HEADER BAR -->
         <header class="sticky top-0 z-30 glass-panel px-6 py-3 flex items-center justify-between gap-4 border-b border-slate-200">
-            <!-- Brand & Subtitle -->
             <div class="flex items-center gap-3 w-64">
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20 font-display font-extrabold text-sm">
                     STEP
@@ -253,10 +265,10 @@
                 </div>
             </div>
 
-            <!-- Global Search & Filters Header Bar -->
+            <!-- SEARCH BAR -->
             <div class="flex-1 max-w-2xl flex items-center gap-2">
                 <div class="relative flex-1">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-2.5 text-slate-400"></i>
                     <input type="text" id="globalSearchInput" placeholder="Search name, passport, nationality, email, certs, skills, city..." class="w-full pl-10 pr-4 py-2 bg-white/90 border border-slate-200 rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-[#0f172a]" />
                 </div>
                 <button onclick="toggleFilterMenu()" class="apple-btn apple-btn-secondary text-xs px-3 py-2 flex items-center gap-1.5">
@@ -265,37 +277,29 @@
                 </button>
             </div>
 
-            <!-- Action Controls / Badges / Add Candidate -->
+            <!-- ACTIONS / USER HEADER -->
             <div class="flex items-center gap-3 relative">
                 <span class="apple-badge apple-badge-blue text-[11px]"><i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> Saved</span>
                 
-                <!-- ÍCONE DE NOTIFICAÇÃO (SININHO) COM BOTÃO DE ABRIR/FECHAR -->
                 <div class="relative">
                     <button onclick="toggleNotificationPanel()" class="relative p-1.5 text-slate-600 hover:text-slate-900 transition focus:outline-none">
                         <i data-lucide="bell" class="w-5 h-5"></i>
                         <span id="notifBadge" class="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">6</span>
                     </button>
 
-                    <!-- PAINEL DE ALERTAS DE NOTIFICAÇÃO DROPDOWN -->
                     <div id="notificationPanel" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-2xl z-50 p-4">
                         <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
                             <div class="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-amber-700">
                                 <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
                                 <span>DOCUMENT EXPIRATION ALERTS</span>
                             </div>
-                            <button onclick="toggleNotificationPanel()" class="text-slate-400 hover:text-slate-600">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
+                            <button onclick="toggleNotificationPanel()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
                         </div>
-
-                        <!-- LISTA DE ALERTAS DE EXPIRAÇÃO -->
-                        <div id="notifListContainer" class="max-h-80 overflow-y-auto pr-1">
-                            <!-- Inserido dinamicamente via Javascript -->
-                        </div>
+                        <div id="notifListContainer" class="max-h-80 overflow-y-auto pr-1 space-y-2"></div>
                     </div>
                 </div>
 
-                <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden apple-btn apple-btn-secondary text-xs px-3 py-1.5" title="Gerenciar Usuários">
+                <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden apple-btn apple-btn-secondary text-xs px-3 py-1.5">
                     <i data-lucide="users" class="w-3.5 h-3.5 text-brand-600"></i>
                     <span>Usuários</span>
                 </button>
@@ -310,19 +314,18 @@
                     <span>+ Add Candidate</span>
                 </button>
 
-                <button id="logoutBtn" class="apple-btn apple-btn-secondary text-xs px-2.5 py-1.5" title="Sair do Sistema">
+                <button id="logoutBtn" class="apple-btn apple-btn-secondary text-xs px-2.5 py-1.5">
                     <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                 </button>
             </div>
         </header>
 
-        <!-- MAIN LAYOUT (SIDEBAR + MAIN CONTENT) -->
+        <!-- MAIN LAYOUT -->
         <div class="flex-1 flex overflow-hidden">
 
-            <!-- LEFT NAVIGATION SIDEBAR -->
+            <!-- SIDEBAR -->
             <aside class="w-64 bg-white/70 backdrop-blur-md border-r border-slate-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0">
                 <div class="space-y-6">
-                    <!-- NAVIGATION GROUP -->
                     <div>
                         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Navigation</div>
                         <nav class="space-y-1">
@@ -344,7 +347,6 @@
                         </nav>
                     </div>
 
-                    <!-- SAVED FILTERS GROUP -->
                     <div>
                         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Saved Filters</div>
                         <div class="space-y-1">
@@ -364,7 +366,6 @@
                     </div>
                 </div>
 
-                <!-- BOTTOM ACTIONS (IMPORT & EXPORT) -->
                 <div class="space-y-2 pt-4 border-t border-slate-200">
                     <button onclick="triggerImport()" class="apple-btn apple-btn-green w-full justify-center text-xs py-2">
                         <i data-lucide="file-up" class="w-4 h-4"></i>
@@ -385,22 +386,15 @@
                         <i data-lucide="archive" class="w-4 h-4"></i>
                         <span>Download All Docs</span>
                     </button>
-
-                    <div class="flex justify-between items-center text-[11px] text-slate-400 pt-2 px-1">
-                        <span class="hover:underline cursor-pointer" onclick="backupJSON()"><i data-lucide="database" class="w-3 h-3 inline"></i> Backup JSON</span>
-                        <span class="hover:underline cursor-pointer" onclick="restoreJSON()"><i data-lucide="rotate-ccw" class="w-3 h-3 inline"></i> Restore</span>
-                    </div>
                 </div>
             </aside>
 
-            <!-- WORKSPACE CONTENT AREA -->
+            <!-- WORKSPACE -->
             <main class="flex-1 overflow-y-auto p-6 space-y-4">
 
-                <!-- SUB HEADER / VIEW TABS / RESULTS BAR -->
                 <div class="flex items-center justify-between gap-4 pb-1 border-b border-slate-200/60">
                     <span id="resultsCountBadge" class="apple-badge apple-badge-blue">3 candidates found</span>
 
-                    <!-- TAB SWITCHER -->
                     <div class="bg-slate-200/60 p-1 rounded-xl flex gap-1 text-xs font-semibold">
                         <button id="tabTable" onclick="switchView('table')" class="px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition">Full Data Table</button>
                         <button id="tabDashboard" onclick="switchView('dashboard')" class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition">Dashboard</button>
@@ -408,22 +402,32 @@
                     </div>
                 </div>
 
-                <!-- VIEW 1: DATA TABLE -->
+                <!-- VIEW TABLE COMPLETA COM TODOS OS CAMPOS DAS IMAGENS 1 E 2 -->
                 <section id="viewTable" class="view-section space-y-4">
                     <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
                         <div class="overflow-x-auto max-h-[72vh]">
                             <table class="w-full text-left text-xs whitespace-nowrap">
                                 <thead class="sticky top-0 z-10 bg-slate-100/90 backdrop-blur-md text-[#475569] uppercase font-bold text-[11px] border-b border-slate-200 tracking-wider">
                                     <tr>
-                                        <th class="p-3">Candidato</th>
+                                        <th class="p-3">Candidate</th>
                                         <th class="p-3 text-center">Photo</th>
                                         <th class="p-3">Status</th>
-                                        <th class="p-3">Nacionalidade</th>
-                                        <th class="p-3">Contato</th>
-                                        <th class="p-3">E-mail</th>
-                                        <th class="p-3">Localização</th>
-                                        <th class="p-3">Disciplina</th>
-                                        <th class="p-3">Passaporte</th>
+                                        <th class="p-3">Nationality</th>
+                                        <th class="p-3">Age</th>
+                                        <th class="p-3">Contact</th>
+                                        <th class="p-3">Email</th>
+                                        <th class="p-3">Location</th>
+                                        <th class="p-3">Available</th>
+                                        <th class="p-3">Discipline</th>
+                                        <th class="p-3">Skills</th>
+                                        <th class="p-3">O&G Exp</th>
+                                        <th class="p-3">Passport</th>
+                                        <th class="p-3">Expiry</th>
+                                        <th class="p-3">Docs</th>
+                                        <th class="p-3">Certifications</th>
+                                        <th class="p-3">Medicals</th>
+                                        <th class="p-3">Visas</th>
+                                        <th class="p-3 text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="candidateTableBody" class="divide-y divide-slate-200/80"></tbody>
@@ -432,9 +436,8 @@
                     </div>
                 </section>
 
-                <!-- VIEW 2: DASHBOARD & METRICS -->
+                <!-- VIEW DASHBOARD -->
                 <section id="viewDashboard" class="view-section space-y-6 hidden">
-                    <!-- TOP SUMMARY CARDS -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="glass-card p-5 flex items-center justify-between">
                             <div>
@@ -477,9 +480,7 @@
                         </div>
                     </div>
 
-                    <!-- CHARTS GRID -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- DONUT CHART: STATUS BREAKDOWN -->
                         <div class="glass-card p-6">
                             <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">STATUS BREAKDOWN</h4>
                             <div class="h-64 flex items-center justify-center">
@@ -487,7 +488,6 @@
                             </div>
                         </div>
 
-                        <!-- BAR CHART: TOP DISCIPLINES HEADCOUNT -->
                         <div class="glass-card p-6">
                             <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">TOP DISCIPLINES HEADCOUNT</h4>
                             <div class="h-64">
@@ -501,83 +501,202 @@
         </div>
     </div>
 
-    <!-- MODAL CADASTRO CANDIDATO -->
+    <!-- MODAL DE CADASTRO DE CANDIDATO COM ESTRUTURA COMPLETA DA IMAGEM 3 -->
     <div id="candidateModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl border border-slate-100 relative">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                    <i data-lucide="user-plus" class="w-5 h-5 text-brand-600"></i>
-                    <span>Cadastrar Novo Profissional</span>
-                </h3>
-                <button onclick="closeCandidateModal()" class="text-slate-400 hover:text-slate-600 transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <form id="candidateForm" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo *</label>
-                    <input type="text" id="candName" required placeholder="Ex: João da Silva" class="apple-input w-full">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">URL da Foto / Avatar</label>
-                    <input type="url" id="candPhoto" placeholder="https://images.unsplash.com/photo-..." class="apple-input w-full">
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Disciplina / Cargo *</label>
-                        <input type="text" id="candDiscipline" required placeholder="Ex: Welder, Pipefitter" class="apple-input w-full">
+        <div class="bg-white rounded-2xl w-full max-w-4xl shadow-2xl border border-slate-100 relative flex flex-col max-h-[90vh] overflow-hidden">
+            
+            <!-- HEADER DO MODAL -->
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
+                        <i data-lucide="user" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                        <select id="candStatus" class="apple-input w-full">
-                            <option value="Available">Disponível</option>
-                            <option value="Working with Us">Trabalhando</option>
-                            <option value="In Interviews">Em Entrevistas</option>
-                        </select>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-slate-800 leading-none">New Candidate</h3>
+                            <span class="apple-badge status-available">Available</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Welder • No location</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
-                        <input type="email" id="candEmail" placeholder="email@exemplo.com" class="apple-input w-full">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone / Contato</label>
-                        <input type="text" id="candPhone" placeholder="+55 22 99999-9999" class="apple-input w-full">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Localização</label>
-                        <input type="text" id="candLocation" placeholder="Ex: Macaé" class="apple-input w-full">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Passaporte</label>
-                        <input type="text" id="candPassport" placeholder="Ex: BR123456" class="apple-input w-full">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nacionalidade</label>
-                        <input type="text" id="candNationality" placeholder="Ex: Brazilian" class="apple-input w-full">
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-2 pt-4 border-t border-slate-100 mt-4">
-                    <button type="button" onclick="closeCandidateModal()" class="apple-btn apple-btn-secondary text-xs">Cancelar</button>
-                    <button type="submit" class="apple-btn text-xs">
-                        <i data-lucide="check" class="w-4 h-4"></i>
-                        <span>Salvar Candidato</span>
+                <div class="flex items-center gap-2">
+                    <button class="apple-btn apple-btn-secondary text-xs px-3 py-1.5">Archive</button>
+                    <button class="apple-btn bg-rose-600 hover:bg-rose-700 text-white text-xs px-3 py-1.5">Delete</button>
+                    <button onclick="closeCandidateModal()" class="text-slate-400 hover:text-slate-600 transition ml-2">
+                        <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-            </form>
+            </div>
+
+            <!-- ABAS DO FORMULÁRIO (TABS - IGUAL IMAGEM 3) -->
+            <div class="flex items-center gap-2 px-5 border-b border-slate-200 bg-slate-50/30 overflow-x-auto text-xs">
+                <button class="modal-tab-btn active" onclick="switchModalTab('tabOverview', this)">Overview</button>
+                <button class="modal-tab-btn" onclick="switchModalTab('tabSkills', this)">Skills & Disciplines</button>
+                <button class="modal-tab-btn" onclick="switchModalTab('tabCerts', this)">Certifications</button>
+                <button class="modal-tab-btn" onclick="switchModalTab('tabMedicals', this)">Medicals</button>
+                <button class="modal-tab-btn" onclick="switchModalTab('tabVisas', this)">Visas</button>
+                <button class="modal-tab-btn" onclick="switchModalTab('tabDocs', this)">Docs</button>
+                <button class="modal-tab-btn" onclick="switchModalTab('tabAssignment', this)">Active Assignment</button>
+                <button class="modal-tab-btn" onclick="switchModalTab('tabNotes', this)">Notes & History</button>
+            </div>
+
+            <!-- CORPO DO FORMULÁRIO -->
+            <div class="p-6 overflow-y-auto flex-1">
+                <form id="candidateForm" class="space-y-6">
+                    
+                    <!-- CONTEÚDO TAB OVERVIEW -->
+                    <div id="tabOverview" class="modal-tab-content space-y-6">
+                        
+                        <!-- SEÇÃO STATUS & AVAILABILITY -->
+                        <div>
+                            <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">STATUS & AVAILABILITY</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Employment Status</label>
+                                    <select id="candStatus" class="apple-input">
+                                        <option value="Available">Available</option>
+                                        <option value="Working with Us">Working with Us</option>
+                                        <option value="In Interviews">In Interviews</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Availability Window</label>
+                                    <select id="candAvailWindow" class="apple-input">
+                                        <option value="Available Immediately">Available Immediately</option>
+                                        <option value="Available in 2 Weeks">Available in 2 Weeks</option>
+                                        <option value="Available in 1 Month">Available in 1 Month</option>
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Specific Availability Date</label>
+                                    <input type="date" id="candAvailDate" class="apple-input" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SEÇÃO PERSONAL DETAILS -->
+                        <div>
+                            <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">PERSONAL DETAILS</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name *</label>
+                                    <input type="text" id="candName" required placeholder="Ex: Carlos Eduardo Silva" class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nationality</label>
+                                    <input type="text" id="candNationality" placeholder="Ex: Brazilian" class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Date of Birth</label>
+                                    <input type="date" id="candDob" class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Age (Auto-calc)</label>
+                                    <input type="number" id="candAge" placeholder="38" class="apple-input bg-slate-50" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Gender</label>
+                                    <select id="candGender" class="apple-input">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Contact Number</label>
+                                    <input type="text" id="candPhone" placeholder="+55 22 99876-5432" class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">WhatsApp</label>
+                                    <input type="text" id="candWhatsapp" placeholder="+55 22 99876-5432" class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+                                    <input type="email" id="candEmail" placeholder="carlos.silva@offshore.com" class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Passport Number</label>
+                                    <input type="text" id="candPassport" placeholder="BR9876543" class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Passport Validity (Expiry)</label>
+                                    <input type="date" id="candPassportExpiry" class="apple-input">
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Located (Country)</label>
+                                        <input type="text" id="candCountry" placeholder="Brazil" class="apple-input">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">City</label>
+                                        <input type="text" id="candCity" placeholder="Macaé" class="apple-input">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Current Address</label>
+                                    <input type="text" id="candAddress" placeholder="Rua..." class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Driving License</label>
+                                    <select id="candDriver" class="apple-input">
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">License Category</label>
+                                    <input type="text" id="candDriverCat" placeholder="e.g. B, C, Heavy" class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Emergency Contact Name</label>
+                                    <input type="text" id="candEmergName" placeholder="Nome do Contato" class="apple-input">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Emergency Contact Phone</label>
+                                    <input type="text" id="candEmergPhone" placeholder="+55..." class="apple-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA SKILLS -->
+                    <div id="tabSkills" class="modal-tab-content hidden space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Discipline / Position</label>
+                            <input type="text" id="candDiscipline" placeholder="Welder, NDT Technician" class="apple-input">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Skills (Separadas por vírgula)</label>
+                            <input type="text" id="candSkills" placeholder="TIG Welding, MIG Welding, FCAW Welding" class="apple-input">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">O&G Experience</label>
+                            <input type="text" id="candOgExp" placeholder="12 yrs OFFSHORE" class="apple-input">
+                        </div>
+                    </div>
+
+                    <!-- OUTRAS ABAS DUMMY -->
+                    <div id="tabCerts" class="modal-tab-content hidden p-4 text-center text-slate-400">Anexos e Registros de Certificações (BOSIET, HUET, CSWIP)</div>
+                    <div id="tabMedicals" class="modal-tab-content hidden p-4 text-center text-slate-400">Exames Médicos Ocupacionais (OGUK, ASO)</div>
+                    <div id="tabVisas" class="modal-tab-content hidden p-4 text-center text-slate-400">Controle de Vistos de Trabalho</div>
+                    <div id="tabDocs" class="modal-tab-content hidden p-4 text-center text-slate-400">Upload de Currículos e Documentos em PDF</div>
+                    <div id="tabAssignment" class="modal-tab-content hidden p-4 text-center text-slate-400">Histórico de Embarques e Contratos Ativos</div>
+                    <div id="tabNotes" class="modal-tab-content hidden p-4 text-center text-slate-400">Anotações do Recrutador</div>
+
+                    <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="closeCandidateModal()" class="apple-btn apple-btn-secondary text-xs">Cancelar</button>
+                        <button type="submit" class="apple-btn text-xs">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span>Salvar Candidato</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- MODAL DE GESTÃO DE USUÁRIOS E PERFIS (ADMIN) -->
+    <!-- MODAL GESTÃO DE USUÁRIOS -->
     <div id="usersModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl p-6 w-full max-w-3xl shadow-2xl border border-slate-100 relative">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
@@ -585,91 +704,145 @@
                     <i data-lucide="shield-check" class="w-5 h-5 text-brand-600"></i>
                     <span>Administração de Usuários e Perfis</span>
                 </h3>
-                <button onclick="closeUsersModal()" class="text-slate-400 hover:text-slate-600 transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
+                <button onclick="closeUsersModal()" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
-            <!-- Criar Novo Usuário -->
             <form id="newUserForm" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
                 <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Criar Novo Acesso</h4>
-                
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail *</label>
-                        <input type="email" id="newUserEmail" required placeholder="usuario@step-og.com" class="apple-input w-full">
+                        <input type="email" id="newUserEmail" required placeholder="usuario@step-og.com" class="apple-input">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Senha *</label>
-                        <input type="password" id="newUserPassword" required placeholder="••••••••" class="apple-input w-full">
+                        <input type="password" id="newUserPassword" required placeholder="••••••••" class="apple-input">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Perfil / Role *</label>
-                        <select id="newUserRole" class="apple-input w-full">
-                            <option value="viewer">Viewer (Apenas Visualizar)</option>
-                            <option value="recruiter">Recruiter (Pode cadastrar)</option>
-                            <option value="admin">Admin (Acesso Total)</option>
+                        <select id="newUserRole" class="apple-input">
+                            <option value="viewer">Viewer</option>
+                            <option value="recruiter">Recruiter</option>
+                            <option value="admin">Admin</option>
                         </select>
                     </div>
                 </div>
-
                 <div class="flex justify-end pt-2">
-                    <button type="submit" class="apple-btn text-xs">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>Criar Usuário</span>
-                    </button>
+                    <button type="submit" class="apple-btn text-xs"><i data-lucide="user-plus" class="w-4 h-4"></i> Criar Usuário</button>
                 </div>
             </form>
 
-            <!-- Tabela de Usuários Existentes -->
-            <div>
-                <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Usuários Cadastrados no Banco</h4>
-                <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl">
-                    <table class="w-full text-left text-xs whitespace-nowrap">
-                        <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
-                            <tr>
-                                <th class="p-2.5">E-mail</th>
-                                <th class="p-2.5">Perfil</th>
-                                <th class="p-2.5">Status</th>
-                                <th class="p-2.5 text-right">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersListBody" class="divide-y divide-slate-100">
-                            <tr>
-                                <td colspan="4" class="p-4 text-center text-slate-400">Carregando usuários...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl">
+                <table class="w-full text-left text-xs whitespace-nowrap">
+                    <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
+                        <tr>
+                            <th class="p-2.5">E-mail</th>
+                            <th class="p-2.5">Perfil</th>
+                            <th class="p-2.5">Status</th>
+                            <th class="p-2.5 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersListBody" class="divide-y divide-slate-100"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL & BACKEND INTEGRATION -->
+    <!-- MAIN SCRIPT -->
     <script>
-        // --- SUPABASE ENGINE ---
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
 
         function getSupabaseClient(options = {}) {
             const createFn = (window.supabase && window.supabase.createClient) || 
                              (window.supabase_js && window.supabase_js.createClient);
-            if (!createFn) {
-                throw new Error("SDK do Supabase não foi carregado corretamente.");
-            }
             return createFn(SUPABASE_URL, SUPABASE_ANON_KEY, options);
         }
 
         let supabaseClient = getSupabaseClient();
 
-        // SEED DATA BASELINE
+        // MOCK SEED DADOS COMPLETOS COMPATÍVEIS COM O LAYOUT ANTIGO
         const MOCK_SEED_CANDIDATES = [
-            { id: 'cand_1', name: 'Carlos Eduardo Silva', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80', status: 'Working with Us', nationality: 'Brazilian', phone: '+55 22 99876-5432', email: 'carlos.silva@offshore.com', location: 'Macaé', discipline: 'Welder', passport: 'BR9876543' },
-            { id: 'cand_2', name: 'João Pedro Santos', photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', status: 'Available', nationality: 'Portuguese', phone: '+351 912 345 678', email: 'j.santos@energytech.pt', location: 'Porto', discipline: 'Pipefitter', passport: 'PT1234567' },
-            { id: 'cand_3', name: 'Elena Rostova', photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', status: 'In Interviews', nationality: 'British', phone: '+44 7700 900077', email: 'elena.rostova@hse-solutions.co.uk', location: 'Aberdeen', discipline: 'HSE Officer', passport: 'UK9988776' }
+            {
+                id: 'cand_1',
+                name: 'Carlos Eduardo Silva',
+                photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+                status: 'Working with Us',
+                nationality: 'Brazilian',
+                age: 38,
+                phone: '+55 22 99876-5432',
+                email: 'carlos.silva@offshore.com',
+                location: 'Brazil (Macaé)',
+                available: 'Available Immediately',
+                discipline: 'Welder, NDT Technician',
+                skills: 'TIG Welding • MIG Welding • FCAW Welding',
+                ogExp: '12 yrs OFFSHORE',
+                passport: 'BR9876543',
+                expiry: '2026-10-15',
+                cvPdf: 'Curriculum_Vitae_Carlos_Silva.pdf',
+                certs: [
+                    { name: 'BOSIET Cert', expiry: '2026-05-10', expired: true },
+                    { name: 'HUET Cert', expiry: '2026-06-10', expired: true }
+                ],
+                medicals: [
+                    { name: 'OGUK Medical', expiry: '2026-09-01' }
+                ],
+                visas: [
+                    { name: 'Work Visa (Angola)', expiry: '2027-01-20' }
+                ]
+            },
+            {
+                id: 'cand_2',
+                name: 'João Pedro Santos',
+                photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
+                status: 'Available',
+                nationality: 'Portuguese',
+                age: 33,
+                phone: '+351 912 345 678',
+                email: 'j.santos@energytech.pt',
+                location: 'Portugal (Porto)',
+                available: 'Available Immediately',
+                discipline: 'Pipefitter, Mechanical Technician',
+                skills: 'Pipe Installation • Hydro Testing • Shutdown Exp',
+                ogExp: '8 yrs OFFSHORE',
+                passport: 'PT1234567',
+                expiry: '2026-08-25 (15d)',
+                cvPdf: 'CV_Joao_Santos.pdf',
+                certs: [
+                    { name: 'CSWIP 3.1', expiry: '2026-08-01', expired: true }
+                ],
+                medicals: [
+                    { name: 'Fit to Work', expiry: '2025-08-01' }
+                ],
+                visas: []
+            },
+            {
+                id: 'cand_3',
+                name: 'Elena Rostova',
+                photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
+                status: 'In Interviews',
+                nationality: 'British',
+                age: 40,
+                phone: '+44 7700 900077',
+                email: 'elena.rostova@hse-solutions.co.uk',
+                location: 'United Kingdom (Aberdeen)',
+                available: 'Available in 2 Weeks',
+                discipline: 'HSE Officer, Project Engineer',
+                skills: 'NEBOSH • IOSH • Offshore Experience • LNG Exp',
+                ogExp: '15 yrs OFFSHORE',
+                passport: 'UK9988776',
+                expiry: '2029-05-10',
+                cvPdf: 'CV_Elena_Rostova.pdf',
+                certs: [
+                    { name: 'NEBOSH Diploma', expiry: '2028-06-01' }
+                ],
+                medicals: [
+                    { name: 'OGUK Medical', expiry: '2027-11-15' }
+                ],
+                visas: []
+            }
         ];
 
-        // MOCK DE NOTIFICAÇÕES EXATAS DO SEU PRINT
         const MOCK_NOTIFICATIONS = [
             { candidate: 'Carlos Eduardo Silva', doc: 'Cert (BOSIET Cert) Expiry', days: 0, expired: true },
             { candidate: 'Carlos Eduardo Silva', doc: 'Cert (HUET Cert) Expiry', days: 0, expired: true },
@@ -681,236 +854,14 @@
 
         let allCandidatesCache = [];
         let currentUserRole = 'viewer';
-        let statusChartObj = null;
-        let disciplinesChartObj = null;
 
-        const authScreen = document.getElementById('authScreen');
-        const appContainer = document.getElementById('appContainer');
-        const loginForm = document.getElementById('loginForm');
-        const loginEmailInput = document.getElementById('loginEmail');
-        const loginPasswordInput = document.getElementById('loginPassword');
-        const authErrorMsg = document.getElementById('authErrorMsg');
-        const authErrorText = document.getElementById('authErrorText');
-        const userEmailSpan = document.getElementById('userEmailSpan');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const globalSearchInput = document.getElementById('globalSearchInput');
+        // TAB SWITCHER DO MODAL (IMAGEM 3)
+        function switchModalTab(tabId, btn) {
+            document.querySelectorAll('.modal-tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.modal-tab-btn').forEach(el => el.classList.remove('active'));
 
-        // FUNÇÕES DE NOTIFICAÇÃO (ALERTAS)
-        function toggleNotificationPanel() {
-            const panel = document.getElementById('notificationPanel');
-            panel.classList.toggle('hidden');
-        }
-
-        function renderNotifications() {
-            const container = document.getElementById('notifListContainer');
-            const badge = document.getElementById('notifBadge');
-
-            container.innerHTML = '';
-            badge.innerText = MOCK_NOTIFICATIONS.length;
-
-            MOCK_NOTIFICATIONS.forEach(notif => {
-                const card = document.createElement('div');
-                card.className = 'notif-card';
-
-                const badgeHtml = notif.expired 
-                    ? `<span class="notif-badge-expired">EXPIRED</span>` 
-                    : `<span class="notif-badge-days">${notif.days} days</span>`;
-
-                card.innerHTML = `
-                    <div>
-                        <div class="font-bold text-xs text-slate-800">${notif.candidate}</div>
-                        <div class="text-[11px] text-amber-800 font-medium">${notif.doc}</div>
-                    </div>
-                    <div>${badgeHtml}</div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // AUTH & LOGIN LOGIC
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            authErrorMsg.classList.add('hidden');
-
-            const email = loginEmailInput.value.trim();
-            const password = loginPasswordInput.value;
-
-            const { data: profile } = await supabaseClient
-                .from('profiles')
-                .select('*')
-                .eq('email', email)
-                .maybeSingle();
-
-            if (profile && profile.is_blocked) {
-                authErrorText.innerText = 'Sua conta está bloqueada por segurança. Contate o administrador.';
-                authErrorMsg.classList.remove('hidden');
-                return;
-            }
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-            if (error) {
-                let attempts = (profile?.failed_attempts || 0) + 1;
-                if (profile) {
-                    if (attempts >= 3) {
-                        await supabaseClient.from('profiles').update({ failed_attempts: attempts, is_blocked: true }).eq('id', profile.id);
-                        authErrorText.innerText = 'Conta bloqueada! Você errou a senha 3 vezes seguidas.';
-                    } else {
-                        await supabaseClient.from('profiles').update({ failed_attempts: attempts }).eq('id', profile.id);
-                        authErrorText.innerText = `Senha incorreta (${attempts}/3 tentativas).`;
-                    }
-                } else {
-                    authErrorText.innerText = error.message || 'Erro ao realizar login.';
-                }
-                authErrorMsg.classList.remove('hidden');
-            } else {
-                if (profile) {
-                    await supabaseClient.from('profiles').update({ failed_attempts: 0 }).eq('id', profile.id);
-                }
-                await showAppUI(data.user);
-            }
-        });
-
-        logoutBtn.addEventListener('click', async () => {
-            await supabaseClient.auth.signOut();
-            showAuthUI();
-        });
-
-        async function checkSession() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session && session.user) {
-                await showAppUI(session.user);
-            } else {
-                showAuthUI();
-            }
-        }
-
-        async function showAppUI(user) {
-            authScreen.classList.add('hidden');
-            appContainer.classList.remove('hidden');
-            appContainer.classList.add('flex');
-            userEmailSpan.innerText = user.email;
-
-            await checkUserPermissions(user.id);
-            await loadCandidates();
-            renderNotifications();
-            if (window.lucide) lucide.createIcons();
-        }
-
-        function showAuthUI() {
-            appContainer.classList.add('hidden');
-            appContainer.classList.remove('flex');
-            authScreen.classList.remove('hidden');
-        }
-
-        // VIEW & TAB SWITCHING
-        function switchView(viewName) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
-
-            const tabTable = document.getElementById('tabTable');
-            const tabDash = document.getElementById('tabDashboard');
-            const tabActive = document.getElementById('tabActive');
-
-            tabTable.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
-            tabDash.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
-            tabActive.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
-
-            if (viewName === 'table') {
-                document.getElementById('viewTable').classList.remove('hidden');
-                document.getElementById('navTable').classList.add('active');
-                tabTable.className = "px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition";
-                renderCandidateTable(allCandidatesCache);
-            } else if (viewName === 'dashboard') {
-                document.getElementById('viewDashboard').classList.remove('hidden');
-                document.getElementById('navDashboard').classList.add('active');
-                tabDash.className = "px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition";
-                renderDashboardCharts();
-            }
-        }
-
-        // FILTERS
-        function filterByStatus(statusName) {
-            switchView('table');
-            const filtered = allCandidatesCache.filter(c => c.status === statusName);
-            renderCandidateTable(filtered);
-        }
-
-        function filterByDiscipline(discName) {
-            switchView('table');
-            const filtered = allCandidatesCache.filter(c => c.discipline && c.discipline.toLowerCase().includes(discName.toLowerCase()));
-            renderCandidateTable(filtered);
-        }
-
-        function filterExpiring() {
-            switchView('table');
-            renderCandidateTable(allCandidatesCache);
-            toggleNotificationPanel();
-        }
-
-        function toggleFilterMenu() {
-            alert("Painel de Filtros Avançados ativado.");
-        }
-
-        // MODAL HELPERS
-        function openCandidateModal() { document.getElementById('candidateModal').classList.remove('hidden'); }
-        function closeCandidateModal() { document.getElementById('candidateModal').classList.add('hidden'); }
-        function openUsersModal() { 
-            document.getElementById('usersModal').classList.remove('hidden');
-            loadSystemUsers();
-        }
-        function closeUsersModal() { document.getElementById('usersModal').classList.add('hidden'); }
-
-        async function checkUserPermissions(userId) {
-            try {
-                const { data } = await supabaseClient
-                    .from('profiles')
-                    .select('role')
-                    .eq('id', userId)
-                    .maybeSingle();
-
-                currentUserRole = data?.role || 'viewer';
-
-                if (currentUserRole === 'admin') {
-                    document.getElementById('btnNewCandidate').classList.remove('hidden');
-                    document.getElementById('btnAdminUsers').classList.remove('hidden');
-                } else if (currentUserRole === 'recruiter') {
-                    document.getElementById('btnNewCandidate').classList.remove('hidden');
-                    document.getElementById('btnAdminUsers').classList.add('hidden');
-                } else {
-                    document.getElementById('btnNewCandidate').classList.add('hidden');
-                    document.getElementById('btnAdminUsers').classList.add('hidden');
-                }
-            } catch (err) {
-                currentUserRole = 'viewer';
-            }
-        }
-
-        // CANDIDATE DATA RENDER
-        async function loadCandidates() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('candidates')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                allCandidatesCache = (!error && data && data.length > 0) ? data : MOCK_SEED_CANDIDATES;
-            } catch (e) {
-                allCandidatesCache = MOCK_SEED_CANDIDATES;
-            }
-            renderCandidateTable(allCandidatesCache);
-            updateMetricsCounters();
-        }
-
-        function updateMetricsCounters() {
-            const total = allCandidatesCache.length;
-            const available = allCandidatesCache.filter(c => c.status === 'Available').length;
-            const active = allCandidatesCache.filter(c => c.status === 'Working with Us').length;
-
-            document.getElementById('dashTotal').innerText = total;
-            document.getElementById('dashAvailable').innerText = available;
-            document.getElementById('dashActive').innerText = active;
-            document.getElementById('badgeActiveCount').innerText = active;
+            document.getElementById(tabId).classList.remove('hidden');
+            btn.classList.add('active');
         }
 
         function renderCandidateTable(candidates) {
@@ -918,7 +869,7 @@
             tbody.innerHTML = '';
 
             if (candidates.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">Nenhum candidato encontrado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="19" class="p-6 text-center text-slate-400">Nenhum candidato encontrado.</td></tr>`;
                 document.getElementById('resultsCountBadge').innerText = `0 candidates found`;
                 return;
             }
@@ -928,281 +879,106 @@
                 tr.className = 'border-b border-slate-200/60 hover:bg-slate-50 transition';
                 
                 let badgeStyle = 'status-available';
-                let statusLabel = cand.status || 'Available';
+                if (cand.status === 'Working with Us') badgeStyle = 'status-working';
+                if (cand.status === 'In Interviews') badgeStyle = 'status-interviews';
 
-                if (cand.status === 'Working with Us' || cand.status === 'Trabalhando') {
-                    badgeStyle = 'status-working';
-                } else if (cand.status === 'In Interviews' || cand.status === 'Em Entrevistas') {
-                    badgeStyle = 'status-interviews';
+                // Photo HTML
+                const photoHtml = cand.photo 
+                    ? `<img src="${cand.photo}" class="w-7 h-7 rounded-full object-cover border border-slate-200 mx-auto" />`
+                    : `<div class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 font-bold text-[10px] flex items-center justify-center mx-auto">C</div>`;
+
+                // Docs chip HTML
+                const docHtml = cand.cvPdf 
+                    ? `<a href="#" class="doc-chip" onclick="alert('Baixando ${cand.cvPdf}...')"><i data-lucide="file-text" class="w-3 h-3"></i> ${cand.cvPdf} <i data-lucide="download" class="w-3 h-3"></i></a>`
+                    : `-`;
+
+                // Certs HTML
+                let certsHtml = '-';
+                if (cand.certs && cand.certs.length > 0) {
+                    certsHtml = cand.certs.map(c => {
+                        const style = c.expired ? 'cert-expired' : 'cert-ok';
+                        return `<span class="cert-tag ${style}">${c.name} <span class="text-[9px] opacity-75">${c.expiry}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`;
+                    }).join(' ');
                 }
 
-                // Photo rendering with fallback initials avatar
-                const photoUrl = cand.photo || cand.photoUrl || cand.avatar || '';
-                let photoHtml = '';
-                
-                if (photoUrl) {
-                    photoHtml = `<img src="${photoUrl}" alt="${cand.name || 'Candidate'}" class="w-8 h-8 rounded-full object-cover border border-slate-200 shadow-sm mx-auto" />`;
-                } else {
-                    const initials = cand.name ? cand.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'C';
-                    photoHtml = `<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold text-[11px] flex items-center justify-center border border-slate-300 mx-auto">${initials}</div>`;
+                // Medicals HTML
+                let medicalsHtml = '-';
+                if (cand.medicals && cand.medicals.length > 0) {
+                    medicalsHtml = cand.medicals.map(m => `<span class="cert-tag cert-ok">${m.name} <span class="text-[9px] text-amber-600">${m.expiry}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`).join(' ');
+                }
+
+                // Visas HTML
+                let visasHtml = 'None';
+                if (cand.visas && cand.visas.length > 0) {
+                    visasHtml = cand.visas.map(v => `<span class="cert-tag cert-ok">${v.name} <span class="text-[9px] text-slate-500">${v.expiry}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`).join(' ');
                 }
 
                 tr.innerHTML = `
                     <td class="p-3 font-semibold text-[#0f172a]">${cand.name || '-'}</td>
                     <td class="p-3 text-center">${photoHtml}</td>
-                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${statusLabel}</span></td>
+                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${cand.status}</span></td>
                     <td class="p-3">${cand.nationality || '-'}</td>
-                    <td class="p-3">${cand.phone || '-'}</td>
-                    <td class="p-3">${cand.email || '-'}</td>
-                    <td class="p-3">${cand.location || cand.residenceCity || '-'}</td>
-                    <td class="p-3 font-medium">${cand.discipline || '-'}</td>
-                    <td class="p-3">${cand.passport || cand.passportNumber || '-'}</td>
+                    <td class="p-3 font-semibold">${cand.age || '-'}</td>
+                    <td class="p-3 text-slate-600">${cand.phone || '-'}</td>
+                    <td class="p-3 text-sky-600 underline cursor-pointer">${cand.email || '-'}</td>
+                    <td class="p-3">${cand.location || '-'}</td>
+                    <td class="p-3 text-amber-700 font-medium">${cand.available || '-'}</td>
+                    <td class="p-3 font-bold">${cand.discipline || '-'}</td>
+                    <td class="p-3 text-slate-600">${cand.skills || '-'}</td>
+                    <td class="p-3 font-semibold">${cand.ogExp || '-'}</td>
+                    <td class="p-3">${cand.passport || '-'}</td>
+                    <td class="p-3 ${cand.expiry?.includes('15d') ? 'text-rose-600 font-bold' : ''}">${cand.expiry || '-'}</td>
+                    <td class="p-3">${docHtml}</td>
+                    <td class="p-3">${certsHtml}</td>
+                    <td class="p-3">${medicalsHtml}</td>
+                    <td class="p-3">${visasHtml}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="openCandidateModal()" class="text-slate-400 hover:text-slate-700"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
 
             document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidates found`;
-        }
-
-        // CHARTS RENDER
-        function renderDashboardCharts() {
-            updateMetricsCounters();
-
-            const workingCount = allCandidatesCache.filter(c => c.status === 'Working with Us').length;
-            const availableCount = allCandidatesCache.filter(c => c.status === 'Available').length;
-            const interviewCount = allCandidatesCache.filter(c => c.status === 'In Interviews').length;
-
-            // Donut Chart
-            const ctxDonut = document.getElementById('statusChart').getContext('2d');
-            if (statusChartObj) statusChartObj.destroy();
-            statusChartObj = new Chart(ctxDonut, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Working with Us', 'Available', 'In Interviews'],
-                    datasets: [{
-                        data: [workingCount, availableCount, interviewCount],
-                        backgroundColor: ['#10b981', '#0284c7', '#f97316'],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
-                }
-            });
-
-            // Bar Chart
-            const ctxBar = document.getElementById('disciplinesChart').getContext('2d');
-            if (disciplinesChartObj) disciplinesChartObj.destroy();
-
-            const disciplines = ['Welder', 'NDT Technician', 'Pipefitter', 'Mechanical Technician', 'HSE Officer', 'Project Engineer'];
-            const counts = disciplines.map(d => allCandidatesCache.filter(c => c.discipline && c.discipline.toLowerCase().includes(d.toLowerCase())).length || 1);
-
-            disciplinesChartObj = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: disciplines,
-                    datasets: [{
-                        label: 'Headcount',
-                        data: counts,
-                        backgroundColor: '#0284c7',
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        // GLOBAL SEARCH
-        globalSearchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            if (!query) return renderCandidateTable(allCandidatesCache);
-
-            const filtered = allCandidatesCache.filter(c => 
-                (c.name && c.name.toLowerCase().includes(query)) ||
-                (c.discipline && c.discipline.toLowerCase().includes(query)) ||
-                (c.email && c.email.toLowerCase().includes(query)) ||
-                (c.passport && c.passport.toLowerCase().includes(query)) ||
-                (c.nationality && c.nationality.toLowerCase().includes(query)) ||
-                (c.location && c.location.toLowerCase().includes(query))
-            );
-
-            renderCandidateTable(filtered);
-        });
-
-        // FORM SUBMISSIONS
-        document.getElementById('candidateForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const candidateData = {
-                name: document.getElementById('candName').value,
-                photo: document.getElementById('candPhoto').value,
-                discipline: document.getElementById('candDiscipline').value,
-                status: document.getElementById('candStatus').value,
-                email: document.getElementById('candEmail').value,
-                phone: document.getElementById('candPhone').value,
-                location: document.getElementById('candLocation').value,
-                passport: document.getElementById('candPassport').value,
-                nationality: document.getElementById('candNationality').value
-            };
-
-            const { error } = await supabaseClient.from('candidates').insert([candidateData]);
-
-            if (error) {
-                alert('Erro ao cadastrar candidato: ' + error.message);
-            } else {
-                alert('Candidato cadastrado com sucesso!');
-                closeCandidateModal();
-                document.getElementById('candidateForm').reset();
-                await loadCandidates();
-            }
-        });
-
-        // ADMIN USER MANAGEMENT
-        async function loadSystemUsers() {
-            const tbody = document.getElementById('usersListBody');
-            tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Carregando...</td></tr>`;
-
-            const { data, error } = await supabaseClient.from('profiles').select('*');
-
-            if (error || !data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum perfil encontrado.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = '';
-            data.forEach(u => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50';
-                
-                const isBlocked = u.is_blocked;
-                const statusBadge = isBlocked 
-                    ? `<span class="apple-badge apple-badge-red">Bloqueado</span>` 
-                    : `<span class="apple-badge status-working">Ativo</span>`;
-
-                tr.innerHTML = `
-                    <td class="p-2.5 font-medium text-slate-800">${u.email || '-'}</td>
-                    <td class="p-2.5">
-                        <select onchange="updateUserRole('${u.id}', this.value)" class="text-xs p-1 border rounded bg-white">
-                            <option value="viewer" ${u.role === 'viewer' ? 'selected' : ''}>Viewer</option>
-                            <option value="recruiter" ${u.role === 'recruiter' ? 'selected' : ''}>Recruiter</option>
-                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
-                        </select>
-                    </td>
-                    <td class="p-2.5">${statusBadge}</td>
-                    <td class="p-2.5 text-right space-x-1">
-                        <button onclick="toggleBlockUser('${u.id}', ${!isBlocked})" class="px-2 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700">
-                            ${isBlocked ? 'Desbloquear' : 'Bloquear'}
-                        </button>
-                        <button onclick="sendPasswordReset('${u.email}')" class="px-2 py-1 text-xs font-semibold rounded bg-sky-50 hover:bg-sky-100 text-sky-700">Reset Senha</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function toggleBlockUser(userId, blockState) {
-            const updatePayload = { is_blocked: blockState };
-            if (!blockState) updatePayload.failed_attempts = 0;
-            const { error } = await supabaseClient.from('profiles').update(updatePayload).eq('id', userId);
-            if (error) alert('Erro ao alterar status: ' + error.message);
-            else loadSystemUsers();
-        }
-
-        async function sendPasswordReset(email) {
-            if (!email) return alert('E-mail inválido.');
-            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
-            if (error) alert('Erro ao enviar e-mail: ' + error.message);
-            else alert(`E-mail enviado para ${email}!`);
-        }
-
-        async function updateUserRole(userId, newRole) {
-            const { error } = await supabaseClient.from('profiles').update({ role: newRole }).eq('id', userId);
-            if (error) alert('Erro ao atualizar permissão: ' + error.message);
-            else loadSystemUsers();
-        }
-
-        document.getElementById('newUserForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-
-            const email = document.getElementById('newUserEmail').value.trim();
-            const password = document.getElementById('newUserPassword').value;
-            const role = document.getElementById('newUserRole').value;
-
-            try {
-                const tempSupabase = getSupabaseClient({ auth: { persistSession: false, autoRefreshToken: false } });
-                const { data, error } = await tempSupabase.auth.signUp({ 
-                    email: email, 
-                    password: password,
-                    options: { data: { role: role } }
-                });
-
-                if (error) throw error;
-
-                if (data.user) {
-                    await supabaseClient.from('profiles').upsert({ 
-                        id: data.user.id, 
-                        email: email, 
-                        role: role,
-                        is_blocked: false,
-                        failed_attempts: 0
-                    }, { onConflict: 'id' });
-
-                    alert(`Usuário ${email} cadastrado com sucesso!`);
-                    document.getElementById('newUserForm').reset();
-                    await loadSystemUsers();
-                }
-            } catch (err) {
-                alert('Erro ao criar usuário: ' + err.message);
-            } finally {
-                submitBtn.disabled = false;
-            }
-        });
-
-        // IMPORT / EXPORT UTILS
-        function triggerImport() { document.getElementById('importFileInput').click(); }
-        function handleFileImport(e) {
-            const file = e.target.files[0];
-            if (file) alert(`Arquivo "${file.name}" carregado. Processando importação...`);
-        }
-
-        function exportCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,Name,Photo,Status,Nationality,Phone,Email,Location,Discipline,Passport\n";
-            allCandidatesCache.forEach(c => {
-                csvContent += `"${c.name}","${c.photo || ''}","${c.status}","${c.nationality}","${c.phone}","${c.email}","${c.location}","${c.discipline}","${c.passport}"\n`;
-            });
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "candidates_export.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function downloadAllDocs() { alert("Gerando pacote com todos os documentos anexados..."); }
-        function backupJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allCandidatesCache));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "backup_candidates.json");
-            dlAnchorElem.click();
-        }
-        function restoreJSON() { alert("Selecione um arquivo de backup JSON para restaurar."); }
-
-        window.addEventListener('DOMContentLoaded', () => {
             if (window.lucide) lucide.createIcons();
-            checkSession();
+        }
+
+        // LOAD CANDIDATES BASELINE
+        async function loadCandidates() {
+            allCandidatesCache = MOCK_SEED_CANDIDATES;
+            renderCandidateTable(allCandidatesCache);
+        }
+
+        // AUTO-CALCULATE AGE FROM DOB (IMAGEM 3)
+        document.getElementById('candDob')?.addEventListener('change', (e) => {
+            if (!e.target.value) return;
+            const dob = new Date(e.target.value);
+            const diff = Date.now() - dob.getTime();
+            const ageDate = new Date(diff);
+            document.getElementById('candAge').value = Math.abs(ageDate.getUTCFullYear() - 1970);
         });
+
+        // INIT SETUP
+        window.addEventListener('DOMContentLoaded', () => {
+            allCandidatesCache = MOCK_SEED_CANDIDATES;
+            renderCandidateTable(allCandidatesCache);
+            if (window.lucide) lucide.createIcons();
+        });
+
+        // NOTIFICATION & MODAL HELPERS
+        function toggleNotificationPanel() { document.getElementById('notificationPanel').classList.toggle('hidden'); }
+        function openCandidateModal() { document.getElementById('candidateModal').classList.remove('hidden'); }
+        function closeCandidateModal() { document.getElementById('candidateModal').classList.add('hidden'); }
+        function openUsersModal() { document.getElementById('usersModal').classList.remove('hidden'); }
+        function closeUsersModal() { document.getElementById('usersModal').classList.add('hidden'); }
+        function switchView(view) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(view === 'table' ? 'viewTable' : 'viewDashboard').classList.remove('hidden');
+        }
+        function triggerImport() { document.getElementById('importFileInput').click(); }
+        function handleFileImport(e) { alert("Arquivo selecionado: " + e.target.files[0]?.name); }
+        function exportCSV() { alert("Exportando dados em formato CSV/Excel..."); }
+        function downloadAllDocs() { alert("Iniciando download de todos os comprovantes e PDFs..."); }
     </script>
 </body>
 </html>
