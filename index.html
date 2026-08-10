@@ -167,6 +167,37 @@
             background: #e0f2fe;
             color: #0369a1;
         }
+
+        /* ESTILIZAÇÃO DOS CARDS DE NOTIFICAÇÃO DO PRINT */
+        .notif-card {
+            background: #fffdf0;
+            border: 1px solid #fef08a;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .notif-badge-expired {
+            background: #f97316;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 980px;
+            text-transform: uppercase;
+        }
+
+        .notif-badge-days {
+            background: #facc15;
+            color: #854d0e;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 980px;
+        }
     </style>
 </head>
 <body class="text-[#0f172a] font-sans antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
@@ -235,11 +266,33 @@
             </div>
 
             <!-- Action Controls / Badges / Add Candidate -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 relative">
                 <span class="apple-badge apple-badge-blue text-[11px]"><i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> Saved</span>
-                <div class="relative cursor-pointer p-1.5 text-slate-600 hover:text-slate-900">
-                    <i data-lucide="bell" class="w-5 h-5"></i>
-                    <span class="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">6</span>
+                
+                <!-- ÍCONE DE NOTIFICAÇÃO (SININHO) COM BOTÃO DE ABRIR/FECHAR -->
+                <div class="relative">
+                    <button onclick="toggleNotificationPanel()" class="relative p-1.5 text-slate-600 hover:text-slate-900 transition focus:outline-none">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span id="notifBadge" class="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">6</span>
+                    </button>
+
+                    <!-- PAINEL DE ALERTAS DE NOTIFICAÇÃO DROPDOWN -->
+                    <div id="notificationPanel" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-2xl z-50 p-4">
+                        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                            <div class="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-amber-700">
+                                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                                <span>DOCUMENT EXPIRATION ALERTS</span>
+                            </div>
+                            <button onclick="toggleNotificationPanel()" class="text-slate-400 hover:text-slate-600">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <!-- LISTA DE ALERTAS DE EXPIRAÇÃO -->
+                        <div id="notifListContainer" class="max-h-80 overflow-y-auto pr-1">
+                            <!-- Inserido dinamicamente via Javascript -->
+                        </div>
+                    </div>
                 </div>
 
                 <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden apple-btn apple-btn-secondary text-xs px-3 py-1.5" title="Gerenciar Usuários">
@@ -363,6 +416,7 @@
                                 <thead class="sticky top-0 z-10 bg-slate-100/90 backdrop-blur-md text-[#475569] uppercase font-bold text-[11px] border-b border-slate-200 tracking-wider">
                                     <tr>
                                         <th class="p-3">Candidato</th>
+                                        <th class="p-3 text-center">Photo</th>
                                         <th class="p-3">Status</th>
                                         <th class="p-3">Nacionalidade</th>
                                         <th class="p-3">Contato</th>
@@ -464,6 +518,11 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo *</label>
                     <input type="text" id="candName" required placeholder="Ex: João da Silva" class="apple-input w-full">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">URL da Foto / Avatar</label>
+                    <input type="url" id="candPhoto" placeholder="https://images.unsplash.com/photo-..." class="apple-input w-full">
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -605,9 +664,19 @@
 
         // SEED DATA BASELINE
         const MOCK_SEED_CANDIDATES = [
-            { id: 'cand_1', name: 'Carlos Eduardo Silva', status: 'Working with Us', nationality: 'Brazilian', phone: '+55 22 99876-5432', email: 'carlos.silva@offshore.com', location: 'Macaé', discipline: 'Welder', passport: 'BR9876543' },
-            { id: 'cand_2', name: 'João Pedro Santos', status: 'Available', nationality: 'Portuguese', phone: '+351 912 345 678', email: 'j.santos@energytech.pt', location: 'Porto', discipline: 'Pipefitter', passport: 'PT1234567' },
-            { id: 'cand_3', name: 'Elena Rostova', status: 'Available', nationality: 'British', phone: '+44 7700 900077', email: 'elena.rostova@hse-solutions.co.uk', location: 'Aberdeen', discipline: 'HSE Officer', passport: 'UK9988776' }
+            { id: 'cand_1', name: 'Carlos Eduardo Silva', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80', status: 'Working with Us', nationality: 'Brazilian', phone: '+55 22 99876-5432', email: 'carlos.silva@offshore.com', location: 'Macaé', discipline: 'Welder', passport: 'BR9876543' },
+            { id: 'cand_2', name: 'João Pedro Santos', photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80', status: 'Available', nationality: 'Portuguese', phone: '+351 912 345 678', email: 'j.santos@energytech.pt', location: 'Porto', discipline: 'Pipefitter', passport: 'PT1234567' },
+            { id: 'cand_3', name: 'Elena Rostova', photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80', status: 'In Interviews', nationality: 'British', phone: '+44 7700 900077', email: 'elena.rostova@hse-solutions.co.uk', location: 'Aberdeen', discipline: 'HSE Officer', passport: 'UK9988776' }
+        ];
+
+        // MOCK DE NOTIFICAÇÕES EXATAS DO SEU PRINT
+        const MOCK_NOTIFICATIONS = [
+            { candidate: 'Carlos Eduardo Silva', doc: 'Cert (BOSIET Cert) Expiry', days: 0, expired: true },
+            { candidate: 'Carlos Eduardo Silva', doc: 'Cert (HUET Cert) Expiry', days: 0, expired: true },
+            { candidate: 'Carlos Eduardo Silva', doc: 'Medical (OGUK Medical) Expiry', days: 22, expired: false },
+            { candidate: 'João Pedro Santos', doc: 'Passport Expiry', days: 15, expired: false },
+            { candidate: 'João Pedro Santos', doc: 'Cert (CSWIP 3.1) Expiry', days: 0, expired: true },
+            { candidate: 'Elena Rostova', doc: 'Offshore Visa Expiry', days: 8, expired: false }
         ];
 
         let allCandidatesCache = [];
@@ -625,6 +694,38 @@
         const userEmailSpan = document.getElementById('userEmailSpan');
         const logoutBtn = document.getElementById('logoutBtn');
         const globalSearchInput = document.getElementById('globalSearchInput');
+
+        // FUNÇÕES DE NOTIFICAÇÃO (ALERTAS)
+        function toggleNotificationPanel() {
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.toggle('hidden');
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('notifListContainer');
+            const badge = document.getElementById('notifBadge');
+
+            container.innerHTML = '';
+            badge.innerText = MOCK_NOTIFICATIONS.length;
+
+            MOCK_NOTIFICATIONS.forEach(notif => {
+                const card = document.createElement('div');
+                card.className = 'notif-card';
+
+                const badgeHtml = notif.expired 
+                    ? `<span class="notif-badge-expired">EXPIRED</span>` 
+                    : `<span class="notif-badge-days">${notif.days} days</span>`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="font-bold text-xs text-slate-800">${notif.candidate}</div>
+                        <div class="text-[11px] text-amber-800 font-medium">${notif.doc}</div>
+                    </div>
+                    <div>${badgeHtml}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
 
         // AUTH & LOGIN LOGIC
         loginForm.addEventListener('submit', async (e) => {
@@ -692,6 +793,7 @@
 
             await checkUserPermissions(user.id);
             await loadCandidates();
+            renderNotifications();
             if (window.lucide) lucide.createIcons();
         }
 
@@ -743,6 +845,7 @@
         function filterExpiring() {
             switchView('table');
             renderCandidateTable(allCandidatesCache);
+            toggleNotificationPanel();
         }
 
         function toggleFilterMenu() {
@@ -815,7 +918,7 @@
             tbody.innerHTML = '';
 
             if (candidates.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">Nenhum candidato encontrado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">Nenhum candidato encontrado.</td></tr>`;
                 document.getElementById('resultsCountBadge').innerText = `0 candidates found`;
                 return;
             }
@@ -833,8 +936,20 @@
                     badgeStyle = 'status-interviews';
                 }
 
+                // Photo rendering with fallback initials avatar
+                const photoUrl = cand.photo || cand.photoUrl || cand.avatar || '';
+                let photoHtml = '';
+                
+                if (photoUrl) {
+                    photoHtml = `<img src="${photoUrl}" alt="${cand.name || 'Candidate'}" class="w-8 h-8 rounded-full object-cover border border-slate-200 shadow-sm mx-auto" />`;
+                } else {
+                    const initials = cand.name ? cand.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'C';
+                    photoHtml = `<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold text-[11px] flex items-center justify-center border border-slate-300 mx-auto">${initials}</div>`;
+                }
+
                 tr.innerHTML = `
                     <td class="p-3 font-semibold text-[#0f172a]">${cand.name || '-'}</td>
+                    <td class="p-3 text-center">${photoHtml}</td>
                     <td class="p-3"><span class="apple-badge ${badgeStyle}">${statusLabel}</span></td>
                     <td class="p-3">${cand.nationality || '-'}</td>
                     <td class="p-3">${cand.phone || '-'}</td>
@@ -928,6 +1043,7 @@
 
             const candidateData = {
                 name: document.getElementById('candName').value,
+                photo: document.getElementById('candPhoto').value,
                 discipline: document.getElementById('candDiscipline').value,
                 status: document.getElementById('candStatus').value,
                 email: document.getElementById('candEmail').value,
@@ -1060,9 +1176,9 @@
         }
 
         function exportCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,Name,Status,Nationality,Phone,Email,Location,Discipline,Passport\n";
+            let csvContent = "data:text/csv;charset=utf-8,Name,Photo,Status,Nationality,Phone,Email,Location,Discipline,Passport\n";
             allCandidatesCache.forEach(c => {
-                csvContent += `"${c.name}","${c.status}","${c.nationality}","${c.phone}","${c.email}","${c.location}","${c.discipline}","${c.passport}"\n`;
+                csvContent += `"${c.name}","${c.photo || ''}","${c.status}","${c.nationality}","${c.phone}","${c.email}","${c.location}","${c.discipline}","${c.passport}"\n`;
             });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
