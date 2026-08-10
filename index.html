@@ -226,7 +226,7 @@
                 <p class="text-xs font-medium text-[#64748b] mt-1">Insira suas credenciais corporativas para entrar</p>
             </div>
 
-            <form id="loginForm" class="space-y-4">
+            <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
                 <div id="authErrorMsg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2">
                     <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
                     <span id="authErrorText">Falha na autenticação</span>
@@ -269,7 +269,7 @@
             <div class="flex-1 max-w-2xl flex items-center gap-2">
                 <div class="relative flex-1">
                     <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-2.5 text-slate-400"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Search name, passport, nationality, email, certs, skills, city..." class="w-full pl-10 pr-4 py-2 bg-white/90 border border-slate-200 rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-[#0f172a]" />
+                    <input type="text" id="globalSearchInput" oninput="handleGlobalSearch(event)" placeholder="Search name, passport, nationality, email, certs, skills, city..." class="w-full pl-10 pr-4 py-2 bg-white/90 border border-slate-200 rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-[#0f172a]" />
                 </div>
                 <button onclick="toggleFilterMenu()" class="apple-btn apple-btn-secondary text-xs px-3 py-2 flex items-center gap-1.5">
                     <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
@@ -284,7 +284,7 @@
                 <div class="relative">
                     <button onclick="toggleNotificationPanel()" class="relative p-1.5 text-slate-600 hover:text-slate-900 transition focus:outline-none">
                         <i data-lucide="bell" class="w-5 h-5"></i>
-                        <span id="notifBadge" class="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">6</span>
+                        <span id="notifBadge" class="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
                     </button>
 
                     <div id="notificationPanel" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-2xl z-50 p-4">
@@ -314,7 +314,7 @@
                     <span>+ Add Candidate</span>
                 </button>
 
-                <button id="logoutBtn" class="apple-btn apple-btn-secondary text-xs px-2.5 py-1.5">
+                <button id="logoutBtn" onclick="handleLogout()" class="apple-btn apple-btn-secondary text-xs px-2.5 py-1.5">
                     <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                 </button>
             </div>
@@ -342,7 +342,7 @@
                                     <i data-lucide="user-check" class="w-4 h-4"></i>
                                     <span>Active Workforce</span>
                                 </div>
-                                <span id="badgeActiveCount" class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">1</span>
+                                <span id="badgeActiveCount" class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                             </div>
                         </nav>
                     </div>
@@ -354,7 +354,7 @@
                                 <span>Available Immediately</span>
                                 <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
                             </button>
-                            <button onclick="filterByDiscipline('Offshore Welder')" class="w-full text-left sidebar-link justify-between py-1.5 text-xs">
+                            <button onclick="filterByDiscipline('Welder')" class="w-full text-left sidebar-link justify-between py-1.5 text-xs">
                                 <span>Offshore Welders</span>
                                 <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
                             </button>
@@ -393,7 +393,7 @@
             <main class="flex-1 overflow-y-auto p-6 space-y-4">
 
                 <div class="flex items-center justify-between gap-4 pb-1 border-b border-slate-200/60">
-                    <span id="resultsCountBadge" class="apple-badge apple-badge-blue">3 candidates found</span>
+                    <span id="resultsCountBadge" class="apple-badge apple-badge-blue">0 candidates found</span>
 
                     <div class="bg-slate-200/60 p-1 rounded-xl flex gap-1 text-xs font-semibold">
                         <button id="tabTable" onclick="switchView('table')" class="px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition">Full Data Table</button>
@@ -402,7 +402,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW TABLE COMPLETA COM TODOS OS CAMPOS DAS IMAGENS 1 E 2 -->
+                <!-- VIEW TABLE COMPLETA COM TODOS OS CAMPOS -->
                 <section id="viewTable" class="view-section space-y-4">
                     <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
                         <div class="overflow-x-auto max-h-[72vh]">
@@ -442,7 +442,7 @@
                         <div class="glass-card p-5 flex items-center justify-between">
                             <div>
                                 <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Candidates</p>
-                                <h3 id="dashTotal" class="text-3xl font-extrabold text-slate-800 mt-1">3</h3>
+                                <h3 id="dashTotal" class="text-3xl font-extrabold text-slate-800 mt-1">0</h3>
                             </div>
                             <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center">
                                 <i data-lucide="users" class="w-6 h-6"></i>
@@ -452,7 +452,7 @@
                         <div class="glass-card p-5 flex items-center justify-between">
                             <div>
                                 <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Available Immediately</p>
-                                <h3 id="dashAvailable" class="text-3xl font-extrabold text-emerald-600 mt-1">2</h3>
+                                <h3 id="dashAvailable" class="text-3xl font-extrabold text-emerald-600 mt-1">0</h3>
                             </div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
                                 <i data-lucide="user-check" class="w-6 h-6"></i>
@@ -462,7 +462,7 @@
                         <div class="glass-card p-5 flex items-center justify-between">
                             <div>
                                 <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Workforce</p>
-                                <h3 id="dashActive" class="text-3xl font-extrabold text-indigo-600 mt-1">1</h3>
+                                <h3 id="dashActive" class="text-3xl font-extrabold text-indigo-600 mt-1">0</h3>
                             </div>
                             <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
                                 <i data-lucide="briefcase" class="w-6 h-6"></i>
@@ -472,7 +472,7 @@
                         <div class="glass-card p-5 flex items-center justify-between">
                             <div>
                                 <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Expirations (90 Days)</p>
-                                <h3 id="dashExpiring" class="text-3xl font-extrabold text-amber-600 mt-1">7</h3>
+                                <h3 id="dashExpiring" class="text-3xl font-extrabold text-amber-600 mt-1">0</h3>
                             </div>
                             <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
                                 <i data-lucide="alert-triangle" class="w-6 h-6"></i>
@@ -501,7 +501,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE CADASTRO DE CANDIDATO COM ESTRUTURA COMPLETA DA IMAGEM 3 -->
+    <!-- MODAL DE CADASTRO / EDIÇÃO DE CANDIDATO -->
     <div id="candidateModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl w-full max-w-4xl shadow-2xl border border-slate-100 relative flex flex-col max-h-[90vh] overflow-hidden">
             
@@ -513,37 +513,38 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 class="text-lg font-bold text-slate-800 leading-none">New Candidate</h3>
-                            <span class="apple-badge status-available">Available</span>
+                            <h3 id="modalTitle" class="text-lg font-bold text-slate-800 leading-none">New Candidate</h3>
+                            <span id="modalBadgeStatus" class="apple-badge status-available">Available</span>
                         </div>
-                        <p class="text-xs text-slate-400 mt-1">Welder • No location</p>
+                        <p id="modalSubTitle" class="text-xs text-slate-400 mt-1">Industrial Platform</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button class="apple-btn apple-btn-secondary text-xs px-3 py-1.5">Archive</button>
-                    <button class="apple-btn bg-rose-600 hover:bg-rose-700 text-white text-xs px-3 py-1.5">Delete</button>
-                    <button onclick="closeCandidateModal()" class="text-slate-400 hover:text-slate-600 transition ml-2">
+                    <button type="button" class="apple-btn apple-btn-secondary text-xs px-3 py-1.5">Archive</button>
+                    <button type="button" onclick="deleteCurrentCandidate()" class="apple-btn bg-rose-600 hover:bg-rose-700 text-white text-xs px-3 py-1.5">Delete</button>
+                    <button type="button" onclick="closeCandidateModal()" class="text-slate-400 hover:text-slate-600 transition ml-2">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- ABAS DO FORMULÁRIO (TABS - IGUAL IMAGEM 3) -->
+            <!-- ABAS DO FORMULÁRIO -->
             <div class="flex items-center gap-2 px-5 border-b border-slate-200 bg-slate-50/30 overflow-x-auto text-xs">
-                <button class="modal-tab-btn active" onclick="switchModalTab('tabOverview', this)">Overview</button>
-                <button class="modal-tab-btn" onclick="switchModalTab('tabSkills', this)">Skills & Disciplines</button>
-                <button class="modal-tab-btn" onclick="switchModalTab('tabCerts', this)">Certifications</button>
-                <button class="modal-tab-btn" onclick="switchModalTab('tabMedicals', this)">Medicals</button>
-                <button class="modal-tab-btn" onclick="switchModalTab('tabVisas', this)">Visas</button>
-                <button class="modal-tab-btn" onclick="switchModalTab('tabDocs', this)">Docs</button>
-                <button class="modal-tab-btn" onclick="switchModalTab('tabAssignment', this)">Active Assignment</button>
-                <button class="modal-tab-btn" onclick="switchModalTab('tabNotes', this)">Notes & History</button>
+                <button type="button" class="modal-tab-btn active" onclick="switchModalTab('tabOverview', this)">Overview</button>
+                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabSkills', this)">Skills & Disciplines</button>
+                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabCerts', this)">Certifications</button>
+                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabMedicals', this)">Medicals</button>
+                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabVisas', this)">Visas</button>
+                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabDocs', this)">Docs</button>
+                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabAssignment', this)">Active Assignment</button>
+                <button type="button" class="modal-tab-btn" onclick="switchModalTab('tabNotes', this)">Notes & History</button>
             </div>
 
             <!-- CORPO DO FORMULÁRIO -->
             <div class="p-6 overflow-y-auto flex-1">
-                <form id="candidateForm" class="space-y-6">
+                <form id="candidateForm" onsubmit="handleCandidateSubmit(event)" class="space-y-6">
+                    <input type="hidden" id="candId" value="" />
                     
                     <!-- CONTEÚDO TAB OVERVIEW -->
                     <div id="tabOverview" class="modal-tab-content space-y-6">
@@ -676,7 +677,7 @@
                         </div>
                     </div>
 
-                    <!-- OUTRAS ABAS DUMMY -->
+                    <!-- OUTRAS ABAS -->
                     <div id="tabCerts" class="modal-tab-content hidden p-4 text-center text-slate-400">Anexos e Registros de Certificações (BOSIET, HUET, CSWIP)</div>
                     <div id="tabMedicals" class="modal-tab-content hidden p-4 text-center text-slate-400">Exames Médicos Ocupacionais (OGUK, ASO)</div>
                     <div id="tabVisas" class="modal-tab-content hidden p-4 text-center text-slate-400">Controle de Vistos de Trabalho</div>
@@ -704,10 +705,10 @@
                     <i data-lucide="shield-check" class="w-5 h-5 text-brand-600"></i>
                     <span>Administração de Usuários e Perfis</span>
                 </h3>
-                <button onclick="closeUsersModal()" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button type="button" onclick="closeUsersModal()" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
-            <form id="newUserForm" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+            <form id="newUserForm" onsubmit="handleCreateUser(event)" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
                 <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Criar Novo Acesso</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
@@ -756,12 +757,12 @@
         function getSupabaseClient(options = {}) {
             const createFn = (window.supabase && window.supabase.createClient) || 
                              (window.supabase_js && window.supabase_js.createClient);
-            return createFn(SUPABASE_URL, SUPABASE_ANON_KEY, options);
+            return createFn ? createFn(SUPABASE_URL, SUPABASE_ANON_KEY, options) : null;
         }
 
         let supabaseClient = getSupabaseClient();
 
-        // MOCK SEED DADOS COMPLETOS COMPATÍVEIS COM O LAYOUT ANTIGO
+        // SEED DE DADOS EM MEMÓRIA COMO FALLBACK
         const MOCK_SEED_CANDIDATES = [
             {
                 id: 'cand_1',
@@ -806,7 +807,7 @@
                 skills: 'Pipe Installation • Hydro Testing • Shutdown Exp',
                 ogExp: '8 yrs OFFSHORE',
                 passport: 'PT1234567',
-                expiry: '2026-08-25 (15d)',
+                expiry: '2026-08-25',
                 cvPdf: 'CV_Joao_Santos.pdf',
                 certs: [
                     { name: 'CSWIP 3.1', expiry: '2026-08-01', expired: true }
@@ -843,32 +844,26 @@
             }
         ];
 
-        const MOCK_NOTIFICATIONS = [
-            { candidate: 'Carlos Eduardo Silva', doc: 'Cert (BOSIET Cert) Expiry', days: 0, expired: true },
-            { candidate: 'Carlos Eduardo Silva', doc: 'Cert (HUET Cert) Expiry', days: 0, expired: true },
-            { candidate: 'Carlos Eduardo Silva', doc: 'Medical (OGUK Medical) Expiry', days: 22, expired: false },
-            { candidate: 'João Pedro Santos', doc: 'Passport Expiry', days: 15, expired: false },
-            { candidate: 'João Pedro Santos', doc: 'Cert (CSWIP 3.1) Expiry', days: 0, expired: true },
-            { candidate: 'Elena Rostova', doc: 'Offshore Visa Expiry', days: 8, expired: false }
-        ];
-
         let allCandidatesCache = [];
-        let currentUserRole = 'viewer';
+        let currentUserRole = 'admin';
+        let statusChartInstance = null;
+        let disciplinesChartInstance = null;
 
-        // TAB SWITCHER DO MODAL (IMAGEM 3)
+        // CONTROLE DAS ABAS DO MODAL
         function switchModalTab(tabId, btn) {
             document.querySelectorAll('.modal-tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.modal-tab-btn').forEach(el => el.classList.remove('active'));
 
             document.getElementById(tabId).classList.remove('hidden');
-            btn.classList.add('active');
+            if (btn) btn.classList.add('active');
         }
 
+        // RENDERIZAÇÃO DA TABELA DE CANDIDATOS
         function renderCandidateTable(candidates) {
             const tbody = document.getElementById('candidateTableBody');
             tbody.innerHTML = '';
 
-            if (candidates.length === 0) {
+            if (!candidates || candidates.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="19" class="p-6 text-center text-slate-400">Nenhum candidato encontrado.</td></tr>`;
                 document.getElementById('resultsCountBadge').innerText = `0 candidates found`;
                 return;
@@ -882,41 +877,36 @@
                 if (cand.status === 'Working with Us') badgeStyle = 'status-working';
                 if (cand.status === 'In Interviews') badgeStyle = 'status-interviews';
 
-                // Photo HTML
                 const photoHtml = cand.photo 
                     ? `<img src="${cand.photo}" class="w-7 h-7 rounded-full object-cover border border-slate-200 mx-auto" />`
-                    : `<div class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 font-bold text-[10px] flex items-center justify-center mx-auto">C</div>`;
+                    : `<div class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 font-bold text-[10px] flex items-center justify-center mx-auto">${cand.name ? cand.name.charAt(0) : 'C'}</div>`;
 
-                // Docs chip HTML
                 const docHtml = cand.cvPdf 
                     ? `<a href="#" class="doc-chip" onclick="alert('Baixando ${cand.cvPdf}...')"><i data-lucide="file-text" class="w-3 h-3"></i> ${cand.cvPdf} <i data-lucide="download" class="w-3 h-3"></i></a>`
                     : `-`;
 
-                // Certs HTML
                 let certsHtml = '-';
                 if (cand.certs && cand.certs.length > 0) {
                     certsHtml = cand.certs.map(c => {
                         const style = c.expired ? 'cert-expired' : 'cert-ok';
-                        return `<span class="cert-tag ${style}">${c.name} <span class="text-[9px] opacity-75">${c.expiry}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`;
+                        return `<span class="cert-tag ${style}">${c.name} <span class="text-[9px] opacity-75">${c.expiry || ''}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`;
                     }).join(' ');
                 }
 
-                // Medicals HTML
                 let medicalsHtml = '-';
                 if (cand.medicals && cand.medicals.length > 0) {
-                    medicalsHtml = cand.medicals.map(m => `<span class="cert-tag cert-ok">${m.name} <span class="text-[9px] text-amber-600">${m.expiry}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`).join(' ');
+                    medicalsHtml = cand.medicals.map(m => `<span class="cert-tag cert-ok">${m.name} <span class="text-[9px] text-amber-600">${m.expiry || ''}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`).join(' ');
                 }
 
-                // Visas HTML
                 let visasHtml = 'None';
                 if (cand.visas && cand.visas.length > 0) {
-                    visasHtml = cand.visas.map(v => `<span class="cert-tag cert-ok">${v.name} <span class="text-[9px] text-slate-500">${v.expiry}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`).join(' ');
+                    visasHtml = cand.visas.map(v => `<span class="cert-tag cert-ok">${v.name} <span class="text-[9px] text-slate-500">${v.expiry || ''}</span> <i data-lucide="download" class="w-2.5 h-2.5 cursor-pointer"></i></span>`).join(' ');
                 }
 
                 tr.innerHTML = `
                     <td class="p-3 font-semibold text-[#0f172a]">${cand.name || '-'}</td>
                     <td class="p-3 text-center">${photoHtml}</td>
-                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${cand.status}</span></td>
+                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${cand.status || 'Available'}</span></td>
                     <td class="p-3">${cand.nationality || '-'}</td>
                     <td class="p-3 font-semibold">${cand.age || '-'}</td>
                     <td class="p-3 text-slate-600">${cand.phone || '-'}</td>
@@ -927,13 +917,13 @@
                     <td class="p-3 text-slate-600">${cand.skills || '-'}</td>
                     <td class="p-3 font-semibold">${cand.ogExp || '-'}</td>
                     <td class="p-3">${cand.passport || '-'}</td>
-                    <td class="p-3 ${cand.expiry?.includes('15d') ? 'text-rose-600 font-bold' : ''}">${cand.expiry || '-'}</td>
+                    <td class="p-3">${cand.expiry || '-'}</td>
                     <td class="p-3">${docHtml}</td>
                     <td class="p-3">${certsHtml}</td>
                     <td class="p-3">${medicalsHtml}</td>
                     <td class="p-3">${visasHtml}</td>
                     <td class="p-3 text-center">
-                        <button onclick="openCandidateModal()" class="text-slate-400 hover:text-slate-700"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                        <button onclick="editCandidate('${cand.id}')" class="text-slate-400 hover:text-slate-700"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -941,15 +931,263 @@
 
             document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidates found`;
             if (window.lucide) lucide.createIcons();
+            updateDashboardMetrics(candidates);
         }
 
-        // LOAD CANDIDATES BASELINE
+        // CARREGAMENTO DE CANDIDATOS
         async function loadCandidates() {
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient.from('candidates').select('*');
+                    if (!error && data && data.length > 0) {
+                        allCandidatesCache = data;
+                        renderCandidateTable(allCandidatesCache);
+                        return;
+                    }
+                } catch (e) {
+                    console.log('Supabase off/unconfigured, loading mock seed.');
+                }
+            }
             allCandidatesCache = MOCK_SEED_CANDIDATES;
             renderCandidateTable(allCandidatesCache);
         }
 
-        // AUTO-CALCULATE AGE FROM DOB (IMAGEM 3)
+        // DASHBOARD E GRÁFICOS
+        function updateDashboardMetrics(list) {
+            const total = list.length;
+            const available = list.filter(c => c.status === 'Available').length;
+            const active = list.filter(c => c.status === 'Working with Us').length;
+
+            document.getElementById('dashTotal').innerText = total;
+            document.getElementById('dashAvailable').innerText = available;
+            document.getElementById('dashActive').innerText = active;
+            document.getElementById('badgeActiveCount').innerText = active;
+
+            let expiringCount = 0;
+            list.forEach(c => {
+                if (c.certs) expiringCount += c.certs.filter(cert => cert.expired).length;
+            });
+            document.getElementById('dashExpiring').innerText = expiringCount;
+
+            renderCharts(list);
+        }
+
+        function renderCharts(list) {
+            if (typeof Chart === 'undefined') return;
+
+            const statusCtx = document.getElementById('statusChart')?.getContext('2d');
+            const discCtx = document.getElementById('disciplinesChart')?.getContext('2d');
+
+            if (!statusCtx || !discCtx) return;
+
+            const counts = { Available: 0, 'Working with Us': 0, 'In Interviews': 0 };
+            const disciplines = {};
+
+            list.forEach(c => {
+                const st = c.status || 'Available';
+                counts[st] = (counts[st] || 0) + 1;
+
+                const disc = c.discipline || 'Unassigned';
+                disciplines[disc] = (disciplines[disc] || 0) + 1;
+            });
+
+            if (statusChartInstance) statusChartInstance.destroy();
+            statusChartInstance = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(counts),
+                    datasets: [{
+                        data: Object.values(counts),
+                        backgroundColor: ['#fde047', '#86efac', '#7dd3fc']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            if (disciplinesChartInstance) disciplinesChartInstance.destroy();
+            disciplinesChartInstance = new Chart(discCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(disciplines),
+                    datasets: [{
+                        label: 'Candidates',
+                        data: Object.values(disciplines),
+                        backgroundColor: '#0284c7'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // PESQUISA E FILTROS
+        function handleGlobalSearch(e) {
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) {
+                renderCandidateTable(allCandidatesCache);
+                return;
+            }
+            const filtered = allCandidatesCache.filter(c => 
+                (c.name && c.name.toLowerCase().includes(query)) ||
+                (c.discipline && c.discipline.toLowerCase().includes(query)) ||
+                (c.skills && c.skills.toLowerCase().includes(query)) ||
+                (c.nationality && c.nationality.toLowerCase().includes(query)) ||
+                (c.email && c.email.toLowerCase().includes(query)) ||
+                (c.location && c.location.toLowerCase().includes(query))
+            );
+            renderCandidateTable(filtered);
+        }
+
+        function filterByStatus(status) {
+            switchView('table');
+            const filtered = allCandidatesCache.filter(c => c.status === status);
+            renderCandidateTable(filtered);
+        }
+
+        function filterByDiscipline(discKey) {
+            switchView('table');
+            const filtered = allCandidatesCache.filter(c => c.discipline && c.discipline.toLowerCase().includes(discKey.toLowerCase()));
+            renderCandidateTable(filtered);
+        }
+
+        function filterExpiring() {
+            switchView('table');
+            const filtered = allCandidatesCache.filter(c => c.certs && c.certs.some(cert => cert.expired));
+            renderCandidateTable(filtered);
+        }
+
+        // CADASTRO / EDIÇÃO DE CANDIDATO
+        function openCandidateModal() {
+            document.getElementById('candidateForm').reset();
+            document.getElementById('candId').value = '';
+            document.getElementById('modalTitle').innerText = 'New Candidate';
+            switchModalTab('tabOverview', document.querySelector('.modal-tab-btn'));
+            document.getElementById('candidateModal').classList.remove('hidden');
+        }
+
+        function editCandidate(id) {
+            const cand = allCandidatesCache.find(c => c.id === id);
+            if (!cand) return;
+
+            document.getElementById('candId').value = cand.id;
+            document.getElementById('candName').value = cand.name || '';
+            document.getElementById('candStatus').value = cand.status || 'Available';
+            document.getElementById('candNationality').value = cand.nationality || '';
+            document.getElementById('candAge').value = cand.age || '';
+            document.getElementById('candPhone').value = cand.phone || '';
+            document.getElementById('candEmail').value = cand.email || '';
+            document.getElementById('candPassport').value = cand.passport || '';
+            document.getElementById('candPassportExpiry').value = cand.expiry || '';
+            document.getElementById('candDiscipline').value = cand.discipline || '';
+            document.getElementById('candSkills').value = cand.skills || '';
+            document.getElementById('candOgExp').value = cand.ogExp || '';
+
+            document.getElementById('modalTitle').innerText = 'Edit Candidate';
+            switchModalTab('tabOverview', document.querySelector('.modal-tab-btn'));
+            document.getElementById('candidateModal').classList.remove('hidden');
+        }
+
+        function closeCandidateModal() {
+            document.getElementById('candidateModal').classList.add('hidden');
+        }
+
+        function handleCandidateSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('candId').value || 'cand_' + Date.now();
+            const name = document.getElementById('candName').value;
+            const status = document.getElementById('candStatus').value;
+            const nationality = document.getElementById('candNationality').value;
+            const age = document.getElementById('candAge').value;
+            const phone = document.getElementById('candPhone').value;
+            const email = document.getElementById('candEmail').value;
+            const passport = document.getElementById('candPassport').value;
+            const expiry = document.getElementById('candPassportExpiry').value;
+            const discipline = document.getElementById('candDiscipline').value;
+            const skills = document.getElementById('candSkills').value;
+            const ogExp = document.getElementById('candOgExp').value;
+
+            const existingIndex = allCandidatesCache.findIndex(c => c.id === id);
+            const newCand = {
+                id, name, status, nationality, age, phone, email, passport, expiry, discipline, skills, ogExp,
+                available: 'Available Immediately',
+                location: 'Brazil',
+                cvPdf: 'CV_' + name.replace(/\s+/g, '_') + '.pdf',
+                certs: [], medicals: [], visas: []
+            };
+
+            if (existingIndex >= 0) {
+                allCandidatesCache[existingIndex] = { ...allCandidatesCache[existingIndex], ...newCand };
+            } else {
+                allCandidatesCache.push(newCand);
+            }
+
+            renderCandidateTable(allCandidatesCache);
+            closeCandidateModal();
+        }
+
+        function deleteCurrentCandidate() {
+            const id = document.getElementById('candId').value;
+            if (!id) {
+                closeCandidateModal();
+                return;
+            }
+            if (confirm('Tem certeza que deseja remover este candidato?')) {
+                allCandidatesCache = allCandidatesCache.filter(c => c.id !== id);
+                renderCandidateTable(allCandidatesCache);
+                closeCandidateModal();
+            }
+        }
+
+        // AUTENTICAÇÃO E NAVEGAÇÃO
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            document.getElementById('appContainer').classList.add('flex');
+            document.getElementById('userEmailSpan').innerText = email;
+            
+            // Exibir botões administrativos
+            document.getElementById('btnAdminUsers').classList.remove('hidden');
+            document.getElementById('btnNewCandidate').classList.remove('hidden');
+
+            loadCandidates();
+        }
+
+        function handleLogout() {
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('flex');
+            document.getElementById('authScreen').classList.remove('hidden');
+        }
+
+        function switchView(view) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+
+            if (view === 'table') {
+                document.getElementById('viewTable').classList.remove('hidden');
+                document.getElementById('navTable').classList.add('active');
+            } else {
+                document.getElementById('viewDashboard').classList.remove('hidden');
+                document.getElementById('navDashboard').classList.add('active');
+            }
+        }
+
+        // MODAL USUÁRIOS E NOTIFICAÇÕES
+        function toggleNotificationPanel() { document.getElementById('notificationPanel').classList.toggle('hidden'); }
+        function openUsersModal() { document.getElementById('usersModal').classList.remove('hidden'); }
+        function closeUsersModal() { document.getElementById('usersModal').classList.add('hidden'); }
+        function handleCreateUser(e) {
+            e.preventDefault();
+            alert('Usuário criado com sucesso!');
+            document.getElementById('newUserForm').reset();
+        }
+
+        function triggerImport() { document.getElementById('importFileInput').click(); }
+        function handleFileImport(e) { alert("Arquivo selecionado: " + e.target.files[0]?.name); }
+        function exportCSV() { alert("Exportando dados em formato CSV/Excel..."); }
+        function downloadAllDocs() { alert("Iniciando download de todos os comprovantes e PDFs..."); }
+
+        // AUTO-CÁLCULO DE IDADE
         document.getElementById('candDob')?.addEventListener('change', (e) => {
             if (!e.target.value) return;
             const dob = new Date(e.target.value);
@@ -958,27 +1196,10 @@
             document.getElementById('candAge').value = Math.abs(ageDate.getUTCFullYear() - 1970);
         });
 
-        // INIT SETUP
+        // INICIALIZAÇÃO DA PÁGINA
         window.addEventListener('DOMContentLoaded', () => {
-            allCandidatesCache = MOCK_SEED_CANDIDATES;
-            renderCandidateTable(allCandidatesCache);
             if (window.lucide) lucide.createIcons();
         });
-
-        // NOTIFICATION & MODAL HELPERS
-        function toggleNotificationPanel() { document.getElementById('notificationPanel').classList.toggle('hidden'); }
-        function openCandidateModal() { document.getElementById('candidateModal').classList.remove('hidden'); }
-        function closeCandidateModal() { document.getElementById('candidateModal').classList.add('hidden'); }
-        function openUsersModal() { document.getElementById('usersModal').classList.remove('hidden'); }
-        function closeUsersModal() { document.getElementById('usersModal').classList.add('hidden'); }
-        function switchView(view) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById(view === 'table' ? 'viewTable' : 'viewDashboard').classList.remove('hidden');
-        }
-        function triggerImport() { document.getElementById('importFileInput').click(); }
-        function handleFileImport(e) { alert("Arquivo selecionado: " + e.target.files[0]?.name); }
-        function exportCSV() { alert("Exportando dados em formato CSV/Excel..."); }
-        function downloadAllDocs() { alert("Iniciando download de todos os comprovantes e PDFs..."); }
     </script>
 </body>
 </html>
