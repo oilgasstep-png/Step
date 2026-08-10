@@ -392,9 +392,11 @@
 
     <!-- ─── SCRIPT DE LÓGICA, AUTENTICAÇÃO E SUPABASE ─── -->
     <script>
-        // 1. CONFIGURAÇÃO DO SUPABASE
-        const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co'; // Substitua pelo seu Project URL
-        const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';                 // Substitua pela sua Anon Key
+        // 1. CONFIGURAÇÃO ÚNICA DO SUPABASE
+        const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
+        const SUPABASE_ANON_KEY = 'COLE_AQUI_A_SUA_CHAVE_ANON_PUBLIC_COMPLETA';
+        
+        // Inicialização global (declarada apenas uma vez)
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Estado Global
@@ -496,7 +498,6 @@
             badge.textContent = currentUserRole.toUpperCase();
             badge.className = `role-badge role-${currentUserRole}`;
 
-            // Exibir/Ocultar elementos com base no atributo data-requires
             document.querySelectorAll('[data-requires]').forEach(el => {
                 const requiredRole = el.getAttribute('data-requires');
                 if (requiredRole === 'admin' && currentUserRole !== 'admin') {
@@ -652,5 +653,3 @@
             }
         });
     </script>
-</body>
-</html>
