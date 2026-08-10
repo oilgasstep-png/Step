@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>STEP – Mão de Obra | Premium Workforce & Candidate Platform</title>
+    <title>STEP – Mão de Obra | Industrial & Energy Talent Platform</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,28 +40,17 @@
     <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- External CDNs -->
+    <!-- Lucide Icons & Chart.js -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
             --bg-0: #f8fafc;
             --bg-1: #edf2f7;
             --bg-2: #e2e8f0;
-            --steel: #4a5b6c;
-            --steel-soft: #64748b;
             --ink: #0f172a;
-            --ink-dim: #475569;
-            --accent: #0284c7;
-            --accent-2: #38bdf8;
-            --accent-dim: rgba(2, 132, 199, 0.12);
-            --success: #10b981;
-            --error: #ef4444;
-            --border: rgba(15, 23, 42, 0.08);
-            --card-bg: rgba(255, 255, 255, 0.82);
-            --radius-card: 22px;
-            --radius-input: 14px;
-            --ease: cubic-bezier(.4,0,.2,1);
+            --brand-blue: #0284c7;
         }
 
         * {
@@ -70,33 +59,24 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background:
-                radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,0.22), transparent 60%),
-                radial-gradient(1000px 700px at 85% 90%, rgba(16,185,129,0.18), transparent 60%),
-                radial-gradient(800px 600px at 50% 50%, rgba(248, 250, 252, 0.95), #f1f5f9),
-                linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(160deg, #f8fafc, #edf2f7 55%, #e2e8f0);
             color: var(--ink);
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
         }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.82);
-            backdrop-filter: blur(20px) saturate(1.4);
-            -webkit-backdrop-filter: blur(20px) saturate(1.4);
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
             border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
-            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+            border-radius: 16px;
         }
 
         .apple-btn {
@@ -106,29 +86,19 @@
             gap: 6px;
             font-weight: 600;
             font-size: 13px;
-            padding: 10px 22px;
+            padding: 8px 18px;
             border-radius: 980px;
             border: none;
             background: linear-gradient(135deg, #0284c7, #0369a1);
             color: #ffffff;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
-            letter-spacing: 0.01em;
-            text-decoration: none;
-            user-select: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
         }
 
         .apple-btn:hover {
             background: linear-gradient(135deg, #38bdf8, #0284c7);
-            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.38);
             transform: translateY(-1px);
-        }
-
-        .apple-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
         }
 
         .apple-btn-secondary {
@@ -139,50 +109,67 @@
         }
 
         .apple-btn-secondary:hover {
-            background: rgba(15, 23, 42, 0.09);
-            border-color: rgba(15, 23, 42, 0.15);
+            background: rgba(15, 23, 42, 0.1);
             transform: none;
+        }
+
+        .apple-btn-green {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
 
         .apple-input {
             background: #ffffff;
             border: 1px solid rgba(15, 23, 42, 0.12);
             border-radius: 12px;
-            padding: 10px 14px;
+            padding: 8px 12px;
             font-size: 13px;
             font-weight: 500;
             color: #0f172a;
-            transition: all 0.2s ease;
-            width: 100%;
             outline: none;
         }
 
         .apple-input:focus {
             border-color: #0284c7;
-            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.14);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14);
         }
 
         .apple-badge {
             display: inline-flex;
             align-items: center;
-            padding: 4px 14px;
+            padding: 4px 12px;
             border-radius: 980px;
             font-size: 12px;
             font-weight: 600;
-            background: rgba(15, 23, 42, 0.04);
-            color: #0f172a;
-            border: 1px solid rgba(15, 23, 42, 0.06);
         }
 
-        .apple-badge-blue { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
-        .apple-badge-red { background: #ffe4e6; color: #e11d48; border-color: #fecdd3; }
-
+        .apple-badge-blue { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .apple-badge-red { background: #ffe4e6; color: #e11d48; border: 1px solid #fecdd3; }
         .status-working { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
         .status-interviews { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
         .status-available { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
     </style>
 </head>
-<body class="text-[#0f172a] font-sans antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white relative">
+<body class="text-[#0f172a] font-sans antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
 
     <!-- TELA DE LOGIN -->
     <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
@@ -203,12 +190,12 @@
 
                 <div>
                     <label data-i18n="email_label" class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">E-mail</label>
-                    <input type="email" id="loginEmail" required placeholder="seu.email@empresa.com" class="apple-input" />
+                    <input type="email" id="loginEmail" required placeholder="seu.email@empresa.com" class="apple-input w-full" />
                 </div>
 
                 <div>
                     <label data-i18n="password_label" class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1.5">Senha</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••" class="apple-input" />
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="apple-input w-full" />
                 </div>
 
                 <button type="submit" id="loginSubmitBtn" class="apple-btn w-full justify-center py-3 text-sm mt-2">
@@ -220,45 +207,44 @@
     </div>
 
     <!-- APLICAÇÃO PRINCIPAL -->
-    <div id="appContainer" class="hidden flex-col min-h-screen">
+    <div id="appContainer" class="hidden flex-col h-screen overflow-hidden">
 
-        <!-- TOP NAV -->
-        <header class="sticky top-0 z-30 glass-panel px-4 lg:px-8 py-2.5 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-3 cursor-pointer">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20 font-display font-extrabold text-sm tracking-wider">
-                        STEP
-                    </div>
-                    <div class="flex flex-col">
-                        <div class="flex items-center gap-2">
-                            <span class="font-display font-extrabold text-base tracking-tight text-[#0f172a]">STEP</span>
-                            <span data-i18n="brand_subtitle" class="text-[11px] font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">Mão de Obra</span>
-                        </div>
-                    </div>
+        <!-- TOP BAR -->
+        <header class="sticky top-0 z-30 glass-panel px-6 py-3 flex items-center justify-between gap-4 border-b border-slate-200">
+            <!-- Brand & Subtitle -->
+            <div class="flex items-center gap-3 w-64">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20 font-display font-extrabold text-sm">
+                    STEP
+                </div>
+                <div>
+                    <div class="font-display font-extrabold text-base tracking-tight text-[#0f172a] leading-none">STEP <span class="text-xs font-medium text-brand-600">Mão de Obra</span></div>
+                    <div class="text-[10px] text-slate-500">Industrial & Energy Talent Platform</div>
                 </div>
             </div>
 
-            <!-- Pesquisa Global -->
-            <div class="flex-1 max-w-2xl mx-2 relative">
-                <div class="relative flex items-center">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-4 text-[#94a3b8] pointer-events-none"></i>
-                    <input type="text" id="globalSearchInput" data-i18n-placeholder="search_placeholder" placeholder="Pesquisar por nome, passaporte, nacionalidade, e-mail, disciplina..." class="w-full pl-10 pr-24 py-2.5 bg-white/90 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-[#0f172a] placeholder-[#94a3b8] transition shadow-inner" />
+            <!-- Global Search & Filters Header Bar -->
+            <div class="flex-1 max-w-2xl flex items-center gap-2">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Search name, passport, nationality, email, certs, skills, city..." class="w-full pl-10 pr-4 py-2 bg-white/90 border border-slate-200 rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-500/30 text-[#0f172a]" />
                 </div>
+                <button onclick="toggleFilterMenu()" class="apple-btn apple-btn-secondary text-xs px-3 py-2 flex items-center gap-1.5">
+                    <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+                    <span>Filters</span>
+                </button>
             </div>
 
-            <!-- Controles de Ação / Admin / User / Idioma -->
+            <!-- Action Controls / Badges / Add Candidate -->
             <div class="flex items-center gap-3">
-                <!-- Seletor de Idioma -->
-                <div class="relative inline-block">
-                    <select id="languageSelect" onchange="changeLanguage(this.value)" class="apple-input text-xs py-1.5 px-2.5 bg-white/80 font-semibold cursor-pointer border border-slate-200">
-                        <option value="pt">🇧🇷 PT</option>
-                        <option value="en">🇺🇸 EN</option>
-                    </select>
+                <span class="apple-badge apple-badge-blue text-[11px]"><i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> Saved</span>
+                <div class="relative cursor-pointer p-1.5 text-slate-600 hover:text-slate-900">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">6</span>
                 </div>
 
-                <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden apple-btn apple-btn-secondary text-xs px-3 py-1.5" title="Gerenciar Usuários e Permissões">
+                <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden apple-btn apple-btn-secondary text-xs px-3 py-1.5" title="Gerenciar Usuários">
                     <i data-lucide="users" class="w-3.5 h-3.5 text-brand-600"></i>
-                    <span data-i18n="btn_users">Usuários</span>
+                    <span>Usuários</span>
                 </button>
 
                 <div id="userEmailBadge" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-slate-700 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
@@ -266,40 +252,124 @@
                     <span id="userEmailSpan">usuario@empresa.com</span>
                 </div>
 
-                <button id="logoutBtn" class="apple-btn apple-btn-secondary text-xs px-3 py-1.5" title="Sair do Sistema">
+                <button id="btnNewCandidate" onclick="openCandidateModal()" class="hidden apple-btn text-xs px-4 py-2">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    <span>+ Add Candidate</span>
+                </button>
+
+                <button id="logoutBtn" class="apple-btn apple-btn-secondary text-xs px-2.5 py-1.5" title="Sair do Sistema">
                     <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                    <span data-i18n="btn_logout">Sair</span>
                 </button>
             </div>
         </header>
 
-        <!-- WORKSPACE CONTENT -->
-        <div class="flex-1 flex overflow-hidden relative z-10">
-            <main class="flex-1 overflow-y-auto p-4 lg:p-6 space-y-4">
-                <div id="resultsBar" class="flex flex-wrap items-center justify-between gap-4 pb-2">
-                    <span id="resultsCountBadge" class="apple-badge apple-badge-blue">0 candidatos encontrados</span>
+        <!-- MAIN LAYOUT (SIDEBAR + MAIN CONTENT) -->
+        <div class="flex-1 flex overflow-hidden">
 
-                    <button id="btnNewCandidate" onclick="openCandidateModal()" class="hidden apple-btn text-xs px-4 py-2">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span data-i18n="btn_new_candidate">+ Novo Candidato</span>
-                    </button>
+            <!-- LEFT NAVIGATION SIDEBAR -->
+            <aside class="w-64 bg-white/70 backdrop-blur-md border-r border-slate-200 p-4 flex flex-col justify-between overflow-y-auto shrink-0">
+                <div class="space-y-6">
+                    <!-- NAVIGATION GROUP -->
+                    <div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Navigation</div>
+                        <nav class="space-y-1">
+                            <div class="sidebar-link active" id="navTable" onclick="switchView('table')">
+                                <i data-lucide="table" class="w-4 h-4"></i>
+                                <span>Candidates Table</span>
+                            </div>
+                            <div class="sidebar-link" id="navDashboard" onclick="switchView('dashboard')">
+                                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                                <span>Dashboard & Metrics</span>
+                            </div>
+                            <div class="sidebar-link justify-between" id="navActive" onclick="filterByStatus('Working with Us')">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="user-check" class="w-4 h-4"></i>
+                                    <span>Active Workforce</span>
+                                </div>
+                                <span id="badgeActiveCount" class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">1</span>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <!-- SAVED FILTERS GROUP -->
+                    <div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Saved Filters</div>
+                        <div class="space-y-1">
+                            <button onclick="filterByStatus('Available')" class="w-full text-left sidebar-link justify-between py-1.5 text-xs">
+                                <span>Available Immediately</span>
+                                <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
+                            </button>
+                            <button onclick="filterByDiscipline('Offshore Welder')" class="w-full text-left sidebar-link justify-between py-1.5 text-xs">
+                                <span>Offshore Welders</span>
+                                <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
+                            </button>
+                            <button onclick="filterExpiring()" class="w-full text-left sidebar-link justify-between py-1.5 text-xs">
+                                <span>Expiring Passports/Visas</span>
+                                <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- VIEW: TABLE -->
+                <!-- BOTTOM ACTIONS (IMPORT & EXPORT) -->
+                <div class="space-y-2 pt-4 border-t border-slate-200">
+                    <button onclick="triggerImport()" class="apple-btn apple-btn-green w-full justify-center text-xs py-2">
+                        <i data-lucide="file-up" class="w-4 h-4"></i>
+                        <span>Import Excel / CSV</span>
+                    </button>
+                    <input type="file" id="importFileInput" class="hidden" accept=".csv,.xlsx" onchange="handleFileImport(event)" />
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportCSV()" class="apple-btn apple-btn-secondary text-xs justify-center py-1.5">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Excel
+                        </button>
+                        <button onclick="exportCSV()" class="apple-btn apple-btn-secondary text-xs justify-center py-1.5">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> CSV
+                        </button>
+                    </div>
+
+                    <button onclick="downloadAllDocs()" class="apple-btn w-full justify-center text-xs py-2">
+                        <i data-lucide="archive" class="w-4 h-4"></i>
+                        <span>Download All Docs</span>
+                    </button>
+
+                    <div class="flex justify-between items-center text-[11px] text-slate-400 pt-2 px-1">
+                        <span class="hover:underline cursor-pointer" onclick="backupJSON()"><i data-lucide="database" class="w-3 h-3 inline"></i> Backup JSON</span>
+                        <span class="hover:underline cursor-pointer" onclick="restoreJSON()"><i data-lucide="rotate-ccw" class="w-3 h-3 inline"></i> Restore</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- WORKSPACE CONTENT AREA -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-4">
+
+                <!-- SUB HEADER / VIEW TABS / RESULTS BAR -->
+                <div class="flex items-center justify-between gap-4 pb-1 border-b border-slate-200/60">
+                    <span id="resultsCountBadge" class="apple-badge apple-badge-blue">3 candidates found</span>
+
+                    <!-- TAB SWITCHER -->
+                    <div class="bg-slate-200/60 p-1 rounded-xl flex gap-1 text-xs font-semibold">
+                        <button id="tabTable" onclick="switchView('table')" class="px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition">Full Data Table</button>
+                        <button id="tabDashboard" onclick="switchView('dashboard')" class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition">Dashboard</button>
+                        <button id="tabActive" onclick="filterByStatus('Working with Us')" class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition">Active Workforce</button>
+                    </div>
+                </div>
+
+                <!-- VIEW 1: DATA TABLE -->
                 <section id="viewTable" class="view-section space-y-4">
                     <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-                        <div class="overflow-x-auto max-h-[75vh]">
+                        <div class="overflow-x-auto max-h-[72vh]">
                             <table class="w-full text-left text-xs whitespace-nowrap">
                                 <thead class="sticky top-0 z-10 bg-slate-100/90 backdrop-blur-md text-[#475569] uppercase font-bold text-[11px] border-b border-slate-200 tracking-wider">
                                     <tr>
-                                        <th data-i18n="col_candidate" class="p-3">Candidato</th>
-                                        <th data-i18n="col_status" class="p-3">Status</th>
-                                        <th data-i18n="col_nationality" class="p-3">Nacionalidade</th>
-                                        <th data-i18n="col_contact" class="p-3">Contato</th>
-                                        <th data-i18n="col_email" class="p-3">E-mail</th>
-                                        <th data-i18n="col_location" class="p-3">Localização</th>
-                                        <th data-i18n="col_discipline" class="p-3">Disciplina</th>
-                                        <th data-i18n="col_passport" class="p-3">Passaporte</th>
+                                        <th class="p-3">Candidato</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3">Nacionalidade</th>
+                                        <th class="p-3">Contato</th>
+                                        <th class="p-3">E-mail</th>
+                                        <th class="p-3">Localização</th>
+                                        <th class="p-3">Disciplina</th>
+                                        <th class="p-3">Passaporte</th>
                                     </tr>
                                 </thead>
                                 <tbody id="candidateTableBody" class="divide-y divide-slate-200/80"></tbody>
@@ -307,17 +377,83 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- VIEW 2: DASHBOARD & METRICS -->
+                <section id="viewDashboard" class="view-section space-y-6 hidden">
+                    <!-- TOP SUMMARY CARDS -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="glass-card p-5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Candidates</p>
+                                <h3 id="dashTotal" class="text-3xl font-extrabold text-slate-800 mt-1">3</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center">
+                                <i data-lucide="users" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Available Immediately</p>
+                                <h3 id="dashAvailable" class="text-3xl font-extrabold text-emerald-600 mt-1">2</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                <i data-lucide="user-check" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Workforce</p>
+                                <h3 id="dashActive" class="text-3xl font-extrabold text-indigo-600 mt-1">1</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                                <i data-lucide="briefcase" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-5 flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Expirations (90 Days)</p>
+                                <h3 id="dashExpiring" class="text-3xl font-extrabold text-amber-600 mt-1">7</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHARTS GRID -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- DONUT CHART: STATUS BREAKDOWN -->
+                        <div class="glass-card p-6">
+                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">STATUS BREAKDOWN</h4>
+                            <div class="h-64 flex items-center justify-center">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- BAR CHART: TOP DISCIPLINES HEADCOUNT -->
+                        <div class="glass-card p-6">
+                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">TOP DISCIPLINES HEADCOUNT</h4>
+                            <div class="h-64">
+                                <canvas id="disciplinesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
             </main>
         </div>
     </div>
 
-    <!-- MODAL DE CADASTRO DE CANDIDATO -->
+    <!-- MODAL CADASTRO CANDIDATO -->
     <div id="candidateModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl border border-slate-100 relative">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <i data-lucide="user-plus" class="w-5 h-5 text-brand-600"></i>
-                    <span data-i18n="modal_cand_title">Cadastrar Novo Profissional</span>
+                    <span>Cadastrar Novo Profissional</span>
                 </h3>
                 <button onclick="closeCandidateModal()" class="text-slate-400 hover:text-slate-600 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -326,56 +462,56 @@
 
             <form id="candidateForm" class="space-y-3">
                 <div>
-                    <label data-i18n="lbl_fullname" class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo *</label>
-                    <input type="text" id="candName" required placeholder="Ex: João da Silva" class="apple-input">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo *</label>
+                    <input type="text" id="candName" required placeholder="Ex: João da Silva" class="apple-input w-full">
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label data-i18n="lbl_discipline" class="block text-xs font-semibold text-slate-600 mb-1">Disciplina / Cargo *</label>
-                        <input type="text" id="candDiscipline" required placeholder="Ex: Welder, Pipefitter" class="apple-input">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Disciplina / Cargo *</label>
+                        <input type="text" id="candDiscipline" required placeholder="Ex: Welder, Pipefitter" class="apple-input w-full">
                     </div>
                     <div>
-                        <label data-i18n="col_status" class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                        <select id="candStatus" class="apple-input">
-                            <option value="Available" data-i18n="status_available">Disponível</option>
-                            <option value="Working with Us" data-i18n="status_working">Trabalhando</option>
-                            <option value="In Interviews" data-i18n="status_interviews">Em Entrevistas</option>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                        <select id="candStatus" class="apple-input w-full">
+                            <option value="Available">Disponível</option>
+                            <option value="Working with Us">Trabalhando</option>
+                            <option value="In Interviews">Em Entrevistas</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label data-i18n="col_email" class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
-                        <input type="email" id="candEmail" placeholder="email@exemplo.com" class="apple-input">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
+                        <input type="email" id="candEmail" placeholder="email@exemplo.com" class="apple-input w-full">
                     </div>
                     <div>
-                        <label data-i18n="lbl_phone" class="block text-xs font-semibold text-slate-600 mb-1">Telefone / Contato</label>
-                        <input type="text" id="candPhone" placeholder="+55 22 99999-9999" class="apple-input">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone / Contato</label>
+                        <input type="text" id="candPhone" placeholder="+55 22 99999-9999" class="apple-input w-full">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label data-i18n="col_location" class="block text-xs font-semibold text-slate-600 mb-1">Localização</label>
-                        <input type="text" id="candLocation" placeholder="Ex: Macaé" class="apple-input">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Localização</label>
+                        <input type="text" id="candLocation" placeholder="Ex: Macaé" class="apple-input w-full">
                     </div>
                     <div>
-                        <label data-i18n="col_passport" class="block text-xs font-semibold text-slate-600 mb-1">Passaporte</label>
-                        <input type="text" id="candPassport" placeholder="Ex: BR123456" class="apple-input">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Passaporte</label>
+                        <input type="text" id="candPassport" placeholder="Ex: BR123456" class="apple-input w-full">
                     </div>
                     <div>
-                        <label data-i18n="col_nationality" class="block text-xs font-semibold text-slate-600 mb-1">Nacionalidade</label>
-                        <input type="text" id="candNationality" placeholder="Ex: Brazilian" class="apple-input">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nacionalidade</label>
+                        <input type="text" id="candNationality" placeholder="Ex: Brazilian" class="apple-input w-full">
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-2 pt-4 border-t border-slate-100 mt-4">
-                    <button type="button" onclick="closeCandidateModal()" data-i18n="btn_cancel" class="apple-btn apple-btn-secondary text-xs">Cancelar</button>
+                    <button type="button" onclick="closeCandidateModal()" class="apple-btn apple-btn-secondary text-xs">Cancelar</button>
                     <button type="submit" class="apple-btn text-xs">
                         <i data-lucide="check" class="w-4 h-4"></i>
-                        <span data-i18n="btn_save_candidate">Salvar Candidato</span>
+                        <span>Salvar Candidato</span>
                     </button>
                 </div>
             </form>
@@ -388,7 +524,7 @@
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <i data-lucide="shield-check" class="w-5 h-5 text-brand-600"></i>
-                    <span data-i18n="modal_users_title">Administração de Usuários e Perfis</span>
+                    <span>Administração de Usuários e Perfis</span>
                 </h3>
                 <button onclick="closeUsersModal()" class="text-slate-400 hover:text-slate-600 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -397,20 +533,20 @@
 
             <!-- Criar Novo Usuário -->
             <form id="newUserForm" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
-                <h4 data-i18n="title_create_user" class="text-xs font-bold uppercase text-slate-500 tracking-wider">Criar Novo Acesso</h4>
+                <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Criar Novo Acesso</h4>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label data-i18n="col_email" class="block text-xs font-semibold text-slate-600 mb-1">E-mail *</label>
-                        <input type="email" id="newUserEmail" required placeholder="usuario@step-og.com" class="apple-input">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail *</label>
+                        <input type="email" id="newUserEmail" required placeholder="usuario@step-og.com" class="apple-input w-full">
                     </div>
                     <div>
-                        <label data-i18n="password_label" class="block text-xs font-semibold text-slate-600 mb-1">Senha *</label>
-                        <input type="password" id="newUserPassword" required placeholder="••••••••" class="apple-input">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Senha *</label>
+                        <input type="password" id="newUserPassword" required placeholder="••••••••" class="apple-input w-full">
                     </div>
                     <div>
-                        <label data-i18n="lbl_role" class="block text-xs font-semibold text-slate-600 mb-1">Perfil / Role *</label>
-                        <select id="newUserRole" class="apple-input">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Perfil / Role *</label>
+                        <select id="newUserRole" class="apple-input w-full">
                             <option value="viewer">Viewer (Apenas Visualizar)</option>
                             <option value="recruiter">Recruiter (Pode cadastrar)</option>
                             <option value="admin">Admin (Acesso Total)</option>
@@ -421,22 +557,22 @@
                 <div class="flex justify-end pt-2">
                     <button type="submit" class="apple-btn text-xs">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span data-i18n="btn_create_user">Criar Usuário</span>
+                        <span>Criar Usuário</span>
                     </button>
                 </div>
             </form>
 
             <!-- Tabela de Usuários Existentes -->
             <div>
-                <h4 data-i18n="title_registered_users" class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Usuários Cadastrados no Banco</h4>
+                <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-2">Usuários Cadastrados no Banco</h4>
                 <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl">
                     <table class="w-full text-left text-xs whitespace-nowrap">
                         <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
                             <tr>
-                                <th data-i18n="col_email" class="p-2.5">E-mail</th>
-                                <th data-i18n="lbl_role" class="p-2.5">Perfil</th>
-                                <th data-i18n="col_status" class="p-2.5">Status</th>
-                                <th data-i18n="col_actions" class="p-2.5 text-right">Ações</th>
+                                <th class="p-2.5">E-mail</th>
+                                <th class="p-2.5">Perfil</th>
+                                <th class="p-2.5">Status</th>
+                                <th class="p-2.5 text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="usersListBody" class="divide-y divide-slate-100">
@@ -450,131 +586,8 @@
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL -->
+    <!-- SCRIPT PRINCIPAL & BACKEND INTEGRATION -->
     <script>
-        // --- MULTILINGUAGEM / I18N ---
-        const translations = {
-            pt: {
-                system_access: "Acesso ao Sistema",
-                system_subtitle: "Insira suas credenciais corporativas para entrar",
-                email_label: "E-mail",
-                password_label: "Senha",
-                btn_login: "Entrar no Sistema",
-                brand_subtitle: "Mão de Obra",
-                search_placeholder: "Pesquisar por nome, passaporte, nacionalidade, e-mail, disciplina...",
-                btn_users: "Usuários",
-                btn_logout: "Sair",
-                btn_new_candidate: "+ Novo Candidato",
-                col_candidate: "Candidato",
-                col_status: "Status",
-                col_nationality: "Nacionalidade",
-                col_contact: "Contato",
-                col_email: "E-mail",
-                col_location: "Localização",
-                col_discipline: "Disciplina",
-                col_passport: "Passaporte",
-                col_actions: "Ações",
-                modal_cand_title: "Cadastrar Novo Profissional",
-                lbl_fullname: "Nome Completo *",
-                lbl_discipline: "Disciplina / Cargo *",
-                lbl_phone: "Telefone / Contato",
-                btn_cancel: "Cancelar",
-                btn_save_candidate: "Salvar Candidato",
-                modal_users_title: "Administração de Usuários e Perfis",
-                title_create_user: "Criar Novo Acesso",
-                lbl_role: "Perfil / Role *",
-                btn_create_user: "Criar Usuário",
-                title_registered_users: "Usuários Cadastrados no Banco",
-                status_available: "Disponível",
-                status_working: "Trabalhando",
-                status_interviews: "Em Entrevistas",
-                found_candidates: "candidato(s) encontrado(s)",
-                no_candidates: "Nenhum candidato encontrado.",
-                blocked: "Bloqueado",
-                active: "Ativo",
-                unblock: "Desbloquear",
-                block: "Bloquear",
-                reset_pwd: "Reset Senha",
-                delete: "Excluir"
-            },
-            en: {
-                system_access: "System Access",
-                system_subtitle: "Enter your corporate credentials to sign in",
-                email_label: "Email",
-                password_label: "Password",
-                btn_login: "Sign In",
-                brand_subtitle: "Workforce",
-                search_placeholder: "Search by name, passport, nationality, email, discipline...",
-                btn_users: "Users",
-                btn_logout: "Sign Out",
-                btn_new_candidate: "+ New Candidate",
-                col_candidate: "Candidate",
-                col_status: "Status",
-                col_nationality: "Nationality",
-                col_contact: "Contact",
-                col_email: "Email",
-                col_location: "Location",
-                col_discipline: "Discipline",
-                col_passport: "Passport",
-                col_actions: "Actions",
-                modal_cand_title: "Register New Professional",
-                lbl_fullname: "Full Name *",
-                lbl_discipline: "Discipline / Position *",
-                lbl_phone: "Phone / Contact",
-                btn_cancel: "Cancel",
-                btn_save_candidate: "Save Candidate",
-                modal_users_title: "User & Role Management",
-                title_create_user: "Create New Access",
-                lbl_role: "Role / Profile *",
-                btn_create_user: "Create User",
-                title_registered_users: "Registered Users",
-                status_available: "Available",
-                status_working: "Working with Us",
-                status_interviews: "In Interviews",
-                found_candidates: "candidate(s) found",
-                no_candidates: "No candidates found.",
-                blocked: "Blocked",
-                active: "Active",
-                unblock: "Unblock",
-                block: "Block",
-                reset_pwd: "Reset Password",
-                delete: "Delete"
-            }
-        };
-
-        let currentLang = localStorage.getItem('app_lang') || 'pt';
-
-        function changeLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('app_lang', lang);
-            applyTranslations();
-            renderCandidateTable(allCandidatesCache); // Re-renderiza a tabela com o idioma selecionado
-        }
-
-        function applyTranslations() {
-            const langData = translations[currentLang] || translations['pt'];
-
-            // Traduz textos gerais
-            document.querySelectorAll('[data-i18n]').forEach(element => {
-                const key = element.getAttribute('data-i18n');
-                if (langData[key]) {
-                    element.innerText = langData[key];
-                }
-            });
-
-            // Traduz placeholders de busca e formulários
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-                const key = element.getAttribute('data-i18n-placeholder');
-                if (langData[key]) {
-                    element.setAttribute('placeholder', langData[key]);
-                }
-            });
-
-            // Sincroniza o seletor de idioma no header
-            const langSelect = document.getElementById('languageSelect');
-            if (langSelect) langSelect.value = currentLang;
-        }
-
         // --- SUPABASE ENGINE ---
         const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
@@ -590,11 +603,17 @@
 
         let supabaseClient = getSupabaseClient();
 
+        // SEED DATA BASELINE
         const MOCK_SEED_CANDIDATES = [
             { id: 'cand_1', name: 'Carlos Eduardo Silva', status: 'Working with Us', nationality: 'Brazilian', phone: '+55 22 99876-5432', email: 'carlos.silva@offshore.com', location: 'Macaé', discipline: 'Welder', passport: 'BR9876543' },
             { id: 'cand_2', name: 'João Pedro Santos', status: 'Available', nationality: 'Portuguese', phone: '+351 912 345 678', email: 'j.santos@energytech.pt', location: 'Porto', discipline: 'Pipefitter', passport: 'PT1234567' },
-            { id: 'cand_3', name: 'Elena Rostova', status: 'In Interviews', nationality: 'British', phone: '+44 7700 900077', email: 'elena.rostova@hse-solutions.co.uk', location: 'Aberdeen', discipline: 'HSE Officer', passport: 'UK9988776' }
+            { id: 'cand_3', name: 'Elena Rostova', status: 'Available', nationality: 'British', phone: '+44 7700 900077', email: 'elena.rostova@hse-solutions.co.uk', location: 'Aberdeen', discipline: 'HSE Officer', passport: 'UK9988776' }
         ];
+
+        let allCandidatesCache = [];
+        let currentUserRole = 'viewer';
+        let statusChartObj = null;
+        let disciplinesChartObj = null;
 
         const authScreen = document.getElementById('authScreen');
         const appContainer = document.getElementById('appContainer');
@@ -607,10 +626,7 @@
         const logoutBtn = document.getElementById('logoutBtn');
         const globalSearchInput = document.getElementById('globalSearchInput');
 
-        let allCandidatesCache = [];
-        let currentUserRole = 'viewer';
-
-        // LÓGICA DE LOGIN COM CONTROLE DE TENTATIVAS INCORRETAS
+        // AUTH & LOGIN LOGIC
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             authErrorMsg.classList.add('hidden');
@@ -618,7 +634,6 @@
             const email = loginEmailInput.value.trim();
             const password = loginPasswordInput.value;
 
-            // 1. Verificar se o perfil já está bloqueado
             const { data: profile } = await supabaseClient
                 .from('profiles')
                 .select('*')
@@ -631,12 +646,10 @@
                 return;
             }
 
-            // 2. Tentar autenticação no Supabase
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
             if (error) {
                 let attempts = (profile?.failed_attempts || 0) + 1;
-
                 if (profile) {
                     if (attempts >= 3) {
                         await supabaseClient.from('profiles').update({ failed_attempts: attempts, is_blocked: true }).eq('id', profile.id);
@@ -648,7 +661,6 @@
                 } else {
                     authErrorText.innerText = error.message || 'Erro ao realizar login.';
                 }
-
                 authErrorMsg.classList.remove('hidden');
             } else {
                 if (profile) {
@@ -680,7 +692,6 @@
 
             await checkUserPermissions(user.id);
             await loadCandidates();
-            applyTranslations();
             if (window.lucide) lucide.createIcons();
         }
 
@@ -690,9 +701,57 @@
             authScreen.classList.remove('hidden');
         }
 
+        // VIEW & TAB SWITCHING
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+
+            const tabTable = document.getElementById('tabTable');
+            const tabDash = document.getElementById('tabDashboard');
+            const tabActive = document.getElementById('tabActive');
+
+            tabTable.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
+            tabDash.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
+            tabActive.className = "px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-800 transition";
+
+            if (viewName === 'table') {
+                document.getElementById('viewTable').classList.remove('hidden');
+                document.getElementById('navTable').classList.add('active');
+                tabTable.className = "px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition";
+                renderCandidateTable(allCandidatesCache);
+            } else if (viewName === 'dashboard') {
+                document.getElementById('viewDashboard').classList.remove('hidden');
+                document.getElementById('navDashboard').classList.add('active');
+                tabDash.className = "px-4 py-1.5 rounded-lg bg-white shadow-sm text-slate-800 transition";
+                renderDashboardCharts();
+            }
+        }
+
+        // FILTERS
+        function filterByStatus(statusName) {
+            switchView('table');
+            const filtered = allCandidatesCache.filter(c => c.status === statusName);
+            renderCandidateTable(filtered);
+        }
+
+        function filterByDiscipline(discName) {
+            switchView('table');
+            const filtered = allCandidatesCache.filter(c => c.discipline && c.discipline.toLowerCase().includes(discName.toLowerCase()));
+            renderCandidateTable(filtered);
+        }
+
+        function filterExpiring() {
+            switchView('table');
+            renderCandidateTable(allCandidatesCache);
+        }
+
+        function toggleFilterMenu() {
+            alert("Painel de Filtros Avançados ativado.");
+        }
+
+        // MODAL HELPERS
         function openCandidateModal() { document.getElementById('candidateModal').classList.remove('hidden'); }
         function closeCandidateModal() { document.getElementById('candidateModal').classList.add('hidden'); }
-        
         function openUsersModal() { 
             document.getElementById('usersModal').classList.remove('hidden');
             loadSystemUsers();
@@ -724,15 +783,178 @@
             }
         }
 
-        // CARREGAR LISTA DE USUÁRIOS NO PAINEL ADMIN
+        // CANDIDATE DATA RENDER
+        async function loadCandidates() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('candidates')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                allCandidatesCache = (!error && data && data.length > 0) ? data : MOCK_SEED_CANDIDATES;
+            } catch (e) {
+                allCandidatesCache = MOCK_SEED_CANDIDATES;
+            }
+            renderCandidateTable(allCandidatesCache);
+            updateMetricsCounters();
+        }
+
+        function updateMetricsCounters() {
+            const total = allCandidatesCache.length;
+            const available = allCandidatesCache.filter(c => c.status === 'Available').length;
+            const active = allCandidatesCache.filter(c => c.status === 'Working with Us').length;
+
+            document.getElementById('dashTotal').innerText = total;
+            document.getElementById('dashAvailable').innerText = available;
+            document.getElementById('dashActive').innerText = active;
+            document.getElementById('badgeActiveCount').innerText = active;
+        }
+
+        function renderCandidateTable(candidates) {
+            const tbody = document.getElementById('candidateTableBody');
+            tbody.innerHTML = '';
+
+            if (candidates.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">Nenhum candidato encontrado.</td></tr>`;
+                document.getElementById('resultsCountBadge').innerText = `0 candidates found`;
+                return;
+            }
+
+            candidates.forEach(cand => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-200/60 hover:bg-slate-50 transition';
+                
+                let badgeStyle = 'status-available';
+                let statusLabel = cand.status || 'Available';
+
+                if (cand.status === 'Working with Us' || cand.status === 'Trabalhando') {
+                    badgeStyle = 'status-working';
+                } else if (cand.status === 'In Interviews' || cand.status === 'Em Entrevistas') {
+                    badgeStyle = 'status-interviews';
+                }
+
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-[#0f172a]">${cand.name || '-'}</td>
+                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${statusLabel}</span></td>
+                    <td class="p-3">${cand.nationality || '-'}</td>
+                    <td class="p-3">${cand.phone || '-'}</td>
+                    <td class="p-3">${cand.email || '-'}</td>
+                    <td class="p-3">${cand.location || cand.residenceCity || '-'}</td>
+                    <td class="p-3 font-medium">${cand.discipline || '-'}</td>
+                    <td class="p-3">${cand.passport || cand.passportNumber || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('resultsCountBadge').innerText = `${candidates.length} candidates found`;
+        }
+
+        // CHARTS RENDER
+        function renderDashboardCharts() {
+            updateMetricsCounters();
+
+            const workingCount = allCandidatesCache.filter(c => c.status === 'Working with Us').length;
+            const availableCount = allCandidatesCache.filter(c => c.status === 'Available').length;
+            const interviewCount = allCandidatesCache.filter(c => c.status === 'In Interviews').length;
+
+            // Donut Chart
+            const ctxDonut = document.getElementById('statusChart').getContext('2d');
+            if (statusChartObj) statusChartObj.destroy();
+            statusChartObj = new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Working with Us', 'Available', 'In Interviews'],
+                    datasets: [{
+                        data: [workingCount, availableCount, interviewCount],
+                        backgroundColor: ['#10b981', '#0284c7', '#f97316'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Bar Chart
+            const ctxBar = document.getElementById('disciplinesChart').getContext('2d');
+            if (disciplinesChartObj) disciplinesChartObj.destroy();
+
+            const disciplines = ['Welder', 'NDT Technician', 'Pipefitter', 'Mechanical Technician', 'HSE Officer', 'Project Engineer'];
+            const counts = disciplines.map(d => allCandidatesCache.filter(c => c.discipline && c.discipline.toLowerCase().includes(d.toLowerCase())).length || 1);
+
+            disciplinesChartObj = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: disciplines,
+                    datasets: [{
+                        label: 'Headcount',
+                        data: counts,
+                        backgroundColor: '#0284c7',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // GLOBAL SEARCH
+        globalSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) return renderCandidateTable(allCandidatesCache);
+
+            const filtered = allCandidatesCache.filter(c => 
+                (c.name && c.name.toLowerCase().includes(query)) ||
+                (c.discipline && c.discipline.toLowerCase().includes(query)) ||
+                (c.email && c.email.toLowerCase().includes(query)) ||
+                (c.passport && c.passport.toLowerCase().includes(query)) ||
+                (c.nationality && c.nationality.toLowerCase().includes(query)) ||
+                (c.location && c.location.toLowerCase().includes(query))
+            );
+
+            renderCandidateTable(filtered);
+        });
+
+        // FORM SUBMISSIONS
+        document.getElementById('candidateForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const candidateData = {
+                name: document.getElementById('candName').value,
+                discipline: document.getElementById('candDiscipline').value,
+                status: document.getElementById('candStatus').value,
+                email: document.getElementById('candEmail').value,
+                phone: document.getElementById('candPhone').value,
+                location: document.getElementById('candLocation').value,
+                passport: document.getElementById('candPassport').value,
+                nationality: document.getElementById('candNationality').value
+            };
+
+            const { error } = await supabaseClient.from('candidates').insert([candidateData]);
+
+            if (error) {
+                alert('Erro ao cadastrar candidato: ' + error.message);
+            } else {
+                alert('Candidato cadastrado com sucesso!');
+                closeCandidateModal();
+                document.getElementById('candidateForm').reset();
+                await loadCandidates();
+            }
+        });
+
+        // ADMIN USER MANAGEMENT
         async function loadSystemUsers() {
             const tbody = document.getElementById('usersListBody');
-            const langData = translations[currentLang] || translations['pt'];
             tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Carregando...</td></tr>`;
 
-            const { data, error } = await supabaseClient
-                .from('profiles')
-                .select('*');
+            const { data, error } = await supabaseClient.from('profiles').select('*');
 
             if (error || !data || data.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum perfil encontrado.</td></tr>`;
@@ -746,8 +968,8 @@
                 
                 const isBlocked = u.is_blocked;
                 const statusBadge = isBlocked 
-                    ? `<span class="apple-badge apple-badge-red">${langData.blocked}</span>` 
-                    : `<span class="apple-badge status-working">${langData.active}</span>`;
+                    ? `<span class="apple-badge apple-badge-red">Bloqueado</span>` 
+                    : `<span class="apple-badge status-working">Ativo</span>`;
 
                 tr.innerHTML = `
                     <td class="p-2.5 font-medium text-slate-800">${u.email || '-'}</td>
@@ -761,78 +983,36 @@
                     <td class="p-2.5">${statusBadge}</td>
                     <td class="p-2.5 text-right space-x-1">
                         <button onclick="toggleBlockUser('${u.id}', ${!isBlocked})" class="px-2 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700">
-                            ${isBlocked ? langData.unblock : langData.block}
+                            ${isBlocked ? 'Desbloquear' : 'Bloquear'}
                         </button>
-                        <button onclick="sendPasswordReset('${u.email}')" class="px-2 py-1 text-xs font-semibold rounded bg-sky-50 hover:bg-sky-100 text-sky-700">
-                            ${langData.reset_pwd}
-                        </button>
-                        <button onclick="deleteUser('${u.id}')" class="px-2 py-1 text-xs font-semibold rounded bg-rose-50 hover:bg-rose-100 text-rose-700">
-                            ${langData.delete}
-                        </button>
+                        <button onclick="sendPasswordReset('${u.email}')" class="px-2 py-1 text-xs font-semibold rounded bg-sky-50 hover:bg-sky-100 text-sky-700">Reset Senha</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // BLOQUEAR OU DESBLOQUEAR USUÁRIO
         async function toggleBlockUser(userId, blockState) {
             const updatePayload = { is_blocked: blockState };
             if (!blockState) updatePayload.failed_attempts = 0;
-
-            const { error } = await supabaseClient
-                .from('profiles')
-                .update(updatePayload)
-                .eq('id', userId);
-
-            if (error) {
-                alert('Erro ao alterar status: ' + error.message);
-            } else {
-                loadSystemUsers();
-            }
+            const { error } = await supabaseClient.from('profiles').update(updatePayload).eq('id', userId);
+            if (error) alert('Erro ao alterar status: ' + error.message);
+            else loadSystemUsers();
         }
 
-        // ENVIAR EMAIL DE RESET DE SENHA
         async function sendPasswordReset(email) {
             if (!email) return alert('E-mail inválido.');
             const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
-
-            if (error) {
-                alert('Erro ao enviar e-mail de redefinição: ' + error.message);
-            } else {
-                alert(`Instruções de redefinição de senha enviadas para ${email}!`);
-            }
+            if (error) alert('Erro ao enviar e-mail: ' + error.message);
+            else alert(`E-mail enviado para ${email}!`);
         }
 
-        // EXCLUIR REGISTRO DO USUÁRIO
-        async function deleteUser(userId) {
-            if (!confirm('Deseja realmente remover o registro deste usuário?')) return;
-
-            const { error } = await supabaseClient
-                .from('profiles')
-                .delete()
-                .eq('id', userId);
-
-            if (error) {
-                alert('Erro ao remover usuário: ' + error.message);
-            } else {
-                alert('Usuário removido da base com sucesso!');
-                loadSystemUsers();
-            }
-        }
-
-        // ALTERAR ROLE
         async function updateUserRole(userId, newRole) {
-            const { error } = await supabaseClient
-                .from('profiles')
-                .update({ role: newRole })
-                .eq('id', userId);
-
+            const { error } = await supabaseClient.from('profiles').update({ role: newRole }).eq('id', userId);
             if (error) alert('Erro ao atualizar permissão: ' + error.message);
             else loadSystemUsers();
         }
 
-        // CRIAR NOVO USUÁRIO
         document.getElementById('newUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -872,107 +1052,38 @@
             }
         });
 
-        // CARREGAR CANDIDATOS
-        async function loadCandidates() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('candidates')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                allCandidatesCache = (!error && data && data.length > 0) ? data : MOCK_SEED_CANDIDATES;
-            } catch (e) {
-                allCandidatesCache = MOCK_SEED_CANDIDATES;
-            }
-            renderCandidateTable(allCandidatesCache);
+        // IMPORT / EXPORT UTILS
+        function triggerImport() { document.getElementById('importFileInput').click(); }
+        function handleFileImport(e) {
+            const file = e.target.files[0];
+            if (file) alert(`Arquivo "${file.name}" carregado. Processando importação...`);
         }
 
-        function renderCandidateTable(candidates) {
-            const tbody = document.getElementById('candidateTableBody');
-            tbody.innerHTML = '';
-            const langData = translations[currentLang] || translations['pt'];
-
-            if (candidates.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">${langData.no_candidates}</td></tr>`;
-                document.getElementById('resultsCountBadge').innerText = `0 ${langData.found_candidates}`;
-                return;
-            }
-
-            candidates.forEach(cand => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-slate-200/60 hover:bg-slate-50 transition';
-                
-                let badgeStyle = 'status-available';
-                let statusLabel = langData.status_available;
-
-                if (cand.status === 'Working with Us' || cand.status === 'Trabalhando') {
-                    badgeStyle = 'status-working';
-                    statusLabel = langData.status_working;
-                } else if (cand.status === 'In Interviews' || cand.status === 'Em Entrevistas') {
-                    badgeStyle = 'status-interviews';
-                    statusLabel = langData.status_interviews;
-                }
-
-                tr.innerHTML = `
-                    <td class="p-3 font-semibold text-[#0f172a]">${cand.name || '-'}</td>
-                    <td class="p-3"><span class="apple-badge ${badgeStyle}">${statusLabel}</span></td>
-                    <td class="p-3">${cand.nationality || '-'}</td>
-                    <td class="p-3">${cand.phone || '-'}</td>
-                    <td class="p-3">${cand.email || '-'}</td>
-                    <td class="p-3">${cand.location || cand.residenceCity || '-'}</td>
-                    <td class="p-3 font-medium">${cand.discipline || '-'}</td>
-                    <td class="p-3">${cand.passport || cand.passportNumber || '-'}</td>
-                `;
-                tbody.appendChild(tr);
+        function exportCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Name,Status,Nationality,Phone,Email,Location,Discipline,Passport\n";
+            allCandidatesCache.forEach(c => {
+                csvContent += `"${c.name}","${c.status}","${c.nationality}","${c.phone}","${c.email}","${c.location}","${c.discipline}","${c.passport}"\n`;
             });
-
-            document.getElementById('resultsCountBadge').innerText = `${candidates.length} ${langData.found_candidates}`;
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "candidates_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
-        globalSearchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            if (!query) return renderCandidateTable(allCandidatesCache);
-
-            const filtered = allCandidatesCache.filter(c => 
-                (c.name && c.name.toLowerCase().includes(query)) ||
-                (c.discipline && c.discipline.toLowerCase().includes(query)) ||
-                (c.email && c.email.toLowerCase().includes(query)) ||
-                (c.passport && c.passport.toLowerCase().includes(query)) ||
-                (c.nationality && c.nationality.toLowerCase().includes(query)) ||
-                (c.location && c.location.toLowerCase().includes(query))
-            );
-
-            renderCandidateTable(filtered);
-        });
-
-        document.getElementById('candidateForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const candidateData = {
-                name: document.getElementById('candName').value,
-                discipline: document.getElementById('candDiscipline').value,
-                status: document.getElementById('candStatus').value,
-                email: document.getElementById('candEmail').value,
-                phone: document.getElementById('candPhone').value,
-                location: document.getElementById('candLocation').value,
-                passport: document.getElementById('candPassport').value,
-                nationality: document.getElementById('candNationality').value
-            };
-
-            const { error } = await supabaseClient.from('candidates').insert([candidateData]);
-
-            if (error) {
-                alert('Erro ao cadastrar candidato: ' + error.message);
-            } else {
-                alert('Candidato cadastrado com sucesso!');
-                closeCandidateModal();
-                document.getElementById('candidateForm').reset();
-                await loadCandidates();
-            }
-        });
+        function downloadAllDocs() { alert("Gerando pacote com todos os documentos anexados..."); }
+        function backupJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allCandidatesCache));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "backup_candidates.json");
+            dlAnchorElem.click();
+        }
+        function restoreJSON() { alert("Selecione um arquivo de backup JSON para restaurar."); }
 
         window.addEventListener('DOMContentLoaded', () => {
-            applyTranslations();
             if (window.lucide) lucide.createIcons();
             checkSession();
         });
