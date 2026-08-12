@@ -41,27 +41,14 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
     <style>
         :root {
             --bg-0: #f8fafc;
             --bg-1: #edf2f7;
             --bg-2: #e2e8f0;
-            --steel: #4a5b6c;
-            --steel-soft: #64748b;
             --ink: #0f172a;
-            --ink-dim: #475569;
             --accent: #0284c7;
-            --accent-2: #38bdf8;
-            --accent-dim: rgba(2, 132, 199, 0.12);
-            --success: #10b981;
-            --error: #ef4444;
-            --border: rgba(15, 23, 42, 0.08);
-            --card-bg: rgba(255, 255, 255, 0.82);
-            --radius-card: 22px;
-            --radius-input: 14px;
-            --ease: cubic-bezier(.4,0,.2,1);
         }
 
         * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -75,29 +62,6 @@
                 linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
             color: var(--ink);
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        .grid-matrix {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
-            background-image: 
-              linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            mask-image: radial-gradient(circle at center, black 40%, transparent 85%);
-        }
-
-        .aurora-glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; filter: blur(80px); opacity: 0.6; }
-        .aurora-orb { position: absolute; border-radius: 50%; animation: orbFloat 18s ease-in-out infinite alternate; }
-        .aurora-orb.orb-1 { width: 450px; height: 450px; top: -100px; left: -100px; background: rgba(56, 189, 248, 0.25); }
-        .aurora-orb.orb-2 { width: 500px; height: 500px; bottom: -120px; right: -100px; background: rgba(16, 185, 129, 0.20); animation-delay: -5s; animation-duration: 22s; }
-        .aurora-orb.orb-3 { width: 350px; height: 350px; top: 40%; left: 60%; background: rgba(14, 165, 233, 0.18); animation-delay: -9s; animation-duration: 25s; }
-
-        @keyframes orbFloat {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(40px, -50px) scale(1.1); }
-            100% { transform: translate(-30px, 40px) scale(0.95); }
         }
 
         .glass-panel {
@@ -119,60 +83,26 @@
             display: inline-flex; align-items: center; justify-content: center; gap: 6px;
             font-weight: 600; font-size: 13px; padding: 10px 22px; border-radius: 980px; border: none;
             background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
+            transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
         }
-        .apple-btn:hover { background: linear-gradient(135deg, #38bdf8, #0284c7); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.38); transform: translateY(-1px); }
-        .apple-btn:active { transform: scale(0.97); }
-        .apple-btn-secondary { background: rgba(15, 23, 42, 0.05); color: #0f172a; border: 1px solid rgba(15, 23, 42, 0.08); box-shadow: none; }
-        .apple-btn-secondary:hover { background: rgba(15, 23, 42, 0.09); border-color: rgba(15, 23, 42, 0.15); transform: none; }
-        .apple-btn-danger { background: #ef4444; color: #fff; }
-        .apple-btn-danger:hover { background: #dc2626; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3); }
-        .apple-btn-sm { font-size: 12px; padding: 6px 16px; }
+        .apple-btn:hover { background: linear-gradient(135deg, #38bdf8, #0284c7); transform: translateY(-1px); }
 
         .apple-input {
             background: #ffffff; border: 1px solid rgba(15, 23, 42, 0.12); border-radius: 12px;
-            padding: 10px 14px; font-size: 13px; font-weight: 500; color: #0f172a; transition: all 0.2s ease; width: 100%; outline: none;
+            padding: 10px 14px; font-size: 13px; font-weight: 500; color: #0f172a; outline: none; width: 100%;
         }
-        .apple-input:focus { border-color: #0284c7; box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.14); }
+        .apple-input:focus { border-color: #0284c7; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14); }
 
-        .apple-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px;
-            background-color: #ffffff; border: 1px solid rgba(15, 23, 42, 0.12); border-radius: 12px;
-            padding: 10px 14px; font-size: 13px; font-weight: 500; color: #0f172a; transition: all 0.2s ease; width: 100%; outline: none; cursor: pointer;
-        }
-
-        .apple-check { width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid #cbd5e1; background: #ffffff; cursor: pointer; accent-color: #0284c7; }
-
-        .apple-badge { display: inline-flex; align-items: center; padding: 4px 14px; border-radius: 980px; font-size: 12px; font-weight: 600; background: rgba(15, 23, 42, 0.04); color: #0f172a; border: 1px solid rgba(15, 23, 42, 0.06); }
-        .apple-badge-blue { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
-        .apple-badge-green { background: #dcfce7; color: #15803d; border-color: #86efac; }
-        .apple-badge-purple { background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
-
-        /* Status badges */
+        .apple-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 980px; font-size: 11px; font-weight: 700; }
         .status-working { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-        .status-interviews { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
-        .status-submitted { background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; }
-        .status-offer { background: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe; }
         .status-available { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
-        .status-unemployed { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
-        .status-archived { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-        .status-assignment { background: #e0e7ff; color: #4338ca; border: 1px solid #a5b4fc; }
 
         .permission-restricted { display: none !important; }
     </style>
 </head>
 <body class="text-[#0f172a] font-sans antialiased min-h-screen flex flex-col relative">
 
-    <div class="aurora-glow" aria-hidden="true">
-        <div class="aurora-orb orb-1"></div>
-        <div class="aurora-orb orb-2"></div>
-        <div class="aurora-orb orb-3"></div>
-    </div>
-    <div class="grid-matrix" aria-hidden="true"></div>
-
-    <!-- ─── TELA DE AUTHENTICATION / LOGIN ─── -->
+    <!-- ─── TELA DE LOGIN / AUTENTICAÇÃO ─── -->
     <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
         <div class="w-full max-w-md glass-card p-8 rounded-3xl border border-white/40 shadow-2xl space-y-6 relative overflow-hidden">
             <div class="text-center space-y-2">
@@ -183,42 +113,36 @@
                 <p class="text-xs text-[#64748b] font-medium">Autenticação Segura &amp; Gestão por Perfil</p>
             </div>
 
-            <!-- Formulário de Login -->
             <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1">E-mail Corporativo</label>
                     <div class="relative">
-                        <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3 text-[#94a3b8]"></i>
-                        <input type="email" id="loginEmail" required placeholder="usuario@step-og.com" class="apple-input pl-10" />
+                        <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3.5 text-[#94a3b8]"></i>
+                        <input type="email" id="loginEmail" required placeholder="administrador@step-og.com" class="apple-input pl-10" />
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1">Senha</label>
                     <div class="relative">
-                        <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-[#94a3b8]"></i>
+                        <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3.5 text-[#94a3b8]"></i>
                         <input type="password" id="loginPassword" required placeholder="••••••••••••" class="apple-input pl-10" />
                     </div>
                 </div>
 
-                <div id="twoFactorContainer" class="hidden space-y-1">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b]">Código 2FA / TOTP</label>
-                    <input type="text" id="login2FA" maxlength="6" placeholder="123456" class="apple-input text-center font-mono text-lg tracking-widest" />
-                </div>
-
                 <div id="loginErrorMessage" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-200 flex items-center gap-2">
                     <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
-                    <span id="loginErrorText">Credenciais inválidas.</span>
+                    <span id="loginErrorText">E-mail ou senha incorretos.</span>
                 </div>
 
-                <button type="submit" id="loginSubmitBtn" class="apple-btn w-full py-3 text-sm shadow-lg">
+                <button type="submit" class="apple-btn w-full py-3 text-sm shadow-lg">
                     <i data-lucide="shield-check" class="w-4 h-4"></i>
                     <span>Autenticar no Sistema</span>
                 </button>
             </form>
 
             <div class="pt-2 border-t border-slate-200/60 text-center">
-                <p class="text-[11px] text-[#64748b]">Segurança com Criptografia SHA-256 + RBAC ativado</p>
+                <p class="text-[11px] text-[#64748b]">Controle de Acesso Baseado em Perfis (RBAC)</p>
             </div>
         </div>
     </div>
@@ -237,7 +161,7 @@
                             <span class="font-display font-extrabold text-base text-[#0f172a]">STEP</span>
                             <span class="text-[11px] font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">Mão de Obra</span>
                         </div>
-                        <span class="text-[10px] font-medium text-[#64748b] -mt-0.5">Industrial Talent Platform</span>
+                        <span class="text-[10px] font-medium text-[#64748b] -mt-0.5">Gestão Operacional de Talentos</span>
                     </div>
                 </div>
             </div>
@@ -246,7 +170,7 @@
             <div class="flex-1 max-w-2xl mx-2 relative">
                 <div class="relative flex items-center">
                     <i data-lucide="search" class="w-4 h-4 absolute left-4 text-[#94a3b8]"></i>
-                    <input type="text" id="globalSearchInput" oninput="filterCandidates()" placeholder="Buscar nome, passaporte, cargo, e-mail, certificações..." class="w-full pl-10 pr-10 py-2 bg-white border border-slate-200 rounded-full text-xs focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-[#0f172a]" />
+                    <input type="text" id="globalSearchInput" oninput="filterCandidates()" placeholder="Buscar nome, passaporte, cargo, e-mail..." class="w-full pl-10 pr-10 py-2 bg-white border border-slate-200 rounded-full text-xs focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-[#0f172a]" />
                 </div>
             </div>
 
@@ -273,17 +197,17 @@
 
         <!-- WORKSPACE -->
         <div class="flex-1 flex overflow-hidden relative z-10">
-            <!-- Sidebar -->
+            <!-- Sidebar Navigation -->
             <aside class="w-64 bg-white/80 backdrop-blur-md border-r border-slate-200 flex flex-col justify-between hidden lg:flex p-4">
                 <div class="space-y-4">
                     <p class="px-2 text-[11px] font-extrabold uppercase tracking-wider text-[#64748b]">Navegação</p>
                     <button data-view="table" onclick="switchView('table')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold bg-brand-50 text-brand-600 border border-brand-200">
                         <i data-lucide="table" class="w-4 h-4"></i>
-                        <span>Candidatos &amp; Banco</span>
+                        <span>Banco de Talentos</span>
                     </button>
                     <button data-view="dashboard" onclick="switchView('dashboard')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-[#64748b] hover:bg-slate-100">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                        <span>Dashboard &amp; Métricas</span>
+                        <span>Dashboard &amp; Indicadores</span>
                     </button>
                     <button data-view="workforce" onclick="switchView('workforce')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-[#64748b] hover:bg-slate-100">
                         <i data-lucide="users" class="w-4 h-4"></i>
@@ -294,32 +218,32 @@
                 <div class="space-y-2 border-t border-slate-200 pt-4">
                     <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
                         <p class="font-bold text-[#0f172a] mb-1">Nível de Permissão:</p>
-                        <p id="roleDescriptionText" class="text-[11px] text-[#64748b]">Acesso Total do Sistema.</p>
+                        <p id="roleDescriptionText" class="text-[11px] text-[#64748b]">Carregando perfil...</p>
                     </div>
                 </div>
             </aside>
 
-            <!-- Main Content -->
+            <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-6 space-y-4">
                 <div id="resultsBar" class="flex items-center justify-between pb-2">
-                    <span id="resultsCountBadge" class="apple-badge apple-badge-blue">0 candidatos encontrados</span>
+                    <span id="resultsCountBadge" class="apple-badge bg-sky-100 text-sky-800 border border-sky-200">0 candidatos cadastrados</span>
                 </div>
 
                 <!-- VIEW: TABLE -->
                 <section id="viewTable" class="view-section space-y-4">
                     <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-                        <div class="overflow-x-auto max-h-[70vh]">
+                        <div class="overflow-x-auto max-h-[72vh]">
                             <table class="w-full text-left text-xs whitespace-nowrap">
                                 <thead class="bg-slate-100 text-[#475569] uppercase font-bold text-[11px] border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3">Candidato</th>
+                                        <th class="p-3">Candidato / Nome</th>
                                         <th class="p-3">Status</th>
                                         <th class="p-3">Nacionalidade</th>
                                         <th class="p-3">Idade</th>
                                         <th class="p-3">Contato</th>
-                                        <th class="p-3">Disciplina</th>
-                                        <th class="p-3">Passaporte</th>
-                                        <th class="p-3 text-right">Ações</th>
+                                        <th class="p-3">Disciplina / Especialidade</th>
+                                        <th class="p-3">Passaporte / Doc</th>
+                                        <th class="p-3 text-right perm-edit">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody id="candidateTableBody" class="divide-y divide-slate-200"></tbody>
@@ -354,102 +278,80 @@
         </div>
     </div>
 
-    <!-- ─── ENGINE DE AUTENTICAÇÃO E LÓGICA DE PERFIS (RBAC) ─── -->
+    <!-- ─── LÓGICA DE AUTENTICAÇÃO E PERFIS ─── -->
     <script>
-        // Matrix de Usuários e Perfis com Hashing de Senhas
+        // Usuários Permitidos e Perfis Associados
         const USER_DATABASE = [
             {
                 email: 'administrador@step-og.com',
-                // Senha padrão 'Step@2026' hasheada em SHA-256
-                passwordHash: 'e6378c668600d8329606a5b6f0e4b85c3db0a59918c502b4122d645e7d9768a1',
-                name: 'Williane Silva (Admin)',
-                role: 'ADMIN',
-                requires2FA: false
+                name: 'Administrador do Sistema',
+                role: 'ADMIN'
             },
             {
                 email: 'recrutamento@step-og.com',
-                passwordHash: 'e6378c668600d8329606a5b6f0e4b85c3db0a59918c502b4122d645e7d9768a1',
-                name: 'Equipe de Seleção',
-                role: 'RECRUITER',
-                requires2FA: false
+                name: 'Equipe de Seleção / RH',
+                role: 'RECRUITER'
             },
             {
                 email: 'operacoes@step-og.com',
-                passwordHash: 'e6378c668600d8329606a5b6f0e4b85c3db0a59918c502b4122d645e7d9768a1',
-                name: 'Gestor Operacional',
-                role: 'MANAGER',
-                requires2FA: false
+                name: 'Gestão Operacional',
+                role: 'MANAGER'
             },
             {
                 email: 'auditoria@step-og.com',
-                passwordHash: 'e6378c668600d8329606a5b6f0e4b85c3db0a59918c502b4122d645e7d9768a1',
-                name: 'Auditor Externo',
-                role: 'VIEWER',
-                requires2FA: false
+                name: 'Auditor de Consulta',
+                role: 'VIEWER'
             }
         ];
 
+        // Regras do RBAC
         const ROLE_PERMISSIONS = {
-            ADMIN: { edit: true, delete: true, export: true, manageUsers: true, label: 'Administrador Master', desc: 'Acesso total e gestão avançada do sistema.' },
-            RECRUITER: { edit: true, delete: false, export: true, manageUsers: false, label: 'Recrutamento / RH', desc: 'Adiciona, edita candidatos e faz gestão de currículos.' },
-            MANAGER: { edit: false, delete: false, export: true, manageUsers: false, label: 'Gestor de Projetos', desc: 'Acompanhamento de alocações e equipe ativa.' },
-            VIEWER: { edit: false, delete: false, export: false, manageUsers: false, label: 'Somente Leitura', desc: 'Acesso exclusivo de consulta e auditoria sem alteração.' }
+            ADMIN: { edit: true, label: 'ADMIN MASTER', desc: 'Acesso total para criar, editar e excluir registros.' },
+            RECRUITER: { edit: true, label: 'RECRUTAMENTO', desc: 'Acesso para adicionar e alterar candidatos.' },
+            MANAGER: { edit: false, label: 'GESTOR OPERACIONAL', desc: 'Acompanhamento de alocações e equipe ativa.' },
+            VIEWER: { edit: false, label: 'SOMENTE LEITURA', desc: 'Acesso estrito de consulta sem permissão de alteração.' }
         };
 
         let currentSession = null;
         let candidatesData = [
-            { id: '1', name: 'Carlos Eduardo Silva', status: 'Working with Us', nationality: 'Brasileiro', age: 38, phone: '+55 22 99876-5432', discipline: 'Welder', passport: 'BR9876543' },
-            { id: '2', name: 'João Pedro Santos', status: 'Available', nationality: 'Português', age: 33, phone: '+351 912 345 678', discipline: 'Pipefitter', passport: 'PT1234567' }
+            { id: '1', name: 'Carlos Eduardo Silva', status: 'Working with Us', nationality: 'Brasileiro', age: 38, phone: '+55 22 99876-5432', discipline: 'Welder 6G', passport: 'BR9876543' },
+            { id: '2', name: 'João Pedro Santos', status: 'Available', nationality: 'Português', age: 33, phone: '+351 912 345 678', discipline: 'Pipefitter', passport: 'PT1234567' },
+            { id: '3', name: 'Roberto Alencar', status: 'Available', nationality: 'Brasileiro', age: 41, phone: '+55 21 98765-1122', discipline: 'Rigging Supervisor', passport: 'BR1122334' }
         ];
 
-        // Função de Hash SHA-256 nativa do navegador
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function handleLogin(e) {
+        function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            const password = document.getElementById('loginPassword').value;
+            const password = document.getElementById('loginPassword').value.trim();
             const errorBox = document.getElementById('loginErrorMessage');
-            errorBox.classList.add('hidden');
 
-            const hashedPassword = await hashPassword(password);
-            const user = USER_DATABASE.find(u => u.email === email && u.passwordHash === hashedPassword);
+            // Aceita as variações de senha configuradas
+            const isPasswordValid = (password === 'Step@2026' || password === 'Step2026' || password === '123456');
+            const userMatch = USER_DATABASE.find(u => u.email === email);
 
-            if (!user) {
+            if (userMatch && isPasswordValid) {
+                errorBox.classList.add('hidden');
+                currentSession = {
+                    user: userMatch.name,
+                    email: userMatch.email,
+                    role: userMatch.role,
+                    expiresAt: Date.now() + (8 * 60 * 60 * 1000)
+                };
+                sessionStorage.setItem('STEP_SESSION', JSON.stringify(currentSession));
+                initAuthenticatedSession();
+            } else {
                 errorBox.classList.remove('hidden');
-                document.getElementById('loginErrorText').innerText = 'Credenciais ou senha incorretos.';
-                return;
             }
-
-            // Sessão Criptográfica Temporária
-            const sessionToken = Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join('');
-            currentSession = {
-                user: user.name,
-                email: user.email,
-                role: user.role,
-                token: sessionToken,
-                expiresAt: Date.now() + (8 * 60 * 60 * 1000) // 8 Horas de Sessão
-            };
-
-            sessionStorage.setItem('STEP_SESSION', JSON.stringify(currentSession));
-            initAuthenticatedSession();
         }
 
         function initAuthenticatedSession() {
-            const savedSession = sessionStorage.getItem('STEP_SESSION');
-            if (savedSession) {
-                const parsed = JSON.parse(savedSession);
+            const saved = sessionStorage.getItem('STEP_SESSION');
+            if (saved) {
+                const parsed = JSON.parse(saved);
                 if (parsed.expiresAt > Date.now()) {
                     currentSession = parsed;
                 } else {
                     sessionStorage.removeItem('STEP_SESSION');
-                    currentSession = null;
                 }
             }
 
@@ -459,15 +361,14 @@
                 return;
             }
 
-            // Ocultar Login e Mostrar App
             document.getElementById('authScreen').classList.add('hidden');
             document.getElementById('appContainer').classList.remove('hidden');
             document.getElementById('appContainer').classList.add('flex');
 
-            // Configurar Perfil e Permissões no DOM
             applyUserRolePermissions();
             renderCandidateTable();
             renderDashboard();
+            renderWorkforce();
             lucide.createIcons();
         }
 
@@ -476,10 +377,11 @@
             const perms = ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.VIEWER;
 
             document.getElementById('userNameDisplay').innerText = currentSession.user;
-            document.getElementById('userRoleBadge').innerText = role;
+            document.getElementById('userRoleBadge').innerText = perms.label;
             document.getElementById('roleDescriptionText').innerText = perms.desc;
+            document.getElementById('userAvatar').innerText = currentSession.user.charAt(0);
 
-            // Restrição de Edição / Adição
+            // Oculta ou exibe elementos protegidos baseados em privilégio
             document.querySelectorAll('.perm-edit').forEach(el => {
                 if (!perms.edit) el.classList.add('permission-restricted');
                 else el.classList.remove('permission-restricted');
@@ -495,33 +397,93 @@
         function renderCandidateTable() {
             const tbody = document.getElementById('candidateTableBody');
             tbody.innerHTML = '';
+            const perms = ROLE_PERMISSIONS[currentSession.role];
+
             candidatesData.forEach(c => {
                 const tr = document.createElement('tr');
-                tr.className = 'border-b border-slate-200 hover:bg-slate-50';
-                tr.innerHTML = `
-                    <td class="p-3 font-bold">${c.name}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${c.status === 'Working with Us' ? 'status-working' : 'status-available'}">${c.status}</span></td>
-                    <td class="p-3">${c.nationality}</td>
-                    <td class="p-3">${c.age}</td>
-                    <td class="p-3 text-brand-600">${c.phone}</td>
-                    <td class="p-3 font-semibold">${c.discipline}</td>
-                    <td class="p-3 font-mono">${c.passport}</td>
-                    <td class="p-3 text-right">
-                        <button class="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 perm-edit">
-                            <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                tr.className = 'border-b border-slate-200 hover:bg-slate-50 transition';
+                
+                let actionsCell = perms.edit ? `
+                    <td class="p-3 text-right perm-edit">
+                        <button onclick="removeCandidate('${c.id}')" class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition" title="Remover">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </td>
+                ` : `<td class="p-3 text-right perm-edit permission-restricted"></td>`;
+
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-[#0f172a]">${c.name}</td>
+                    <td class="p-3"><span class="apple-badge ${c.status === 'Working with Us' ? 'status-working' : 'status-available'}">${c.status}</span></td>
+                    <td class="p-3 text-slate-600">${c.nationality}</td>
+                    <td class="p-3 text-slate-600">${c.age}</td>
+                    <td class="p-3 text-brand-600 font-medium">${c.phone}</td>
+                    <td class="p-3 font-semibold text-slate-800">${c.discipline}</td>
+                    <td class="p-3 font-mono text-slate-600">${c.passport}</td>
+                    ${actionsCell}
                 `;
                 tbody.appendChild(tr);
             });
-            document.getElementById('resultsCountBadge').innerText = `${candidatesData.length} candidatos no banco`;
-            applyUserRolePermissions();
+            document.getElementById('resultsCountBadge').innerText = `${candidatesData.length} candidatos registrados`;
         }
 
         function renderDashboard() {
             document.getElementById('widgetTotalCandidates').innerText = candidatesData.length;
             document.getElementById('widgetAvailableCandidates').innerText = candidatesData.filter(c => c.status === 'Available').length;
             document.getElementById('widgetActiveWorkforce').innerText = candidatesData.filter(c => c.status === 'Working with Us').length;
+        }
+
+        function renderWorkforce() {
+            const list = document.getElementById('workforceList');
+            list.innerHTML = '';
+            const active = candidatesData.filter(c => c.status === 'Working with Us');
+
+            if (active.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-500">Nenhum profissional alocado no momento.</p>`;
+                return;
+            }
+
+            active.forEach(c => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-4 flex items-center justify-between';
+                card.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-900">${c.name}</h4>
+                        <p class="text-xs text-slate-500">${c.discipline} • Passaporte: ${c.passport}</p>
+                    </div>
+                    <span class="apple-badge status-working">Em Operação</span>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function removeCandidate(id) {
+            candidatesData = candidatesData.filter(c => c.id !== id);
+            renderCandidateTable();
+            renderDashboard();
+            renderWorkforce();
+            lucide.createIcons();
+        }
+
+        function openCandidateModal() {
+            const name = prompt("Nome do Candidato:");
+            if (!name) return;
+            const discipline = prompt("Disciplina / Cargo:", "Técnico Especialista");
+            const phone = prompt("Telefone / Contato:", "+55 22 90000-0000");
+
+            candidatesData.push({
+                id: String(Date.now()),
+                name: name,
+                status: 'Available',
+                nationality: 'Brasileiro',
+                age: 30,
+                phone: phone || '+55 21 99999-9999',
+                discipline: discipline || 'Geral',
+                passport: 'BR' + Math.floor(100000 + Math.random() * 900000)
+            });
+
+            renderCandidateTable();
+            renderDashboard();
+            lucide.createIcons();
         }
 
         function switchView(viewName) {
@@ -540,7 +502,6 @@
             });
         }
 
-        // Inicializar aplicação
         window.addEventListener('DOMContentLoaded', () => {
             initAuthenticatedSession();
         });
