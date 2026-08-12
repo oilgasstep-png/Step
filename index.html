@@ -1,657 +1,560 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="light">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>STEP – Mão de Obra | Portal &amp; Gestão de Candidatos</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STEP – Mão de Obra | Secure Access</title>
+<meta name="description" content="Secure access to the STEP Mão de Obra oil & gas workforce intelligence platform." />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        display: ['"Outfit"', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f0f7ff',
-                            100: '#e0f2fe',
-                            500: '#0284c7',
-                            600: '#0369a1',
-                            700: '#075985',
-                            900: '#0c4a6e',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+<style>
+  /* ============================================================
+     STEP — Mão de Obra · Secure Access
+     Design language: control-room / rig-deck instrumentation
+     Signature: seismic reflection lines + hexagon lattice
+     ============================================================ */
 
-    <!-- External CDNs -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  :root{
+    --bg-0:#04070c;
+    --bg-1:#081018;
+    --bg-2:#0d1c28;
+    --steel:#4a5b6c;
+    --steel-soft:#8393a1;
+    --ink:#ffffff;
+    --ink-dim:#aab8c2;
+    --accent:#38bdf8;
+    --accent-2:#7dd3fc;
+    --accent-dim:rgba(56,189,248,0.16);
+    --success:#10b981;
+    --error:#ef4444;
+    --border:rgba(255,255,255,0.09);
+    --card-bg:rgba(13, 28, 40, 0.68);
+    --radius-card:22px;
+    --radius-input:14px;
+    --ease:cubic-bezier(.4,0,.2,1);
+  }
 
-    <style>
-        :root {
-            --bg-0: #f8fafc;
-            --bg-1: #edf2f7;
-            --bg-2: #e2e8f0;
-            --steel-soft: #64748b;
-            --ink: #0f172a;
-            --accent: #0284c7;
-            --radius-card: 22px;
-            --radius-input: 14px;
-        }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg-0:#eef2f5;
+      --bg-1:#e4eaef;
+      --bg-2:#d9e1e8;
+      --ink:#0f1a24;
+      --ink-dim:#4a5b6c;
+      --border:rgba(15,26,38,0.10);
+      --card-bg:rgba(255,255,255,0.72);
+    }
+  }
 
-        * { -webkit-font-smoothing: antialiased; }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,0.22), transparent 60%),
-                        radial-gradient(1000px 700px at 85% 90%, rgba(16,185,129,0.18), transparent 60%),
-                        linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
-            color: var(--ink);
-            min-height: 100vh;
-        }
+  html,body{ height:100%; }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-        }
+  body{
+    font-family:'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background:
+      radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,0.14), transparent 60%),
+      radial-gradient(1000px 700px at 85% 90%, rgba(16,185,129,0.10), transparent 60%),
+      radial-gradient(800px 600px at 50% 50%, rgba(13,28,40,0.8), var(--bg-0)),
+      linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
+    color:var(--ink);
+    min-height:100dvh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow-x:hidden;
+    position:relative;
+    padding:24px;
+  }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.90);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-            border-radius: 20px;
-        }
+  /* custom scrollbar */
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.14); border-radius:10px; }
 
-        .apple-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-weight: 600;
-            font-size: 13px;
-            padding: 9px 20px;
-            border-radius: 980px;
-            background: linear-gradient(135deg, #0284c7, #0369a1);
-            color: #ffffff;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
+  /* ---------- background atmosphere with wow-effect elements ---------- */
 
-        .apple-btn:hover {
-            background: linear-gradient(135deg, #38bdf8, #0284c7);
-            transform: translateY(-1px);
-        }
+  /* Digital Grid Matrix Overlay */
+  .grid-matrix{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black 40%, transparent 85%);
+  }
 
-        .apple-btn-secondary {
-            background: rgba(15, 23, 42, 0.05);
-            color: #0f172a;
-            border: 1px solid rgba(15, 23, 42, 0.08);
-        }
+  /* Glowing Aurora Orbs */
+  .aurora-glow{
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; filter: blur(80px); opacity: 0.5;
+  }
+  .aurora-orb{
+    position: absolute; border-radius: 50%;
+    animation: orbFloat 18s ease-in-out infinite alternate;
+  }
+  .aurora-orb.orb-1{
+    width: 400px; height: 400px; top: -100px; left: -100px;
+    background: rgba(56, 189, 248, 0.18);
+  }
+  .aurora-orb.orb-2{
+    width: 450px; height: 450px; bottom: -120px; right: -100px;
+    background: rgba(16, 185, 129, 0.15);
+    animation-delay: -5s;
+    animation-duration: 22s;
+  }
+  .aurora-orb.orb-3{
+    width: 300px; height: 300px; top: 40%; left: 60%;
+    background: rgba(14, 165, 233, 0.12);
+    animation-delay: -9s;
+    animation-duration: 25s;
+  }
 
-        .apple-btn-danger { background: #ef4444; color: #fff; }
+  @keyframes orbFloat{
+    0%{ transform: translate(0, 0) scale(1); }
+    50%{ transform: translate(40px, -50px) scale(1.1); }
+    100%{ transform: translate(-30px, 40px) scale(0.95); }
+  }
 
-        .apple-input, .apple-select {
-            background: #ffffff;
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 12px;
-            padding: 9px 13px;
-            font-size: 13px;
-            color: #0f172a;
-            width: 100%;
-            outline: none;
-        }
+  .rig-scale{
+    position:fixed; top:0; bottom:0; width:34px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:40px 0; opacity:.35; z-index:1; pointer-events:none;
+  }
+  .rig-scale.left{ left:18px; }
+  .rig-scale.right{ right:18px; }
+  .rig-scale span{
+    display:block; height:1px; width:100%; background:var(--steel-soft);
+    position:relative;
+  }
+  .rig-scale span::after{
+    content:attr(data-d); position:absolute; left:14px; top:-6px;
+    font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:.04em;
+    color:var(--steel-soft);
+  }
+  .rig-scale.right span::after{ left:auto; right:14px; }
 
-        .apple-input:focus, .apple-select:focus {
-            border-color: #0284c7;
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14);
-        }
+  .hex-field{ position:fixed; inset:0; z-index:1; overflow:hidden; pointer-events:none; }
+  .hex{
+    position:absolute; border:1px solid rgba(56,189,248,0.18);
+    filter:blur(0.5px);
+    clip-path:polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0% 50%);
+    animation:hexDrift 26s ease-in-out infinite;
+  }
+  .hex.h1{ width:260px; height:260px; top:-60px; left:-60px; background:rgba(56,189,248,0.06); animation-duration:32s; }
+  .hex.h2{ width:180px; height:180px; bottom:8%; right:-40px; background:rgba(16,185,129,0.05); animation-duration:24s; animation-delay:-6s; }
+  .hex.h3{ width:120px; height:120px; top:14%; right:12%; border-color:rgba(255,255,255,0.08); animation-duration:20s; animation-delay:-3s; }
+  .hex.h4{ width:90px; height:90px; bottom:16%; left:8%; border-color:rgba(56,189,248,0.14); animation-duration:22s; animation-delay:-10s; }
 
-        .role-badge {
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 2px 8px;
-            border-radius: 980px;
-            letter-spacing: 0.05em;
-        }
-        .role-admin { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-        .role-recruit { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
-        .role-viewer { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+  @keyframes hexDrift{
+    0%,100%{ transform:translate(0,0) rotate(0deg); }
+    50%{ transform:translate(14px,-18px) rotate(6deg); }
+  }
 
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 980px; }
-    </style>
+  /* seismic reflection strips */
+  .seismic{
+    position:fixed; left:0; width:200%; height:64px; z-index:1; opacity:.6; pointer-events:none;
+  }
+  .seismic.top{ top:0; }
+  .seismic.bottom{ bottom:0; transform:scaleY(-1); }
+  .seismic svg{ width:100%; height:100%; display:block; }
+  .seismic .top-track, .seismic .bottom-track{ animation:seismicScroll 34s linear infinite; }
+  @keyframes seismicScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  @media (prefers-reduced-motion:reduce){
+    .hex, .top-track, .bottom-track, .logo-mark, .aurora-orb{ animation:none !important; }
+  }
+
+  /* ---------- content ---------- */
+
+  .stage{ position:relative; z-index:2; width:100%; max-width:400px; display:flex; flex-direction:column; align-items:center; }
+
+  .brandmark{
+    display:flex; flex-direction:column; align-items:center; gap:18px;
+    margin-bottom:34px;
+    opacity:0; transform:translateY(10px);
+    animation:riseIn .7s var(--ease) forwards;
+  }
+
+  .logo-mark{
+    width:64px; height:64px; position:relative;
+    animation:logoBreathe 5s ease-in-out infinite;
+  }
+  .logo-mark svg{ width:100%; height:100%; }
+  @keyframes logoBreathe{ 0%,100%{ filter:drop-shadow(0 0 0 rgba(56,189,248,0)); } 50%{ filter:drop-shadow(0 0 20px rgba(56,189,248,0.5)); } }
+
+  .wordmark{ text-align:center; }
+  .wordmark .step{
+    font-family:'Outfit', sans-serif; font-weight:800; font-size:40px; letter-spacing:-0.02em;
+    line-height:1; background:linear-gradient(135deg, var(--ink), var(--ink));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .wordmark .sub{
+    font-family:'Outfit', sans-serif; font-weight:600; font-size:15px; letter-spacing:.14em;
+    text-transform:uppercase; color:#ffffff; margin-top:4px;
+  }
+  .wordmark .tagline{
+    font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:#ffffff; margin-top:12px;
+  }
+
+  .card{
+    width:100%;
+    background:var(--card-bg);
+    backdrop-filter:blur(24px) saturate(1.4);
+    -webkit-backdrop-filter:blur(24px) saturate(1.4);
+    border:1px solid var(--border);
+    border-radius:var(--radius-card);
+    padding:32px 28px 28px;
+    box-shadow:0 30px 70px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+    opacity:0; transform:translateY(22px);
+    animation:riseIn .7s var(--ease) .15s forwards;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:1.5px;
+    background:linear-gradient(90deg, transparent, var(--accent), var(--success), transparent);
+    opacity:.8;
+  }
+
+  @keyframes riseIn{ to{ opacity:1; transform:translateY(0); } }
+
+  .card-label{
+    display:flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-dim); margin-bottom:18px;
+  }
+  .card-label .dot{ width:6px; height:6px; border-radius:50%; background:var(--success); box-shadow:0 0 10px var(--success); flex-shrink:0; }
+
+  form{ display:flex; flex-direction:column; gap:14px; }
+
+  .field{ position:relative; }
+
+  .input-wrap{ position:relative; }
+
+  #password{
+    width:100%; height:54px; border-radius:var(--radius-input);
+    background:rgba(255,255,255,0.04); border:1px solid var(--border);
+    color:var(--ink); font-size:15px; font-family:'Plus Jakarta Sans', sans-serif;
+    padding:0 46px 0 18px; outline:none;
+    transition:border-color .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+    letter-spacing:0.02em;
+  }
+  #password::placeholder{ color:var(--steel-soft); }
+  #password:focus{
+    border-color:var(--accent);
+    background:rgba(56,189,248,0.06);
+    box-shadow:0 0 0 4px var(--accent-dim);
+  }
+  #password.error{ border-color:var(--error); animation:shake .42s var(--ease); }
+  #password.success{ border-color:var(--success); }
+
+  @keyframes shake{
+    10%,90%{ transform:translateX(-1px); }
+    20%,80%{ transform:translateX(3px); }
+    30%,50%,70%{ transform:translateX(-6px); }
+    40%,60%{ transform:translateX(6px); }
+  }
+
+  .toggle-visibility{
+    position:absolute; right:14px; top:50%; transform:translateY(-50%);
+    background:none; border:none; cursor:pointer; padding:6px;
+    color:var(--steel-soft); display:flex; align-items:center; justify-content:center;
+    border-radius:8px; transition:color .2s, background .2s;
+  }
+  .toggle-visibility:hover{ color:var(--ink); background:rgba(255,255,255,0.06); }
+  .toggle-visibility svg{ width:18px; height:18px; }
+
+  .capslock-note{
+    display:flex; align-items:center; gap:6px;
+    font-size:11.5px; color:var(--accent-2); min-height:0; overflow:hidden;
+    max-height:0; opacity:0; transition:max-height .25s var(--ease), opacity .2s, margin-top .25s var(--ease);
+  }
+  .capslock-note.show{ max-height:24px; opacity:1; margin-top:2px; }
+
+  .error-msg{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; color:var(--error); font-weight:500;
+    max-height:0; opacity:0; overflow:hidden;
+    transition:max-height .25s var(--ease), opacity .2s;
+  }
+  .error-msg.show{ max-height:30px; opacity:1; }
+
+  .row-between{ display:flex; align-items:center; justify-content:space-between; margin-top:2px; }
+
+  .remember{ display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
+  .remember input{ display:none; }
+  .checkbox{
+    width:17px; height:17px; border-radius:5px; border:1.5px solid var(--border);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    transition:all .2s var(--ease); background:rgba(255,255,255,0.03);
+  }
+  .remember input:checked + .checkbox{ background:var(--accent); border-color:var(--accent); }
+  .checkbox svg{ width:11px; height:11px; opacity:0; transform:scale(.5); transition:all .18s var(--ease); }
+  .remember input:checked + .checkbox svg{ opacity:1; transform:scale(1); }
+  .remember span.label{ font-size:12.5px; color:var(--ink-dim); }
+
+  .forgot{ font-size:12.5px; color:var(--steel-soft); text-decoration:none; cursor:not-allowed; opacity:.6; }
+
+  .enter-btn{
+    margin-top:6px; width:100%; height:54px; border:none; border-radius:var(--radius-input);
+    background:linear-gradient(135deg, var(--accent), #0284c7);
+    color:#0b0f14; font-family:'Outfit', sans-serif; font-weight:700; font-size:15px; letter-spacing:.02em;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    cursor:pointer; position:relative; overflow:hidden;
+    box-shadow:0 10px 28px rgba(56,189,248,0.32);
+    transition:transform .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  .enter-btn:hover{ transform:translateY(-1px) scale(1.008); box-shadow:0 14px 34px rgba(56,189,248,0.4); }
+  .enter-btn:active{ transform:scale(.98); }
+  .enter-btn:focus-visible{ outline:2px solid var(--ink); outline-offset:3px; }
+  .enter-btn[disabled]{ cursor:default; opacity:.9; }
+
+  .btn-text, .btn-gauge, .btn-check{ display:flex; align-items:center; gap:9px; }
+  .btn-gauge, .btn-check{ display:none; }
+  .enter-btn.loading .btn-text{ display:none; }
+  .enter-btn.loading .btn-gauge{ display:flex; }
+  .enter-btn.success .btn-text, .enter-btn.success .btn-gauge{ display:none; }
+  .enter-btn.success .btn-check{ display:flex; }
+  .enter-btn.success{ background:linear-gradient(135deg, var(--success), #059669); box-shadow:0 14px 34px rgba(16,185,129,0.35); }
+
+  .gauge{ width:19px; height:19px; position:relative; flex-shrink:0; }
+  .gauge svg{ width:100%; height:100%; animation:gaugeSpin 1s linear infinite; }
+  @keyframes gaugeSpin{ to{ transform:rotate(360deg); } }
+
+  .btn-check svg{ width:19px; height:19px; }
+  .check-path{ stroke-dasharray:20; stroke-dashoffset:20; animation:drawCheck .35s var(--ease) forwards; }
+  @keyframes drawCheck{ to{ stroke-dashoffset:0; } }
+
+  .footline{
+    margin-top:22px; text-align:center;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.1em;
+    color:#ffffff; opacity:0; animation:riseIn .7s var(--ease) .35s forwards;
+  }
+  .footline b{ color:#ffffff; font-weight:500; }
+
+  @media (max-width:420px){
+    .rig-scale{ display:none; }
+    .wordmark .step{ font-size:32px; }
+    .card{ padding:24px 20px 22px; }
+  }
+</style>
 </head>
-<body class="text-[#0f172a] min-h-screen flex flex-col relative">
+<body>
 
-    <!-- ─── TELA DE LOGIN (SUPABASE AUTH) ─── -->
-    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
-        <div class="glass-card w-full max-w-md p-8 border border-white/20 shadow-2xl relative overflow-hidden bg-slate-900 text-white">
-            <div class="text-center mb-6">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 mx-auto flex items-center justify-center font-extrabold text-xl font-display shadow-lg shadow-sky-500/30 mb-3">
-                    STEP
-                </div>
-                <h1 class="text-2xl font-extrabold font-display">STEP – Mão de Obra</h1>
-                <p class="text-xs text-slate-400 mt-1">Plataforma de Gestão de Talentos Oil &amp; Gas</p>
-            </div>
+  <!-- Wow-effect atmospheric backgrounds: Aurora Orbs & Grid Matrix -->
+  <div class="aurora-glow" aria-hidden="true">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
+  <div class="grid-matrix" aria-hidden="true"></div>
 
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">E-mail Corporativo</label>
-                    <input type="email" id="loginEmail" class="apple-input bg-slate-800 border-slate-700 text-white" placeholder="usuario@empresa.com" required />
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Senha</label>
-                    <input type="password" id="loginPassword" class="apple-input bg-slate-800 border-slate-700 text-white" placeholder="••••••••" required />
-                </div>
-                <div id="authErrorMessage" class="hidden text-xs text-rose-400 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20"></div>
-                <button type="submit" id="loginSubmitBtn" class="apple-btn w-full py-3 font-bold text-sm bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500">
-                    Entrar na Plataforma
-                </button>
-            </form>
-        </div>
+  <!-- decorative depth scale, purely atmospheric -->
+  <div class="rig-scale left" aria-hidden="true">
+    <span data-d="0m"></span><span data-d="450m"></span><span data-d="900m"></span><span data-d="1350m"></span><span data-d="1800m"></span>
+  </div>
+  <div class="rig-scale right" aria-hidden="true">
+    <span data-d="RIG-04"></span><span data-d="SEC-A"></span><span data-d="SEC-B"></span><span data-d="SEC-C"></span><span data-d="AUTH"></span>
+  </div>
+
+  <div class="hex-field" aria-hidden="true">
+    <div class="hex h1"></div>
+    <div class="hex h2"></div>
+    <div class="hex h3"></div>
+    <div class="hex h4"></div>
+  </div>
+
+  <div class="seismic top" aria-hidden="true">
+    <svg viewBox="0 0 1600 64" preserveAspectRatio="none"><path class="top-track" d="M0 32 C 40 10, 80 54, 120 32 S 200 10, 240 32 S 320 54, 360 32 S 440 10, 480 32 S 560 54, 600 32 S 680 10, 720 32 S 800 54, 840 32 S 920 10, 960 32 S 1040 54, 1080 32 S 1160 10, 1200 32 S 1280 54, 1320 32 S 1400 10, 1440 32 S 1520 54, 1560 32 S 1640 10, 1680 32 S 1760 54, 1800 32 S 1880 10, 1920 32 S 2000 54, 2040 32 S 2120 10, 2160 32 S 2240 54, 2280 32 S 2360 10, 2400 32 S 2480 54, 2520 32 S 2600 10, 2640 32 S 2720 54, 2760 32 S 2840 10, 2880 32 S 2960 54, 3000 32 S 3080 10, 3120 32 S 3200 54, 3200 32" fill="none" stroke="#38bdf8" stroke-width="1"/></svg>
+  </div>
+  <div class="seismic bottom" aria-hidden="true">
+    <svg viewBox="0 0 1600 64" preserveAspectRatio="none"><path class="bottom-track" d="M0 32 C 40 54, 80 10, 120 32 S 200 54, 240 32 S 320 10, 360 32 S 440 54, 480 32 S 560 10, 600 32 S 680 54, 720 32 S 800 10, 840 32 S 920 54, 960 32 S 1040 10, 1080 32 S 1160 54, 1200 32 S 1280 10, 1320 32 S 1400 54, 1440 32 S 1520 10, 1560 32 S 1640 54, 1680 32 S 1760 10, 1800 32 S 1880 54, 1920 32 S 2000 10, 2040 32 S 2120 54, 2160 32 S 2240 10, 2280 32 S 2360 54, 2400 32 S 2480 10, 2520 32 S 2600 54, 2640 32 S 2720 10, 2760 32 S 2840 54, 2880 32 S 2960 10, 3000 32 S 3080 54, 3120 32 S 3200 10, 3200 32" fill="none" stroke="#10b981" stroke-width="1"/></svg>
+  </div>
+
+  <main class="stage">
+    <div class="brandmark">
+      <div class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 56 56" fill="none">
+          <polygon points="28,3 50,15.5 50,40.5 28,53 6,40.5 6,15.5" stroke="#38bdf8" stroke-width="1.6" fill="rgba(56,189,248,0.06)"/>
+          <path d="M28 16 L28 30 M20 22 L28 30 L36 22" stroke="#eef2f5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="28" cy="38" r="2" fill="#38bdf8"/>
+        </svg>
+      </div>
+      <div class="wordmark">
+        <div class="step">STEP</div>
+        <div class="sub">Mão de Obra</div>
+        <div class="tagline">Oil &amp; Gas Workforce Intelligence Platform</div>
+      </div>
     </div>
 
-    <!-- ─── APLICAÇÃO PRINCIPAL ─── -->
-    <div id="appScreen" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
+    <div class="card" role="region" aria-labelledby="cardLabel">
+      <div class="card-label" id="cardLabel"><span class="dot" aria-hidden="true"></span> Secure Access · Field Personnel Only</div>
 
-        <!-- NAV SUPERIOR -->
-        <header class="sticky top-0 z-30 glass-panel px-6 py-3 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
-                    STEP
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-extrabold text-base tracking-tight">STEP</span>
-                        <span class="text-[11px] font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">Mão de Obra</span>
-                    </div>
-                    <span class="text-[10px] font-medium text-slate-500 block -mt-1">Oil &amp; Gas Talent Platform</span>
-                </div>
-            </div>
-
-            <!-- Pesquisa Global -->
-            <div class="flex-1 max-w-xl mx-4 relative">
-                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400 pointer-events-none"></i>
-                <input type="text" id="globalSearchInput" placeholder="Buscar por nome, passaporte, cargo, certificados..." class="apple-input pl-10 pr-4 py-2" />
-            </div>
-
-            <!-- Usuário Conectado -->
-            <div class="flex items-center gap-3">
-                <div class="text-right hidden sm:block">
-                    <p id="userEmailDisplay" class="text-xs font-bold text-slate-800">user@step.com</p>
-                    <span id="userRoleBadge" class="role-badge role-viewer">VIEWER</span>
-                </div>
-                <button id="addCandidateBtn" class="apple-btn text-xs font-bold hidden flex items-center gap-1.5" data-requires="recruit">
-                    <i data-lucide="user-plus" class="w-4 h-4"></i>
-                    <span>Novo Candidato</span>
-                </button>
-                <button id="logoutBtn" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition" title="Sair">
-                    <i data-lucide="log-out" class="w-5 h-5"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- ÁREA DE TRABALHO -->
-        <div class="flex-1 flex overflow-hidden">
-
-            <!-- SIDEBAR -->
-            <aside class="w-64 bg-white/80 backdrop-blur-md border-r border-slate-200 flex flex-col justify-between p-4 z-20">
-                <div class="space-y-6">
-                    <div>
-                        <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">Navegação</p>
-                        <nav class="space-y-1">
-                            <button data-view="table" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold bg-brand-50 text-brand-600">
-                                <i data-lucide="table" class="w-4 h-4"></i>
-                                <span>Candidatos</span>
-                            </button>
-                            <button data-view="dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">
-                                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                                <span>Dashboard</span>
-                            </button>
-                            <button data-view="users" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 hidden" data-requires="admin">
-                                <i data-lucide="shield-check" class="w-4 h-4"></i>
-                                <span>Gestão de Usuários</span>
-                            </button>
-                        </nav>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-200 text-xs text-slate-400 font-mono">
-                    STEP Auth Engine v2.5
-                </div>
-            </aside>
-
-            <!-- CONTEÚDO PRINCIPAL -->
-            <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
-
-                <!-- VISÃO: TABELA DE CANDIDATOS -->
-                <section id="viewTable" class="view-section space-y-4">
-                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-200">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs whitespace-nowrap">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-bold text-[10px] border-b border-slate-200">
-                                    <tr>
-                                        <th class="p-3">Candidato</th>
-                                        <th class="p-3">Status</th>
-                                        <th class="p-3">Nacionalidade</th>
-                                        <th class="p-3">Contato</th>
-                                        <th class="p-3">E-mail</th>
-                                        <th class="p-3">Passaporte</th>
-                                        <th class="p-3 text-right">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="candidateTableBody" class="divide-y divide-slate-100"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- VISÃO: DASHBOARD -->
-                <section id="viewDashboard" class="view-section hidden space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="glass-card p-5">
-                            <span class="text-xs font-semibold text-slate-500">Total Candidatos</span>
-                            <p id="metricTotal" class="text-3xl font-extrabold text-slate-900 mt-2">0</p>
-                        </div>
-                        <div class="glass-card p-5">
-                            <span class="text-xs font-semibold text-slate-500">Disponíveis</span>
-                            <p id="metricAvailable" class="text-3xl font-extrabold text-emerald-600 mt-2">0</p>
-                        </div>
-                        <div class="glass-card p-5">
-                            <span class="text-xs font-semibold text-slate-500">Em Projeto</span>
-                            <p id="metricEmployed" class="text-3xl font-extrabold text-brand-600 mt-2">0</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- VISÃO: GESTÃO DE USUÁRIOS (ADMIN ONLY) -->
-                <section id="viewUsers" class="view-section hidden space-y-6" data-requires="admin">
-                    <div class="glass-card p-6 border border-slate-200">
-                        <h2 class="text-base font-bold text-slate-900 mb-4">Criar / Atualizar Nível de Acesso de Usuário</h2>
-                        <form id="createUserForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail do Usuário</label>
-                                <input type="email" id="newUserEmail" class="apple-input" placeholder="usuario@empresa.com" required />
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Perfil (Role)</label>
-                                <select id="newUserRole" class="apple-select">
-                                    <option value="viewer">Viewer (Somente Leitura)</option>
-                                    <option value="recruit">Recruiter (Cadastro/Edição)</option>
-                                    <option value="admin">Admin (Acesso Total)</option>
-                                </select>
-                            </div>
-                            <div class="flex items-end">
-                                <button type="submit" class="apple-btn w-full">Salvar Usuário</button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-            </main>
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <div class="input-wrap">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter Password"
+              autocomplete="current-password"
+              aria-describedby="capsNote errorMsg"
+              autofocus
+              required
+            />
+            <button type="button" class="toggle-visibility" id="toggleVisibility" aria-label="Show password" aria-pressed="false">
+              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="capslock-note" id="capsNote" role="status">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L20 10 L15 10 L15 16 L9 16 L9 10 L4 10 Z"/></svg>
+            Caps Lock is on
+          </div>
+          <div class="error-msg" id="errorMsg" role="alert">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Incorrect password. Please try again.
+          </div>
         </div>
+
+        <div class="row-between">
+          <label class="remember">
+            <input type="checkbox" id="rememberMe" />
+            <span class="checkbox">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0b0f14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span class="label">Remember this device</span>
+          </label>
+          <a href="#" class="forgot" aria-disabled="true" tabindex="-1" onclick="return false;">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="enter-btn" id="enterBtn" aria-label="Enter Platform">
+          <span class="btn-text">Enter Platform</span>
+          <span class="btn-gauge">
+            <span class="gauge">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="rgba(11,15,20,0.25)" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="#0b0f14" stroke-width="3" stroke-linecap="round"/></svg>
+            </span>
+            Verifying credentials…
+          </span>
+          <span class="btn-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#062b22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline class="check-path" points="4 12 9 17 20 6"/></svg>
+            Access granted
+          </span>
+        </button>
+      </form>
     </div>
 
-    <!-- ─── MODAL DE CANDIDATO ─── -->
-    <div id="candidateModal" class="hidden fixed inset-0 z-50 overflow-hidden bg-slate-900/40 backdrop-blur-sm flex justify-end">
-        <div class="w-full max-w-3xl bg-white h-full shadow-2xl flex flex-col">
-            <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-                <h3 id="modalTitle" class="font-bold text-lg text-slate-900">Perfil do Candidato</h3>
-                <button id="closeModalBtn" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
+    <div class="footline">AUTH-STEP-01 &nbsp;//&nbsp; <b>Encrypted session</b> &nbsp;//&nbsp; Unauthorized access prohibited</div>
+  </main>
 
-            <!-- Abas do Modal -->
-            <div class="flex items-center gap-2 px-5 border-b border-slate-200 bg-slate-100/50">
-                <button data-tab="tabOverview" class="modal-tab-btn px-4 py-3 text-xs font-bold border-b-2 border-brand-600 text-brand-600">Dados Gerais</button>
-                <button data-tab="tabCerts" class="modal-tab-btn px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-500">Certificados &amp; Cursos</button>
-                <button data-tab="tabExams" class="modal-tab-btn px-4 py-3 text-xs font-semibold border-b-2 border-transparent text-slate-500">Exames Médicos</button>
-            </div>
+<script>
+(function(){
+  'use strict';
 
-            <div class="flex-1 overflow-y-auto p-6">
-                <!-- ABA 1: DADOS GERAIS -->
-                <div id="tabOverview" class="modal-tab-content space-y-4">
-                    <form id="candidateForm" class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo</label>
-                                <input type="text" id="candName" class="apple-input" required />
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                                <select id="candStatus" class="apple-select">
-                                    <option value="Available">Disponível</option>
-                                    <option value="Working with Us">Em Projeto</option>
-                                    <option value="In Interviews">Em Entrevista</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Nacionalidade</label>
-                                <input type="text" id="candNationality" class="apple-input" />
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Passaporte</label>
-                                <input type="text" id="candPassport" class="apple-input" />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
-                                <input type="email" id="candEmail" class="apple-input" />
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Telefone / WhatsApp</label>
-                                <input type="text" id="candPhone" class="apple-input" />
-                            </div>
-                        </div>
-                        <div class="pt-4 flex justify-end">
-                            <button type="submit" class="apple-btn" data-requires="recruit">Salvar Alterações</button>
-                        </div>
-                    </form>
-                </div>
+  var CONFIG = {
+    correctPassword: 'Step2026',
+    redirectUrl: 'platform.html',
+    rememberKey: 'step_mdo_remember_device'
+  };
 
-                <!-- ABA 2: CERTIFICADOS -->
-                <div id="tabCerts" class="modal-tab-content hidden space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-bold uppercase text-slate-400">Certificados Cadastrados</h4>
-                        <button id="addCertBtn" class="apple-btn text-xs" data-requires="recruit">+ Adicionar Certificado</button>
-                    </div>
-                    <div id="certsList" class="space-y-2"></div>
-                </div>
+  var form        = document.getElementById('loginForm');
+  var input       = document.getElementById('password');
+  var toggleBtn   = document.getElementById('toggleVisibility');
+  var eyeIcon     = document.getElementById('eyeIcon');
+  var capsNote    = document.getElementById('capsNote');
+  var errorMsg    = document.getElementById('errorMsg');
+  var enterBtn    = document.getElementById('enterBtn');
+  var rememberBox = document.getElementById('rememberMe');
 
-                <!-- ABA 3: EXAMES MÉDICOS -->
-                <div id="tabExams" class="modal-tab-content hidden space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-bold uppercase text-slate-400">Exames &amp; ASO</h4>
-                        <button id="addExamBtn" class="apple-btn text-xs" data-requires="recruit">+ Adicionar Exame</button>
-                    </div>
-                    <div id="examsList" class="space-y-2"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+  try {
+    if (localStorage.getItem(CONFIG.rememberKey) === '1') {
+      rememberBox.checked = true;
+    }
+  } catch (e) { /* ignore */ }
 
-    <!-- ─── SCRIPT DE LÓGICA, AUTENTICAÇÃO E SUPABASE ─── -->
-    <script>
-        // 1. CONFIGURAÇÃO ÚNICA DO SUPABASE
-        const SUPABASE_URL = 'https://gvdayxbxnzqejqbqkykx.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_TeQKj8aLBr7hepq6qhYQ8g_6BvJptk4';
-        
-        // Inicialização global com nome único para evitar conflito com o SDK CDN
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  toggleBtn.addEventListener('click', function () {
+    var showing = input.type === 'text';
+    input.type = showing ? 'password' : 'text';
+    toggleBtn.setAttribute('aria-pressed', String(!showing));
+    toggleBtn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+    eyeIcon.innerHTML = showing
+      ? '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>'
+      : '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a19.87 19.87 0 0 1 4.22-5.19M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a19.86 19.86 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23"/>';
+    input.focus();
+  });
 
-        // Estado Global
-        let currentUser = null;
-        let currentUserRole = 'viewer';
-        let candidatesData = [
-            { id: 1, name: 'Carlos Eduardo', status: 'Available', nationality: 'Brasileira', phone: '+55 22 99999-8888', email: 'carlos@mdo.com', passport: 'BR123456', certs: ['CBSP', 'HUET'], exams: ['ASO Ocupacional'] }
-        ];
-        let currentSelectedCandidate = null;
+  input.addEventListener('keyup', function (e) {
+    var caps = typeof e.getModifierState === 'function' && e.getModifierState('CapsLock');
+    capsNote.classList.toggle('show', !!caps);
+  });
+  input.addEventListener('blur', function () { capsNote.classList.remove('show'); });
 
-        // Elementos DOM
-        const authScreen = document.getElementById('authScreen');
-        const appScreen = document.getElementById('appScreen');
-        const loginForm = document.getElementById('loginForm');
-        const authErrorMessage = document.getElementById('authErrorMessage');
+  input.addEventListener('input', function () {
+    input.classList.remove('error');
+    errorMsg.classList.remove('show');
+  });
 
-        // Inicialização dos Ícones Lucide
-        lucide.createIcons();
+  function validatePassword(candidate) {
+    return Promise.resolve(candidate === CONFIG.correctPassword);
+  }
 
-        // 2. MONITORAMENTO DE SESSÃO E AUTENTICAÇÃO
-        supabaseClient.auth.onAuthStateChange(async (event, session) => {
-            if (session) {
-                currentUser = session.user;
-                await fetchUserRole();
-                initApp();
-            } else {
-                currentUser = null;
-                currentUserRole = 'viewer';
-                showAuthScreen();
-            }
-        });
+  function setLoading(isLoading) {
+    enterBtn.classList.toggle('loading', isLoading);
+    enterBtn.disabled = isLoading;
+  }
 
-        // Formulário de Login
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+  function showError() {
+    input.classList.remove('success');
+    input.classList.add('error');
+    errorMsg.classList.add('show');
+    input.select();
+    setTimeout(function () { input.classList.remove('error'); }, 450);
+  }
 
-            authErrorMessage.classList.add('hidden');
-            const submitBtn = document.getElementById('loginSubmitBtn');
-            submitBtn.textContent = 'Autenticando...';
-            submitBtn.disabled = true;
+  function showSuccessAndRedirect() {
+    input.classList.add('success');
+    enterBtn.classList.remove('loading');
+    enterBtn.classList.add('success');
+    try {
+      if (rememberBox.checked) { localStorage.setItem(CONFIG.rememberKey, '1'); }
+      else { localStorage.removeItem(CONFIG.rememberKey); }
+    } catch (e) { /* ignore */ }
 
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    document.body.style.transition = 'opacity .5s ease';
+    setTimeout(function () {
+      document.body.style.opacity = '0';
+      setTimeout(function () { window.location.href = CONFIG.redirectUrl; }, 480);
+    }, 550);
+  }
 
-            if (error) {
-                authErrorMessage.textContent = error.message || 'Erro ao realizar login.';
-                authErrorMessage.classList.remove('hidden');
-            }
-            
-            submitBtn.textContent = 'Entrar na Plataforma';
-            submitBtn.disabled = false;
-        });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (enterBtn.disabled) return;
 
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            await supabaseClient.auth.signOut();
-        });
+    var value = input.value;
+    if (!value) { showError(); return; }
 
-        // Busca o papel (role) na tabela public.profiles
-        async function fetchUserRole() {
-            if (!currentUser) return;
-            
-            try {
-                const { data, error } = await supabaseClient
-                    .from('profiles')
-                    .select('role')
-                    .eq('id', currentUser.id)
-                    .single();
+    setLoading(true);
 
-                if (data && data.role) {
-                    currentUserRole = data.role;
-                } else {
-                    currentUserRole = 'viewer';
-                }
-            } catch (err) {
-                console.error('Erro ao buscar role:', err);
-                currentUserRole = 'viewer';
-            }
-        }
-
-        // 3. CONTROLE DE INTERFACE E PERMISSÕES (RBAC)
-        function showAuthScreen() {
-            authScreen.classList.remove('hidden');
-            appScreen.classList.add('hidden');
-        }
-
-        function initApp() {
-            authScreen.classList.add('hidden');
-            appScreen.classList.remove('hidden');
-            applyRolePermissions();
-            renderCandidatesTable();
-            updateMetrics();
-        }
-
-        function applyRolePermissions() {
-            document.getElementById('userEmailDisplay').textContent = currentUser.email;
-            const badge = document.getElementById('userRoleBadge');
-            badge.textContent = currentUserRole.toUpperCase();
-            badge.className = `role-badge role-${currentUserRole}`;
-
-            document.querySelectorAll('[data-requires]').forEach(el => {
-                const requiredRole = el.getAttribute('data-requires');
-                if (requiredRole === 'admin' && currentUserRole !== 'admin') {
-                    el.classList.add('hidden');
-                } else if (requiredRole === 'recruit' && (currentUserRole !== 'recruit' && currentUserRole !== 'admin')) {
-                    el.classList.add('hidden');
-                } else {
-                    el.classList.remove('hidden');
-                }
-            });
-        }
-
-        // 4. GESTÃO DE USUÁRIOS (PAINEL ADMIN)
-        const createUserForm = document.getElementById('createUserForm');
-        if (createUserForm) {
-            createUserForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                if (currentUserRole !== 'admin') return alert('Acesso negado.');
-
-                const targetEmail = document.getElementById('newUserEmail').value;
-                const newRole = document.getElementById('newUserRole').value;
-
-                const { data, error } = await supabaseClient
-                    .from('profiles')
-                    .update({ role: newRole })
-                    .eq('email', targetEmail);
-
-                if (error) {
-                    alert('Erro ao atualizar permissão: ' + error.message);
-                } else {
-                    alert(`Permissão do usuário ${targetEmail} alterada para ${newRole.toUpperCase()} com sucesso!`);
-                    createUserForm.reset();
-                }
-            });
-        }
-
-        // 5. NAVEGAÇÃO DA SIDEBAR
-        document.querySelectorAll('.nav-item').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const targetView = btn.getAttribute('data-view');
-                document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
-                
-                const targetSection = document.getElementById(`view${targetView.charAt(0).toUpperCase() + targetView.slice(1)}`);
-                if (targetSection) targetSection.classList.remove('hidden');
-
-                document.querySelectorAll('.nav-item').forEach(i => {
-                    i.classList.remove('bg-brand-50', 'text-brand-600', 'font-bold');
-                    i.classList.add('text-slate-600', 'font-semibold');
-                });
-                btn.classList.add('bg-brand-50', 'text-brand-600', 'font-bold');
-            });
-        });
-
-        // 6. RENDERIZAÇÃO DA TABELA E MÉTRICAS
-        function renderCandidatesTable() {
-            const tbody = document.getElementById('candidateTableBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            candidatesData.forEach(c => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 transition cursor-pointer';
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-slate-800">${c.name}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${c.status}</span></td>
-                    <td class="p-3 text-slate-600">${c.nationality}</td>
-                    <td class="p-3 text-slate-600">${c.phone}</td>
-                    <td class="p-3 text-slate-600">${c.email}</td>
-                    <td class="p-3 text-slate-600">${c.passport}</td>
-                    <td class="p-3 text-right">
-                        <button onclick="openCandidateModal(${c.id})" class="text-brand-600 font-bold hover:underline">Ver / Editar</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function updateMetrics() {
-            document.getElementById('metricTotal').textContent = candidatesData.length;
-            document.getElementById('metricAvailable').textContent = candidatesData.filter(c => c.status === 'Available').length;
-            document.getElementById('metricEmployed').textContent = candidatesData.filter(c => c.status === 'Working with Us').length;
-        }
-
-        // 7. MODAL DE CANDIDATOS, CERTIFICADOS E EXAMES
-        window.openCandidateModal = function(id) {
-            currentSelectedCandidate = candidatesData.find(c => c.id === id);
-            if (!currentSelectedCandidate) return;
-
-            document.getElementById('candName').value = currentSelectedCandidate.name;
-            document.getElementById('candStatus').value = currentSelectedCandidate.status;
-            document.getElementById('candNationality').value = currentSelectedCandidate.nationality;
-            document.getElementById('candPassport').value = currentSelectedCandidate.passport;
-            document.getElementById('candEmail').value = currentSelectedCandidate.email;
-            document.getElementById('candPhone').value = currentSelectedCandidate.phone;
-
-            renderCertsAndExams();
-            document.getElementById('candidateModal').classList.remove('hidden');
-        };
-
-        function renderCertsAndExams() {
-            const certsList = document.getElementById('certsList');
-            certsList.innerHTML = currentSelectedCandidate.certs.map(cert => `
-                <div class="p-3 rounded-xl bg-slate-100 flex items-center justify-between text-xs font-semibold">
-                    <span>${cert}</span>
-                    <span class="text-emerald-600">Válido</span>
-                </div>
-            `).join('');
-
-            const examsList = document.getElementById('examsList');
-            examsList.innerHTML = currentSelectedCandidate.exams.map(exam => `
-                <div class="p-3 rounded-xl bg-slate-100 flex items-center justify-between text-xs font-semibold">
-                    <span>${exam}</span>
-                    <span class="text-emerald-600">Apto</span>
-                </div>
-            `).join('');
-        }
-
-        document.getElementById('closeModalBtn')?.addEventListener('click', () => {
-            document.getElementById('candidateModal').classList.add('hidden');
-        });
-
-        // Alternância de Abas do Modal
-        document.querySelectorAll('.modal-tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const targetTab = btn.getAttribute('data-tab');
-                document.querySelectorAll('.modal-tab-content').forEach(tc => tc.classList.add('hidden'));
-                document.getElementById(targetTab).classList.remove('hidden');
-
-                document.querySelectorAll('.modal-tab-btn').forEach(b => {
-                    b.classList.remove('border-brand-600', 'text-brand-600', 'font-bold');
-                    b.classList.add('border-transparent', 'text-slate-500');
-                });
-                btn.classList.add('border-brand-600', 'text-brand-600', 'font-bold');
-            });
-        });
-
-        // Adição de Certificados e Exames
-        document.getElementById('addCertBtn')?.addEventListener('click', () => {
-            if (currentUserRole === 'viewer') return alert('Permissão insuficiente.');
-            const certName = prompt('Nome do Certificado/Treinamento:');
-            if (certName && currentSelectedCandidate) {
-                currentSelectedCandidate.certs.push(certName);
-                renderCertsAndExams();
-            }
-        });
-
-        document.getElementById('addExamBtn')?.addEventListener('click', () => {
-            if (currentUserRole === 'viewer') return alert('Permissão insuficiente.');
-            const examName = prompt('Nome do Exame Médico / ASO:');
-            if (examName && currentSelectedCandidate) {
-                currentSelectedCandidate.exams.push(examName);
-                renderCertsAndExams();
-            }
-        });
-    </script>
+    var start = Date.now();
+    validatePassword(value).then(function (ok) {
+      var elapsed = Date.now() - start;
+      var wait = Math.max(0, 650 - elapsed);
+      setTimeout(function () {
+        if (ok) { showSuccessAndRedirect(); }
+        else { setLoading(false); showError(); }
+      }, wait);
+    });
+  });
+})();
+</script>
 </body>
 </html>
