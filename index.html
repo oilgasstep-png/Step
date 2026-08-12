@@ -1,35 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>STEP – Mão de Obra | Enterprise Workforce Platform</title>
+    <title>STEP – Mão de Obra | Premium Work</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        display: ['"Outfit"', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
                         brand: {
-                            50: '#f0f7ff',
-                            100: '#e0f2fe',
-                            500: '#0284c7',
-                            600: '#0369a1',
-                            700: '#075985',
-                            900: '#0c4a6e',
+                            blue: '#0284c7',
+                            green: '#059669',
+                            bg: '#eef6f6'
                         }
                     }
                 }
@@ -37,474 +31,412 @@
         }
     </script>
 
-    <!-- External CDNs -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
-        :root {
-            --bg-0: #f8fafc;
-            --bg-1: #edf2f7;
-            --bg-2: #e2e8f0;
-            --ink: #0f172a;
-            --accent: #0284c7;
-        }
-
-        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background:
-                radial-gradient(1200px 800px at 15% 10%, rgba(56,189,248,0.22), transparent 60%),
-                radial-gradient(1000px 700px at 85% 90%, rgba(16,185,129,0.18), transparent 60%),
-                radial-gradient(800px 600px at 50% 50%, rgba(248, 250, 252, 0.95), #f1f5f9),
-                linear-gradient(160deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
-            color: var(--ink);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #eef7f6 0%, #e0f2fe 50%, #e6f4f1 100%);
             min-height: 100vh;
+            color: #1e293b;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px) saturate(1.4);
-            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        .wave-bg {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 180px;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23059669' fill-opacity='0.08' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            background-repeat: no-repeat;
+            z-index: 0;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
-            border-radius: 20px;
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+
+        .badge-working { background-color: #d1fae5; color: #047857; }
+        .badge-available { background-color: #fef08a; color: #854d0e; }
+        .badge-interviews { background-color: #e0f2fe; color: #0369a1; }
+
+        .btn-action-green { background-color: #059669; color: #ffffff; }
+        .btn-action-green:hover { background-color: #047857; }
+
+        .btn-action-blue { background-color: #0284c7; color: #ffffff; }
+        .btn-action-blue:hover { background-color: #0369a1; }
+
+        .form-input {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-size: 12px;
+            color: #334155;
+            outline: none;
+            transition: all 0.15s ease;
         }
-
-        .apple-btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            font-weight: 600; font-size: 13px; padding: 10px 22px; border-radius: 980px; border: none;
-            background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; cursor: pointer;
-            transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
+        .form-input:focus {
+            border-color: #0284c7;
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
         }
-        .apple-btn:hover { background: linear-gradient(135deg, #38bdf8, #0284c7); transform: translateY(-1px); }
-
-        .apple-input {
-            background: #ffffff; border: 1px solid rgba(15, 23, 42, 0.12); border-radius: 12px;
-            padding: 10px 14px; font-size: 13px; font-weight: 500; color: #0f172a; outline: none; width: 100%;
-        }
-        .apple-input:focus { border-color: #0284c7; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14); }
-
-        .apple-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 980px; font-size: 11px; font-weight: 700; }
-        .status-working { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-        .status-available { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
-
-        .permission-restricted { display: none !important; }
     </style>
 </head>
-<body class="text-[#0f172a] font-sans antialiased min-h-screen flex flex-col relative">
+<body class="flex flex-col h-screen text-slate-800 antialiased selection:bg-teal-500 selection:text-white">
 
-    <!-- ─── TELA DE LOGIN / AUTENTICAÇÃO ─── -->
-    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
-        <div class="w-full max-w-md glass-card p-8 rounded-3xl border border-white/40 shadow-2xl space-y-6 relative overflow-hidden">
-            <div class="text-center space-y-2">
-                <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white font-display font-extrabold text-xl shadow-lg shadow-brand-500/30">
-                    STEP
-                </div>
-                <h2 class="font-display font-extrabold text-2xl tracking-tight text-[#0f172a]">Mão de Obra</h2>
-                <p class="text-xs text-[#64748b] font-medium">Autenticação Segura &amp; Gestão por Perfil</p>
-            </div>
+    <div class="wave-bg"></div>
 
-            <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1">E-mail Corporativo</label>
-                    <div class="relative">
-                        <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3.5 text-[#94a3b8]"></i>
-                        <input type="email" id="loginEmail" required placeholder="administrador@step-og.com" class="apple-input pl-10" />
-                    </div>
-                </div>
+    <!-- Main Outer Wrapper -->
+    <div class="flex-1 flex overflow-hidden z-10">
 
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1">Senha</label>
-                    <div class="relative">
-                        <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3.5 text-[#94a3b8]"></i>
-                        <input type="password" id="loginPassword" required placeholder="••••••••••••" class="apple-input pl-10" />
-                    </div>
-                </div>
-
-                <div id="loginErrorMessage" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-200 flex items-center gap-2">
-                    <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
-                    <span id="loginErrorText">E-mail ou senha incorretos.</span>
-                </div>
-
-                <button type="submit" class="apple-btn w-full py-3 text-sm shadow-lg">
-                    <i data-lucide="shield-check" class="w-4 h-4"></i>
-                    <span>Autenticar no Sistema</span>
-                </button>
-            </form>
-
-            <div class="pt-2 border-t border-slate-200/60 text-center">
-                <p class="text-[11px] text-[#64748b]">Controle de Acesso Baseado em Perfis (RBAC)</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ─── APLICAÇÃO PRINCIPAL ─── -->
-    <div id="appContainer" class="hidden flex-col min-h-screen">
-        <!-- TOP NAV -->
-        <header class="sticky top-0 z-30 glass-panel px-4 lg:px-8 py-2.5 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('table')">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md font-display font-extrabold text-sm">
+        <!-- Sidebar Left -->
+        <aside class="w-60 bg-white/70 backdrop-blur-md border-r border-slate-200/80 flex flex-col justify-between p-4 z-20">
+            <div class="space-y-6">
+                <!-- Logo -->
+                <div class="flex items-center gap-2.5 px-1">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-extrabold text-xs tracking-wider shadow-md">
                         STEP
                     </div>
-                    <div class="flex flex-col">
-                        <div class="flex items-center gap-2">
-                            <span class="font-display font-extrabold text-base text-[#0f172a]">STEP</span>
-                            <span class="text-[11px] font-semibold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">Mão de Obra</span>
-                        </div>
-                        <span class="text-[10px] font-medium text-[#64748b] -mt-0.5">Gestão Operacional de Talentos</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Global Search -->
-            <div class="flex-1 max-w-2xl mx-2 relative">
-                <div class="relative flex items-center">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-4 text-[#94a3b8]"></i>
-                    <input type="text" id="globalSearchInput" oninput="filterCandidates()" placeholder="Buscar nome, passaporte, cargo, e-mail..." class="w-full pl-10 pr-10 py-2 bg-white border border-slate-200 rounded-full text-xs focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 text-[#0f172a]" />
-                </div>
-            </div>
-
-            <!-- User Info & Role Badge -->
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
-                    <div class="w-6 h-6 rounded-full bg-brand-600 text-white font-bold text-[10px] flex items-center justify-center" id="userAvatar">A</div>
-                    <div class="flex flex-col text-left">
-                        <span id="userNameDisplay" class="text-xs font-bold text-[#0f172a]">Usuário</span>
-                        <span id="userRoleBadge" class="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-brand-100 text-brand-700">ADMIN</span>
+                    <div>
+                        <div class="font-extrabold text-xs tracking-tight text-slate-900 leading-none">STEP <span class="font-normal text-slate-500 text-[10px]">Mão de Obra</span></div>
+                        <div class="text-[9px] text-slate-400 font-medium">Industrial & Energy Talent Platform</div>
                     </div>
                 </div>
 
-                <button id="addCandidateBtn" class="apple-btn perm-edit" onclick="openCandidateModal()">
-                    <i data-lucide="user-plus" class="w-4 h-4"></i>
-                    <span>Adicionar</span>
+                <!-- Navigation Section -->
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">NAVIGATION</p>
+                    <nav class="space-y-1">
+                        <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-100">
+                            <i data-lucide="table" class="w-4 h-4 text-sky-600"></i>
+                            <span>Candidates Table</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100/60 transition">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-400"></i>
+                            <span>Dashboard & Metrics</span>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100/60 transition">
+                            <div class="flex items-center gap-2.5">
+                                <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
+                                <span>Active Workforce</span>
+                            </div>
+                            <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.2 rounded-full">0</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Saved Filters -->
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">SAVED FILTERS</p>
+                    <nav class="space-y-1 text-xs">
+                        <a href="#" class="flex items-center justify-between px-3 py-1.5 text-slate-600 hover:bg-slate-100/60 rounded-md">
+                            <span>Available Immediately</span>
+                            <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-3 py-1.5 text-slate-600 hover:bg-slate-100/60 rounded-md">
+                            <span>Offshore Welders</span>
+                            <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
+                        </a>
+                        <a href="#" class="flex items-center justify-between px-3 py-1.5 text-slate-600 hover:bg-slate-100/60 rounded-md">
+                            <span>Expiring Passports/Visas</span>
+                            <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400"></i>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="space-y-2 pt-4 border-t border-slate-200/60">
+                <button class="w-full btn-action-green font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-2 shadow-sm">
+                    <i data-lucide="file-up" class="w-3.5 h-3.5"></i>
+                    <span>Import Excel / CSV</span>
                 </button>
-
-                <button onclick="handleLogout()" title="Sair do Sistema" class="p-2 rounded-full text-rose-600 hover:bg-rose-50 transition border border-rose-200">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                <div class="grid grid-cols-2 gap-2">
+                    <button class="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium py-1.5 text-[11px] rounded-lg flex items-center justify-center gap-1">
+                        <i data-lucide="download" class="w-3 h-3"></i> Excel
+                    </button>
+                    <button class="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium py-1.5 text-[11px] rounded-lg flex items-center justify-center gap-1">
+                        <i data-lucide="download" class="w-3 h-3"></i> CSV
+                    </button>
+                </div>
+                <button class="w-full btn-action-blue font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-2 shadow-sm">
+                    <i data-lucide="folder-archive" class="w-3.5 h-3.5"></i>
+                    <span>Download All Docs</span>
                 </button>
             </div>
-        </header>
+        </aside>
 
-        <!-- WORKSPACE -->
-        <div class="flex-1 flex overflow-hidden relative z-10">
-            <!-- Sidebar Navigation -->
-            <aside class="w-64 bg-white/80 backdrop-blur-md border-r border-slate-200 flex flex-col justify-between hidden lg:flex p-4">
-                <div class="space-y-4">
-                    <p class="px-2 text-[11px] font-extrabold uppercase tracking-wider text-[#64748b]">Navegação</p>
-                    <button data-view="table" onclick="switchView('table')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold bg-brand-50 text-brand-600 border border-brand-200">
-                        <i data-lucide="table" class="w-4 h-4"></i>
-                        <span>Banco de Talentos</span>
-                    </button>
-                    <button data-view="dashboard" onclick="switchView('dashboard')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-[#64748b] hover:bg-slate-100">
-                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                        <span>Dashboard &amp; Indicadores</span>
-                    </button>
-                    <button data-view="workforce" onclick="switchView('workforce')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-[#64748b] hover:bg-slate-100">
-                        <i data-lucide="users" class="w-4 h-4"></i>
-                        <span>Equipe Alocada</span>
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden relative">
+
+            <!-- Top Header -->
+            <header class="h-14 px-6 flex items-center justify-between gap-4 border-b border-slate-200/60 bg-white/40 backdrop-blur-sm">
+                <div class="flex-1 max-w-xl relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="Search name, passport, nationality, email, certs, skills, city..." class="w-full pl-9 pr-20 py-1.5 text-xs bg-white/80 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition shadow-sm" />
+                    <button class="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[11px] font-medium bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center gap-1">
+                        <i data-lucide="sliders-horizontal" class="w-3 h-3"></i> Filters
                     </button>
                 </div>
 
-                <div class="space-y-2 border-t border-slate-200 pt-4">
-                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
-                        <p class="font-bold text-[#0f172a] mb-1">Nível de Permissão:</p>
-                        <p id="roleDescriptionText" class="text-[11px] text-[#64748b]">Carregando perfil...</p>
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <i data-lucide="check-circle-2" class="w-3 h-3"></i> Saved
+                    </span>
+                    <button class="p-1.5 text-slate-500 relative">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                        <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">6</span>
+                    </button>
+                    <button class="btn-action-blue text-xs font-semibold py-1.5 px-3.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                        <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+                        <span>Add Candidate</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Table Controls -->
+            <div class="px-6 py-3 flex items-center justify-between">
+                <div class="inline-flex items-center px-3 py-1 rounded-full bg-sky-100/70 border border-sky-200/60 text-sky-800 font-semibold text-xs">
+                    6 candidates found
+                </div>
+                <div class="bg-slate-200/60 p-1 rounded-full flex items-center gap-1 text-xs font-medium text-slate-600">
+                    <button class="px-3 py-1 rounded-full bg-white text-sky-700 font-semibold shadow-sm">Full Data Table</button>
+                    <button class="px-3 py-1 rounded-full hover:text-slate-900">Dashboard</button>
+                    <button class="px-3 py-1 rounded-full hover:text-slate-900">Active Workforce</button>
+                </div>
+            </div>
+
+            <!-- Main Data Table Container -->
+            <div class="flex-1 px-6 pb-6 overflow-hidden">
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xl h-full flex flex-col overflow-hidden">
+                    <div class="overflow-x-auto flex-1">
+                        <table class="w-full text-left text-xs whitespace-nowrap">
+                            <thead class="bg-slate-50 text-slate-400 font-bold uppercase text-[9px] border-b border-slate-200 tracking-wider sticky top-0 z-10">
+                                <tr>
+                                    <th class="p-3 w-8 text-center"><input type="checkbox" class="rounded border-slate-300" /></th>
+                                    <th class="p-3 font-bold text-slate-500">CANDIDATE</th>
+                                    <th class="p-3 font-bold text-slate-500">PHOTO</th>
+                                    <th class="p-3 font-bold text-slate-500">STATUS</th>
+                                    <th class="p-3 font-bold text-slate-500">NATIONALITY</th>
+                                    <th class="p-3 font-bold text-slate-500">AGE</th>
+                                    <th class="p-3 font-bold text-slate-500">CONTACT</th>
+                                    <th class="p-3 font-bold text-slate-500">EMAIL</th>
+                                    <th class="p-3 font-bold text-slate-500">LOCATION</th>
+                                    <th class="p-3 font-bold text-slate-500">AVAILABLE</th>
+                                    <th class="p-3 font-bold text-slate-500">DISCIPLINE</th>
+                                    <th class="p-3 font-bold text-slate-500">SKILLS</th>
+                                    <th class="p-3 font-bold text-slate-500">O&G EXP</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-700">
+                                <tr onclick="openDrawer('Carlos Eduardo Silva')" class="hover:bg-slate-50/80 cursor-pointer transition">
+                                    <td class="p-3 text-center" onclick="event.stopPropagation()"><input type="checkbox" class="rounded border-slate-300" /></td>
+                                    <td class="p-3 font-bold text-slate-900">Carlos Eduardo Silva</td>
+                                    <td class="p-3"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" class="w-7 h-7 rounded-full object-cover border border-slate-200" alt="" /></td>
+                                    <td class="p-3"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold badge-working">Working with Us</span></td>
+                                    <td class="p-3 text-slate-500">Brazilian</td>
+                                    <td class="p-3 font-bold text-slate-900">38</td>
+                                    <td class="p-3 text-slate-500">+55 22 99876-5432</td>
+                                    <td class="p-3 text-sky-600 font-medium">carlos.silva@offshore.com</td>
+                                    <td class="p-3 text-slate-500">Brazil</td>
+                                    <td class="p-3 font-semibold text-amber-600">Available Immediately</td>
+                                    <td class="p-3 font-semibold text-slate-800">Welder, NDT Technician</td>
+                                    <td class="p-3 text-slate-500">TIG Welding • MIG Wel...</td>
+                                    <td class="p-3 text-slate-500">10+ Years</td>
+                                </tr>
+
+                                <tr onclick="openDrawer('New Candidate')" class="hover:bg-slate-50/80 cursor-pointer transition">
+                                    <td class="p-3 text-center" onclick="event.stopPropagation()"><input type="checkbox" class="rounded border-slate-300" /></td>
+                                    <td class="p-3 font-bold text-slate-900">New Candidate</td>
+                                    <td class="p-3"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" class="w-7 h-7 rounded-full object-cover border border-slate-200" alt="" /></td>
+                                    <td class="p-3"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold badge-available">Available</span></td>
+                                    <td class="p-3 text-slate-400">N/A</td>
+                                    <td class="p-3 font-bold text-slate-400">N/A</td>
+                                    <td class="p-3 text-slate-400">N/A</td>
+                                    <td class="p-3 text-sky-600 font-medium">N/A</td>
+                                    <td class="p-3 text-slate-400">N/A</td>
+                                    <td class="p-3 font-semibold text-amber-600">Available Immediately</td>
+                                    <td class="p-3 font-semibold text-slate-800">Welder</td>
+                                    <td class="p-3 text-slate-400">N/A</td>
+                                    <td class="p-3 text-slate-400">N/A</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </aside>
+            </div>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-6 space-y-4">
-                <div id="resultsBar" class="flex items-center justify-between pb-2">
-                    <span id="resultsCountBadge" class="apple-badge bg-sky-100 text-sky-800 border border-sky-200">0 candidatos cadastrados</span>
+            <!-- Slide-Over Right Drawer (Matching Image 2) -->
+            <div id="candidateDrawer" class="absolute inset-y-0 right-0 w-full max-w-2xl bg-white shadow-2xl border-l border-slate-200 z-50 flex flex-col transition-transform duration-300 translate-x-0">
+                
+                <!-- Drawer Header -->
+                <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+                    <div class="flex items-center gap-3">
+                        <img id="drawerAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" class="w-10 h-10 rounded-full object-cover border border-slate-300" alt="" />
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 id="drawerCandidateName" class="font-extrabold text-slate-900 text-sm">New Candidate</h3>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold badge-available">Available</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 font-medium">Welder • No location</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-semibold">Archive</button>
+                        <button class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold">Delete</button>
+                        <button onclick="closeDrawer()" class="p-1.5 text-slate-400 hover:text-slate-600 ml-2">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- VIEW: TABLE -->
-                <section id="viewTable" class="view-section space-y-4">
-                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-                        <div class="overflow-x-auto max-h-[72vh]">
-                            <table class="w-full text-left text-xs whitespace-nowrap">
-                                <thead class="bg-slate-100 text-[#475569] uppercase font-bold text-[11px] border-b border-slate-200">
-                                    <tr>
-                                        <th class="p-3">Candidato / Nome</th>
-                                        <th class="p-3">Status</th>
-                                        <th class="p-3">Nacionalidade</th>
-                                        <th class="p-3">Idade</th>
-                                        <th class="p-3">Contato</th>
-                                        <th class="p-3">Disciplina / Especialidade</th>
-                                        <th class="p-3">Passaporte / Doc</th>
-                                        <th class="p-3 text-right perm-edit">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="candidateTableBody" class="divide-y divide-slate-200"></tbody>
-                            </table>
+                <!-- Sub-Navigation Tabs (8 Tabs) -->
+                <div class="border-b border-slate-200 px-4 flex items-center gap-4 text-xs font-medium text-slate-500 overflow-x-auto">
+                    <button onclick="switchTab('overview')" class="tab-btn py-2.5 text-sky-600 border-b-2 border-sky-600 font-semibold">Overview</button>
+                    <button onclick="switchTab('skills')" class="tab-btn py-2.5 hover:text-slate-800">Skills & Disciplines</button>
+                    <button onclick="switchTab('certs')" class="tab-btn py-2.5 hover:text-slate-800">Certifications</button>
+                    <button onclick="switchTab('medicals')" class="tab-btn py-2.5 hover:text-slate-800">Medicals</button>
+                    <button onclick="switchTab('visas')" class="tab-btn py-2.5 hover:text-slate-800">Visas</button>
+                    <button onclick="switchTab('docs')" class="tab-btn py-2.5 hover:text-slate-800">Docs</button>
+                    <button onclick="switchTab('active')" class="tab-btn py-2.5 hover:text-slate-800">Active Assignment</button>
+                    <button onclick="switchTab('notes')" class="tab-btn py-2.5 hover:text-slate-800">Notes & History</button>
+                </div>
+
+                <!-- Tab Content: Overview -->
+                <div id="tabContent" class="flex-1 overflow-y-auto p-5 space-y-5 text-xs">
+                    
+                    <!-- Status & Availability -->
+                    <div>
+                        <p class="font-extrabold uppercase text-[10px] text-slate-400 tracking-wider mb-2">STATUS & AVAILABILITY</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Employment Status</label>
+                                <select class="form-input">
+                                    <option>Available</option>
+                                    <option>Working with Us</option>
+                                    <option>In interviews</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Personal Details</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="text" placeholder="Nationality" class="form-input" />
+                                    <input type="text" placeholder="dd / mm / aaaa" class="form-input" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Availability Window</label>
+                                <select class="form-input">
+                                    <option>Available Immediately</option>
+                                    <option>Available in 2 Weeks</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="block text-slate-600 font-medium mb-1">Age (Auto-calc)</label>
+                                        <input type="text" placeholder="" class="form-input bg-slate-50" readonly />
+                                    </div>
+                                    <div>
+                                        <label class="block text-slate-600 font-medium mb-1">Gender</label>
+                                        <select class="form-input">
+                                            <option>Male</option>
+                                            <option>Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </section>
 
-                <!-- VIEW: DASHBOARD -->
-                <section id="viewDashboard" class="view-section hidden space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="glass-card p-5 rounded-2xl">
-                            <span class="text-xs font-semibold text-[#64748b]">Total no Banco</span>
-                            <div id="widgetTotalCandidates" class="text-3xl font-bold text-[#0f172a] mt-2">0</div>
-                        </div>
-                        <div class="glass-card p-5 rounded-2xl">
-                            <span class="text-xs font-semibold text-[#64748b]">Disponíveis Imediatos</span>
-                            <div id="widgetAvailableCandidates" class="text-3xl font-bold text-emerald-600 mt-2">0</div>
-                        </div>
-                        <div class="glass-card p-5 rounded-2xl">
-                            <span class="text-xs font-semibold text-[#64748b]">Alocados / Em Operação</span>
-                            <div id="widgetActiveWorkforce" class="text-3xl font-bold text-indigo-600 mt-2">0</div>
+                    <!-- Contact Details -->
+                    <div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Contact Number</label>
+                                <input type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">WhatsApp</label>
+                                <input type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Email</label>
+                                <input type="email" class="form-input" />
+                            </div>
                         </div>
                     </div>
-                </section>
 
-                <!-- VIEW: WORKFORCE -->
-                <section id="viewWorkforce" class="view-section hidden space-y-4">
-                    <div id="workforceList" class="space-y-3"></div>
-                </section>
-            </main>
+                    <!-- Passports & Location -->
+                    <div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Passport Number</label>
+                                <input type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Passport Validity (Expiry)</label>
+                                <input type="text" placeholder="dd / mm / aaaa" class="form-input" />
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Located (Country & City)</label>
+                                <div class="grid grid-cols-2 gap-1">
+                                    <input type="text" placeholder="Country" class="form-input" />
+                                    <input type="text" placeholder="City" class="form-input" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Emergency Contact Name</label>
+                                <input type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 font-medium mb-1">Emergency Contact Phone</label>
+                                <input type="text" class="form-input" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
     </div>
 
-    <!-- ─── LÓGICA DE AUTENTICAÇÃO E PERFIS ─── -->
     <script>
-        // Usuários Permitidos e Perfis Associados
-        const USER_DATABASE = [
-            {
-                email: 'administrador@step-og.com',
-                name: 'Administrador do Sistema',
-                role: 'ADMIN'
-            },
-            {
-                email: 'recrutamento@step-og.com',
-                name: 'Equipe de Seleção / RH',
-                role: 'RECRUITER'
-            },
-            {
-                email: 'operacoes@step-og.com',
-                name: 'Gestão Operacional',
-                role: 'MANAGER'
-            },
-            {
-                email: 'auditoria@step-og.com',
-                name: 'Auditor de Consulta',
-                role: 'VIEWER'
-            }
-        ];
-
-        // Regras do RBAC
-        const ROLE_PERMISSIONS = {
-            ADMIN: { edit: true, label: 'ADMIN MASTER', desc: 'Acesso total para criar, editar e excluir registros.' },
-            RECRUITER: { edit: true, label: 'RECRUTAMENTO', desc: 'Acesso para adicionar e alterar candidatos.' },
-            MANAGER: { edit: false, label: 'GESTOR OPERACIONAL', desc: 'Acompanhamento de alocações e equipe ativa.' },
-            VIEWER: { edit: false, label: 'SOMENTE LEITURA', desc: 'Acesso estrito de consulta sem permissão de alteração.' }
-        };
-
-        let currentSession = null;
-        let candidatesData = [
-            { id: '1', name: 'Carlos Eduardo Silva', status: 'Working with Us', nationality: 'Brasileiro', age: 38, phone: '+55 22 99876-5432', discipline: 'Welder 6G', passport: 'BR9876543' },
-            { id: '2', name: 'João Pedro Santos', status: 'Available', nationality: 'Português', age: 33, phone: '+351 912 345 678', discipline: 'Pipefitter', passport: 'PT1234567' },
-            { id: '3', name: 'Roberto Alencar', status: 'Available', nationality: 'Brasileiro', age: 41, phone: '+55 21 98765-1122', discipline: 'Rigging Supervisor', passport: 'BR1122334' }
-        ];
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            const password = document.getElementById('loginPassword').value.trim();
-            const errorBox = document.getElementById('loginErrorMessage');
-
-            // Aceita as variações de senha configuradas
-            const isPasswordValid = (password === 'Step@2026' || password === 'Step2026' || password === '123456');
-            const userMatch = USER_DATABASE.find(u => u.email === email);
-
-            if (userMatch && isPasswordValid) {
-                errorBox.classList.add('hidden');
-                currentSession = {
-                    user: userMatch.name,
-                    email: userMatch.email,
-                    role: userMatch.role,
-                    expiresAt: Date.now() + (8 * 60 * 60 * 1000)
-                };
-                sessionStorage.setItem('STEP_SESSION', JSON.stringify(currentSession));
-                initAuthenticatedSession();
-            } else {
-                errorBox.classList.remove('hidden');
-            }
-        }
-
-        function initAuthenticatedSession() {
-            const saved = sessionStorage.getItem('STEP_SESSION');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                if (parsed.expiresAt > Date.now()) {
-                    currentSession = parsed;
-                } else {
-                    sessionStorage.removeItem('STEP_SESSION');
-                }
-            }
-
-            if (!currentSession) {
-                document.getElementById('authScreen').classList.remove('hidden');
-                document.getElementById('appContainer').classList.add('hidden');
-                return;
-            }
-
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
-            document.getElementById('appContainer').classList.add('flex');
-
-            applyUserRolePermissions();
-            renderCandidateTable();
-            renderDashboard();
-            renderWorkforce();
-            lucide.createIcons();
-        }
-
-        function applyUserRolePermissions() {
-            const role = currentSession.role;
-            const perms = ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.VIEWER;
-
-            document.getElementById('userNameDisplay').innerText = currentSession.user;
-            document.getElementById('userRoleBadge').innerText = perms.label;
-            document.getElementById('roleDescriptionText').innerText = perms.desc;
-            document.getElementById('userAvatar').innerText = currentSession.user.charAt(0);
-
-            // Oculta ou exibe elementos protegidos baseados em privilégio
-            document.querySelectorAll('.perm-edit').forEach(el => {
-                if (!perms.edit) el.classList.add('permission-restricted');
-                else el.classList.remove('permission-restricted');
-            });
-        }
-
-        function handleLogout() {
-            sessionStorage.removeItem('STEP_SESSION');
-            currentSession = null;
-            location.reload();
-        }
-
-        function renderCandidateTable() {
-            const tbody = document.getElementById('candidateTableBody');
-            tbody.innerHTML = '';
-            const perms = ROLE_PERMISSIONS[currentSession.role];
-
-            candidatesData.forEach(c => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-slate-200 hover:bg-slate-50 transition';
-                
-                let actionsCell = perms.edit ? `
-                    <td class="p-3 text-right perm-edit">
-                        <button onclick="removeCandidate('${c.id}')" class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition" title="Remover">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </td>
-                ` : `<td class="p-3 text-right perm-edit permission-restricted"></td>`;
-
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-[#0f172a]">${c.name}</td>
-                    <td class="p-3"><span class="apple-badge ${c.status === 'Working with Us' ? 'status-working' : 'status-available'}">${c.status}</span></td>
-                    <td class="p-3 text-slate-600">${c.nationality}</td>
-                    <td class="p-3 text-slate-600">${c.age}</td>
-                    <td class="p-3 text-brand-600 font-medium">${c.phone}</td>
-                    <td class="p-3 font-semibold text-slate-800">${c.discipline}</td>
-                    <td class="p-3 font-mono text-slate-600">${c.passport}</td>
-                    ${actionsCell}
-                `;
-                tbody.appendChild(tr);
-            });
-            document.getElementById('resultsCountBadge').innerText = `${candidatesData.length} candidatos registrados`;
-        }
-
-        function renderDashboard() {
-            document.getElementById('widgetTotalCandidates').innerText = candidatesData.length;
-            document.getElementById('widgetAvailableCandidates').innerText = candidatesData.filter(c => c.status === 'Available').length;
-            document.getElementById('widgetActiveWorkforce').innerText = candidatesData.filter(c => c.status === 'Working with Us').length;
-        }
-
-        function renderWorkforce() {
-            const list = document.getElementById('workforceList');
-            list.innerHTML = '';
-            const active = candidatesData.filter(c => c.status === 'Working with Us');
-
-            if (active.length === 0) {
-                list.innerHTML = `<p class="text-xs text-slate-500">Nenhum profissional alocado no momento.</p>`;
-                return;
-            }
-
-            active.forEach(c => {
-                const card = document.createElement('div');
-                card.className = 'glass-card p-4 flex items-center justify-between';
-                card.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-sm text-slate-900">${c.name}</h4>
-                        <p class="text-xs text-slate-500">${c.discipline} • Passaporte: ${c.passport}</p>
-                    </div>
-                    <span class="apple-badge status-working">Em Operação</span>
-                `;
-                list.appendChild(card);
-            });
-        }
-
-        function removeCandidate(id) {
-            candidatesData = candidatesData.filter(c => c.id !== id);
-            renderCandidateTable();
-            renderDashboard();
-            renderWorkforce();
-            lucide.createIcons();
-        }
-
-        function openCandidateModal() {
-            const name = prompt("Nome do Candidato:");
-            if (!name) return;
-            const discipline = prompt("Disciplina / Cargo:", "Técnico Especialista");
-            const phone = prompt("Telefone / Contato:", "+55 22 90000-0000");
-
-            candidatesData.push({
-                id: String(Date.now()),
-                name: name,
-                status: 'Available',
-                nationality: 'Brasileiro',
-                age: 30,
-                phone: phone || '+55 21 99999-9999',
-                discipline: discipline || 'Geral',
-                passport: 'BR' + Math.floor(100000 + Math.random() * 900000)
-            });
-
-            renderCandidateTable();
-            renderDashboard();
-            lucide.createIcons();
-        }
-
-        function switchView(viewName) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            if (viewName === 'table') document.getElementById('viewTable').classList.remove('hidden');
-            if (viewName === 'dashboard') document.getElementById('viewDashboard').classList.remove('hidden');
-            if (viewName === 'workforce') document.getElementById('viewWorkforce').classList.remove('hidden');
-        }
-
-        function filterCandidates() {
-            const query = document.getElementById('globalSearchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#candidateTableBody tr');
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(query) ? '' : 'none';
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initAuthenticatedSession();
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) { lucide.createIcons(); }
         });
+
+        function openDrawer(name) {
+            document.getElementById('drawerCandidateName').innerText = name;
+            document.getElementById('candidateDrawer').classList.remove('translate-x-full');
+        }
+
+        function closeDrawer() {
+            document.getElementById('candidateDrawer').classList.add('translate-x-full');
+        }
+
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(t => {
+                t.classList.remove('text-sky-600', 'border-b-2', 'border-sky-600', 'font-semibold');
+            });
+            event.target.classList.add('text-sky-600', 'border-b-2', 'border-sky-600', 'font-semibold');
+        }
     </script>
 </body>
 </html>
